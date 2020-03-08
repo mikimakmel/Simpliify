@@ -1,47 +1,92 @@
-import * as React from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
+import HomeScreen from '../screens/customer/HomeScreen';
+import ExploreScreen from '../screens/customer/ExploreScreen';
+import ScheduleScreen from '../screens/customer/ScheduleScreen';
+import BusinessScreen from '../screens/customer/BusinessScreen';
+import { AntDesign, EvilIcons, Feather } from '@expo/vector-icons';
+import Colors from '../constants/Colors';
+import { createStackNavigator } from '@react-navigation/stack';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = 'Home';
+const INITIAL_ROUTE_NAME = 'Explore';
+
+const Stack = createStackNavigator();
+
+function HomeStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+      <Stack.Screen name="Home" component={HomeScreen} />
+      {/* <Stack.Screen name="Business" component={BusinessScreen}/> */}
+    </Stack.Navigator>
+  );
+}
+
+// function ScheduleStack() {
+//   return (
+//     <Stack.Navigator>
+//       <Stack.Screen name="Schedule" component={ScheduleScreen} />
+//     </Stack.Navigator>
+//   );
+// }
+
+function ExploreStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+      <Stack.Screen name="Explore" component={ExploreScreen} />
+    </Stack.Navigator>
+  );
+}
 
 export default function BottomTabNavigator({ navigation, route }) {
-  // Set the header title on the parent stack navigator depending on the
-  // currently active tab. Learn more in the documentation:
-  // https://reactnavigation.org/docs/en/screen-options-resolution.html
-  navigation.setOptions({ headerTitle: getHeaderTitle(route) });
 
   return (
-    <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
+      <BottomTab.Navigator 
+        initialRouteName={INITIAL_ROUTE_NAME}
+        tabBarOptions={{
+          activeTintColor: Colors.red,
+        }}
+      >
       <BottomTab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="Explore"
+        component={ExploreStack}
         options={{
-          title: 'Get Started',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
+          title: 'Explore',
+          tabBarIcon: ({ color }) => (
+            <EvilIcons name="search" size={40} color={color} style={{ paddingTop: 5 }} />
+          )
         }}
       />
       <BottomTab.Screen
-        name="Links"
-        component={LinksScreen}
+        name="Home"
+        component={HomeStack}
         options={{
-          title: 'Resources',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
+          title: 'Home',
+          tabBarIcon: ({ color }) => (
+            <AntDesign name="home" size={31} color={color} style={{ paddingTop: 5 }} />
+          )
+        }}
+      />
+      <BottomTab.Screen
+        name="Schedule"
+        component={ScheduleScreen}
+        options={{
+          title: 'Schedule',
+          tabBarIcon: ({ color }) => (
+            <EvilIcons name="calendar" size={40} color={color} style={{ paddingTop: 5 }} />
+          )
         }}
       />
     </BottomTab.Navigator>
   );
 }
 
-function getHeaderTitle(route) {
-  const routeName = route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
-
-  switch (routeName) {
-    case 'Home':
-      return 'How to get started';
-    case 'Links':
-      return 'Links to learn more';
-  }
-}
