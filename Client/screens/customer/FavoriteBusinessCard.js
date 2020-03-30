@@ -60,13 +60,13 @@ export default class FavoriteBusinessCard extends Component {
 
     return (
       <TouchableOpacity
-        // onPress={() =>
-        //   this.props.navigation.navigate('BusinessPage', {
-        //     businessData,
-        //     isInUserFavorites: this.state.isInUserFavorites,
-        //     prevScreen: 'Home'
-        //   })
-        // }
+        onPress={() =>
+          this.props.navigation.navigate('Business', {
+            businessData,
+            // isInUserFavorites: this.state.isInUserFavorites,
+            // prevScreen: 'Home'
+          })
+        }
       >
         <View>
           <View style={styles.imageContainer}>

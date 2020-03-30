@@ -6,12 +6,17 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './screens/customer/HomeScreen';
 import ExploreScreen from './screens/customer/ExploreScreen';
 import ScheduleScreen from './screens/customer/ScheduleScreen';
-import BottomTabNavigator from './navigation/BottomTabNavigator';
+import MenuScreen from './screens/customer/MenuScreen';
+import LoginScreen from './screens/LoginScreen';
+import CameraScreen from './screens/CameraScreen';
+import CreditCardScreen from './screens/CreditCardScreen';
+import Navigator from './navigation/Navigator';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-
 import { Provider } from "react-redux";
 import Store from "./redux/Store";
+
+console.disableYellowBox = true;
 
 export default class App extends Component {
   render() {
@@ -19,7 +24,9 @@ export default class App extends Component {
       <Provider store={Store}>
         <NavigationContainer>
           <StatusBar barStyle="dark-content" />
-          <BottomTabNavigator />
+          <Navigator />
+          {/* <CameraScreen /> */}
+          {/* <CreditCardScreen /> */}
         </NavigationContainer>
       </Provider>
     )
@@ -27,12 +34,3 @@ export default class App extends Component {
 }
 
 AppRegistry.registerComponent("Simpliify", () => App);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

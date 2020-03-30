@@ -4,6 +4,9 @@
     "slug": "Simpliify",
     "privacy": "public",
     "sdkVersion": "36.0.0",
+    "facebookAppId": "786955858495098",
+    "facebookScheme": "fb786955858495098",
+    "facebookDisplayName": "Simpliify",
     "platforms": [
       "ios",
       "android",
