@@ -16,7 +16,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = 'Menu';
+const INITIAL_ROUTE_NAME = 'Home';
 
 const Stack = createStackNavigator();
 
@@ -76,7 +76,7 @@ function ExploreStack() {
 
 export default function RootStack() {
   return (
-    <Stack.Navigator initialRouteName={"Profile"}>
+    <Stack.Navigator initialRouteName={"LogIn"}>
       <Stack.Screen
         name="LogIn"
         component={LogInStack}

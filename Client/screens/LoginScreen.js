@@ -3,7 +3,6 @@ import { ActivityIndicator, Alert, View, Text, StyleSheet, TextInput, KeyboardAv
 import styles from '../styles/Style_LoginScreen';
 import layout from '../constants/Layout'
 import colors from '../constants/Colors'
-import { LinearGradient } from 'expo-linear-gradient';
 import { Asset } from 'expo-asset';
 import { AppLoading } from 'expo';
 import { TapGestureHandler, State } from 'react-native-gesture-handler';
