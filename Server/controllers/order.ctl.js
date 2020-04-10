@@ -11,13 +11,13 @@ module.exports = {
         const serviceID = req.body.serviceID;
         const status = 'Pending';
         const startTime = req.body.startTime;
-        const transactionTime = req.body.transactionTime;
 
         const query = 
             `INSERT INTO Orders 
-            (customer, business, service, status, starttime, transactiontime) 
+            (Customer, Business, Service, status, starttime, transactiontime) 
             VALUES 
-            (${userID}, ${businessID}, ${serviceID}, ${status}, ${startTime}, ${transactionTime})`;
+            ('${userID}', '${businessID}', '${serviceID}', '${status}', '${startTime}', NOW() AT TIME ZONE 'EETDST')
+            RETURNING *`;
         
         db.query(query)
             .then(result => res.json(result.rows))
@@ -36,7 +36,8 @@ module.exports = {
             SET 
             status='${status}'
             WHERE 
-            order=${orderID}`;
+            orderid=${orderID}
+            RETURNING *`;
         
         db.query(query)
             .then(result => res.json(result.rows))

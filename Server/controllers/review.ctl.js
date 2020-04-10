@@ -26,12 +26,13 @@ module.exports = {
 
         const query = 
             `INSERT INTO Review 
-            (userid, businessid, rating, description) 
+            (customer, business, reviewedat, description, rating) 
             VALUES 
-            (${userID}, ${businessID}, ${rating}, ${description})`;
+            (${userID}, ${businessID}, NOW() AT TIME ZONE 'EETDST', '${description}', ${rating})
+            RETURNING *`;
         
         db.query(query)
-            .then(result => res.json(result.rows))
+            .then(result => res.json(result.rows[0]))
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
@@ -39,9 +40,10 @@ module.exports = {
     async deleteReview(req, res) {
         console.log("deleteReview()");
 
-        const reviewID = req.body.reviewID;
+        const customer = req.body.customer;
+        const business = req.body.business;
 
-        const query = `DELETE FROM Review WHERE id=${reviewID}`;
+        const query = `DELETE FROM Review WHERE customer='${customer}' AND business='${business}'`;
         
         db.query(query)
             .then(result => res.json(result.rows))
