@@ -1,4 +1,4 @@
 // @ Simpliify
 
-// require('./database');
+require('./database');
 require('./server');

@@ -1,0 +1,80 @@
+{
+  "_from": "react-native-credit-card-input",
+  "_id": "react-native-credit-card-input@0.4.1",
+  "_inBundle": false,
+  "_integrity": "sha1-5i3Rqb7qtnh+U3O6I7k4Mcv1894=",
+  "_location": "/react-native-credit-card-input",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "react-native-credit-card-input",
+    "name": "react-native-credit-card-input",
+    "escapedName": "react-native-credit-card-input",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/react-native-credit-card-input/-/react-native-credit-card-input-0.4.1.tgz",
+  "_shasum": "e62dd1a9beeab6787e5373ba23b93831cbf5f3de",
+  "_spec": "react-native-credit-card-input",
+  "_where": "C:\\Users\\user\\Desktop\\VScode Projects\\Simpliify\\Client",
+  "author": {
+    "name": "sbycrosz"
+  },
+  "bugs": {
+    "url": "https://github.com/sbycrosz/react-native-credit-card-input/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "card-validator": "^3.0.0",
+    "lodash.compact": "^3.0.1",
+    "lodash.every": "^4.6.0",
+    "lodash.pick": "^4.4.0",
+    "lodash.values": "^4.3.0",
+    "prop-types": "^15.6.0",
+    "react-native-flip-card": "^3.4.1"
+  },
+  "deprecated": false,
+  "description": "React native credit card input component",
+  "devDependencies": {
+    "babel-eslint": "^5.0.0",
+    "babel-polyfill": "^6.6.1",
+    "babel-preset-react-native": "^1.8.0",
+    "eslint": "~2.2.0",
+    "eslint-config-airbnb": "6.0.2",
+    "eslint-plugin-react": "^4.2.0"
+  },
+  "homepage": "https://github.com/sbycrosz/react-native-credit-card-input#readme",
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "credit-card",
+    "credit-card input",
+    "skeuomorphic credit-card",
+    "form",
+    "flip",
+    "card",
+    "input",
+    "component",
+    "react-component",
+    "react-native-component"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "react-native-credit-card-input",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sbycrosz/react-native-credit-card-input.git"
+  },
+  "scripts": {
+    "lint": "eslint --ext .js .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.4.1"
+}
