@@ -54,8 +54,8 @@ app.put('/service/updateServiceDetails', serviceCtl.updateServiceDetails);      
 app.post('/service/deleteService', serviceCtl.deleteService);                           // READY
 
 /*** Statistics routes ***/
-app.get('/statistics/getCustomersSortedByAge', statisticsCtl.getCustomersSortedByAge);  
-app.get('/statistics/getDailyCounter', statisticsCtl.getDailyCounter); 
+app.get('/statistics/getDailyCounter', statisticsCtl.getDailyCounter);                  // READY
+app.get('/statistics/getCustomersSortedByAge', statisticsCtl.getCustomersSortedByAge);  // 
 
 /*** Review routes ***/
 app.post('/review/createNewReview', reviewCtl.createNewReview);                  // READY, but needs check with time zone

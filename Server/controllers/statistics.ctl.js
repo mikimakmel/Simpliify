@@ -50,7 +50,7 @@ module.exports = {
         const query = `SELECT DailyCounter FROM Business WHERE BusinessID=${businessID}`;
         
         db.query(query)
-            .then(result => res.json(result.rows))
+            .then(result => res.json(result.rows[0]))
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 

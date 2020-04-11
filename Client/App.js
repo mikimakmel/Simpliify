@@ -9,6 +9,7 @@ import ScheduleScreen from './screens/customer/ScheduleScreen';
 import MenuScreen from './screens/customer/MenuScreen';
 import LoginScreen from './screens/LoginScreen';
 import CameraScreen from './screens/CameraScreen';
+import SignUpForm from './screens/user/SignUpForm';
 import CreditCardScreen from './screens/CreditCardScreen';
 import Navigator from './navigation/Navigator';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -24,9 +25,8 @@ export default class App extends Component {
       <Provider store={Store}>
         <NavigationContainer>
           <StatusBar barStyle="dark-content" />
-          <Navigator />
-          {/* <CameraScreen /> */}
-          {/* <CreditCardScreen /> */}
+          {/* <Navigator /> */}
+          <SignUpForm />
         </NavigationContainer>
       </Provider>
     )
