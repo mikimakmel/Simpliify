@@ -14,7 +14,7 @@ module.exports = {
 
         const query = 
             `INSERT INTO Orders 
-            (Customer, Business, Service, status, starttime, transactiontime) 
+            (Customer, Business, Service, status, starttime, orderedat) 
             VALUES 
             ('${userID}', '${businessID}', '${serviceID}', '${status}', '${startTime}', NOW() AT TIME ZONE 'EETDST')
             RETURNING *`;
@@ -50,7 +50,25 @@ module.exports = {
 
         const userID = req.body.userID;
 
-        const query = `SELECT * FROM Orders WHERE customer=${userID}`;
+        const query = 
+            `SELECT orderid, customer, business, service, status,
+            starttime AT TIME ZONE 'UTC' as starttime,
+            orderedat AT TIME ZONE 'UTC' as orderedat, 
+            FROM Orders 
+            WHERE customer=${userID}`;
+        
+        db.query(query)
+            .then(result => res.json(result.rows))
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    },
+
+    // get all business orders (past and future).
+    async getAllBusinessOrders(req, res) {
+        console.log("getAllBusinessOrders()");
+
+        const businessID = req.body.businessID;
+
+        const query = `SELECT * FROM Orders WHERE business=${businessID}`;
         
         db.query(query)
             .then(result => res.json(result.rows))
@@ -58,3 +76,6 @@ module.exports = {
     },
 
 }
+
+
+// SELECT orders.business, orders.status, orders.starttime, service.durationminutes FROM orders LEFT OUTER JOIN service ON (orders.business = service.businessid AND orders.service = service.serviceid) WHERE business = X

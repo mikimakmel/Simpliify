@@ -1,5 +1,4 @@
 const express = require('express');
-const cors = require('cors');
 const userCtl = require('./controllers/user.ctl');
 const customerCtl = require('./controllers/customer.ctl');
 const businessCtl = require('./controllers/business.ctl');
@@ -7,6 +6,7 @@ const serviceCtl = require('./controllers/service.ctl');
 const orderCtl = require('./controllers/order.ctl');
 const reviewCtl = require('./controllers/review.ctl');
 const statisticsCtl = require('./controllers/statistics.ctl');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -25,20 +25,33 @@ app.put('/user/updateUserDetails', userCtl.updateUserDetails);                  
 app.post('/user/createNewUser', userCtl.createNewUser);                         // READY
 
 /*** Customer routes ***/
+app.post('/customer/addBusinessToFavorites', customerCtl.addBusinessToFavorites);               // READY
+app.post('/customer/removeBusinessFromFavorites', customerCtl.removeBusinessFromFavorites);     // READY
+app.get('/customer/getFavoritesList', customerCtl.getFavoritesList);                            // READY
 
 /*** Order routes ***/
-app.post('/order/createNewOrder', orderCtl.createNewOrder);                     // need to take care of service creation
+app.post('/order/createNewOrder', orderCtl.createNewOrder);                     // need to take care of starttime
 app.put('/order/updateOrderStatus', orderCtl.updateOrderStatus);                // READY
 app.get('/order/getAllCustomerOrders', orderCtl.getAllCustomerOrders);          // READY
+app.get('/order/getAllBusinessOrders', orderCtl.getAllBusinessOrders);          // READY
 
 /*** Business routes ***/
 app.get('/business/getAllBusinesses', businessCtl.getAllBusinesses);                        // READY
 app.get('/business/getBusinessesByID', businessCtl.getBusinessesByID);                      // READY
 app.get('/business/getAllCustomers', businessCtl.getAllCustomers);                          // READY
+app.get('/business/getBusinessAvailability', businessCtl.getBusinessAvailability);          // READY
 app.get('/business/getAllBusinessesByCategory', businessCtl.getAllBusinessesByCategory);    // READY
-app.put('/business/deleteYourBusiness', businessCtl.deleteYourBusiness);                    // can't delete because of foriegn keys
+app.post('/business/createNewBusiness', businessCtl.createNewBusiness);                     // READY
+app.post('/business/deleteYourBusiness', businessCtl.deleteYourBusiness);                   // can't delete because of foriegn keys
+app.put('/business/updateBusinessDetails', businessCtl.updateBusinessDetails);              // READY, needs check what about images
 
 /*** Service routes ***/
+app.get('/service/getAllServices', serviceCtl.getAllServices);                          // READY
+app.get('/service/getServiceByID', serviceCtl.getServiceByID);                          // READY
+app.get('/service/getAllBusinessServices', serviceCtl.getAllBusinessServices);          // READY
+app.post('/service/createNewService', serviceCtl.createNewService);                     // READY, needs check about availability
+app.put('/service/updateServiceDetails', serviceCtl.updateServiceDetails);              // READY, needs check about availability
+app.post('/service/deleteService', serviceCtl.deleteService);                           // READY
 
 /*** Statistics routes ***/
 app.get('/statistics/getCustomersSortedByAge', statisticsCtl.getCustomersSortedByAge);  

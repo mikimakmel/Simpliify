@@ -32,7 +32,10 @@ module.exports = {
 
         const userID = req.body.userID;
 
-        const query = `SELECT * FROM Users LEFT OUTER JOIN address ON (users.address = address.addressid) WHERE userid='${userID}'`;
+        const query = 
+            `SELECT * FROM Users 
+            LEFT OUTER JOIN address ON (users.address = address.addressid) 
+            WHERE userid='${userID}'`;
         
         db.query(query)
             .then(result => res.json(result.rows))
@@ -56,22 +59,22 @@ module.exports = {
         const gender = req.body.gender;
 
         const addressQuery =
-        `INSERT INTO Address 
-        (street, city, country)
-        VALUES 
-        ('${street}', '${city}', '${country}')
-        RETURNING addressid`;
+            `INSERT INTO Address 
+            (street, city, country)
+            VALUES 
+            ('${street}', '${city}', '${country}')
+            RETURNING addressid`;
 
         db.query(addressQuery)
         .then(result => {
             let addressID = result.rows[0].addressid;
 
             const userQuery = 
-            `INSERT INTO Users 
-            (FirstName, LastName, Phone, Gender, Email, address, HasBusiness, Birthday)
-            VALUES 
-            ('${firstName}', '${lastName}', '${phone}', '${gender}', '${email}', ${addressID}, '${false}', '${birthday}')
-            RETURNING UserID`;
+                `INSERT INTO Users 
+                (FirstName, LastName, Phone, Gender, Email, address, HasBusiness, Birthday)
+                VALUES 
+                ('${firstName}', '${lastName}', '${phone}', '${gender}', '${email}', ${addressID}, '${false}', '${birthday}')
+                RETURNING UserID`;
 
             db.query(userQuery)
             .then(result => res.json(result.rows[0].userid))
@@ -98,13 +101,14 @@ module.exports = {
         const gender = req.body.gender;
 
         const addressQuery =
-        `UPDATE Address 
-        SET
-        Street='${street}',
-        City='${city}',
-        Country='${country}'
-        WHERE 
-        AddressID=${addressID}`;
+            `UPDATE Address 
+            SET
+            Street='${street}',
+            City='${city}',
+            Country='${country}'
+            WHERE 
+            AddressID=${addressID}
+            RETURNING *`;
 
         const userQuery = 
             `UPDATE Users

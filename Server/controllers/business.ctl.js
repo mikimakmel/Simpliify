@@ -39,32 +39,6 @@ module.exports = {
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
-    // get all businesses within distance radius.
-    // async getAllBusinessesByDistance(req, res) {
-    //     console.log("getAllBusinessesByDistance()");
-
-    //     const distance = req.body.distance;
-
-    //     const query = `SELECT * FROM "public"."address"`;
-        
-    //     db.query(query)
-    //         .then(result => res.json(result.rows))
-    //         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-    // },
-
-    // get all businesses in Simpliify by tag.
-    async getAllBusinessesByTag(req, res) {
-        console.log("getAllBusinessesByTag()");
-
-        const tag = req.body.tag;
-
-        const query = `SELECT * FROM "public"."address"`;
-        
-        db.query(query)
-            .then(result => res.json(result.rows))
-            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-    },
-
     // create a new business page.
     async createNewBusiness(req, res) {
         console.log("createNewBusiness()");
@@ -80,9 +54,10 @@ module.exports = {
 
         const query = 
             `INSERT INTO Business 
-            (address, manager, name, category, phone, website, description, avatar) 
+            (address, manager, name, category, phone, website, description, DailyCounter, avatar) 
             VALUES 
-            (${addressID}, ${managerID}, ${name}, ${category}, ${phone}, ${website}, ${description}, ${avatar})`;
+            (${addressID}, ${managerID}, '${name}', '${category}', '${phone}', '${website}', '${description}',0 , '${avatar}')
+            RETURNING *`;
         
         db.query(query)
           .then(result => res.json(result.rows))
@@ -95,7 +70,10 @@ module.exports = {
 
         const businessID = req.body.businessID;
 
-        const query = `DELETE FROM Business WHERE businessid=${businessID}`;
+        const query = 
+            `DELETE FROM Business 
+            WHERE businessid=${businessID} 
+            RETURNING businessid`;
         
         db.query(query)
             .then(result => res.json(result.rows))
@@ -124,12 +102,13 @@ module.exports = {
             phone='${phone}',
             website='${website}',
             description='${description}',
-            avatar='${avatar}',
+            avatar='${avatar}'
             WHERE 
-            businessid=${businessID}`;
+            businessid='${businessID}'
+            RETURNING *`;
         
         db.query(query)
-            .then(result => res.json(result.rows))
+            .then(result => res.json(result.rows[0]))
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
@@ -146,13 +125,13 @@ module.exports = {
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
-    // get all the orders from this business (past and future).
-    async getAllOrders(req, res) {
-        console.log("getAllOrders()");
+    // get business weekly availability.
+    async getBusinessAvailability(req, res) {
+        console.log("getBusinessAvailability()");
 
         const businessID = req.body.businessID;
 
-        const query = `SELECT * FROM "public"."address"`;
+        const query = `SELECT * FROM availability WHERE businessid=${businessID}`;
         
         db.query(query)
             .then(result => res.json(result.rows))
