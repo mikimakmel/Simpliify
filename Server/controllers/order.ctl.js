@@ -14,7 +14,7 @@ module.exports = {
 
         const query = 
             `INSERT INTO Orders 
-            (Customer, Business, Service, status, starttime, transactiontime) 
+            (Customer, Business, Service, status, starttime, orderedat) 
             VALUES 
             ('${userID}', '${businessID}', '${serviceID}', '${status}', '${startTime}', NOW() AT TIME ZONE 'EETDST')
             RETURNING *`;
@@ -50,7 +50,7 @@ module.exports = {
 
         const userID = req.body.userID;
 
-        const query = `SELECT * FROM Orders WHERE customer=${userID}`;
+        const query = `SELECT orderid,customer,business,service,status,starttime AT TIME ZONE 'UTC' as starttime,orderedat AT TIME ZONE 'UTC' as orderedat,orderid FROM Orders WHERE customer=${userID}`;
         
         db.query(query)
             .then(result => res.json(result.rows))
