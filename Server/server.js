@@ -32,7 +32,7 @@ app.get('/customer/getFavoritesList', customerCtl.getFavoritesList);            
 /*** Order routes ***/
 app.post('/order/createNewOrder', orderCtl.createNewOrder);                     // need to take care of starttime
 app.put('/order/updateOrderStatus', orderCtl.updateOrderStatus);                // READY
-app.get('/order/getAllCustomerOrders', orderCtl.getAllCustomerOrders);          // READY
+app.get('/order/getAllCustomerOrders', orderCtl.getAllCustomerOrders);          // dosen't show all the orders
 app.get('/order/getAllBusinessOrders', orderCtl.getAllBusinessOrders);          // READY
 
 /*** Business routes ***/
@@ -41,7 +41,7 @@ app.get('/business/getBusinessesByID', businessCtl.getBusinessesByID);          
 app.get('/business/getAllCustomers', businessCtl.getAllCustomers);                          // READY
 app.get('/business/getBusinessAvailability', businessCtl.getBusinessAvailability);          // READY
 app.get('/business/getAllBusinessesByCategory', businessCtl.getAllBusinessesByCategory);    // READY
-app.post('/business/createNewBusiness', businessCtl.createNewBusiness);                     // READY
+app.post('/business/createNewBusiness', businessCtl.createNewBusiness);                     // READY, needs check what about images
 app.post('/business/deleteYourBusiness', businessCtl.deleteYourBusiness);                   // can't delete because of foriegn keys
 app.put('/business/updateBusinessDetails', businessCtl.updateBusinessDetails);              // READY, needs check what about images
 
@@ -49,8 +49,8 @@ app.put('/business/updateBusinessDetails', businessCtl.updateBusinessDetails);  
 app.get('/service/getAllServices', serviceCtl.getAllServices);                          // READY
 app.get('/service/getServiceByID', serviceCtl.getServiceByID);                          // READY
 app.get('/service/getAllBusinessServices', serviceCtl.getAllBusinessServices);          // READY
-app.post('/service/createNewService', serviceCtl.createNewService);                     // READY, needs check about availability
-app.put('/service/updateServiceDetails', serviceCtl.updateServiceDetails);              // READY, needs check about availability
+app.post('/service/createNewService', serviceCtl.createNewService);                     // READY
+app.put('/service/updateServiceDetails', serviceCtl.updateServiceDetails);              // READY
 app.post('/service/deleteService', serviceCtl.deleteService);                           // READY
 
 /*** Statistics routes ***/

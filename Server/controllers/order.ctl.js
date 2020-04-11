@@ -53,7 +53,7 @@ module.exports = {
         const query = 
             `SELECT orderid, customer, business, service, status,
             starttime AT TIME ZONE 'UTC' as starttime,
-            orderedat AT TIME ZONE 'UTC' as orderedat, 
+            orderedat AT TIME ZONE 'UTC' as orderedat
             FROM Orders 
             WHERE customer=${userID}`;
         
