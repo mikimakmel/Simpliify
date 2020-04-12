@@ -106,7 +106,8 @@ export default class ScheduleScreen extends Component {
     return (
       <SafeAreaView style={styles.flexContainer}>
         <View style={styles.flexContainer}>
-            <Text style={styles.heading}>My Schedule</Text>
+            {/* <Text style={styles.heading}>My Schedule</Text> */}
+            <Text style={styles.heading}>My Orders</Text>
             {this.state.isEmpty === true ? this.renderEmptySchedule() : this.renderScheduleList()}
         </View>
       </SafeAreaView>

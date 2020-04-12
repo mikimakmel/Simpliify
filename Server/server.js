@@ -22,7 +22,7 @@ app.get('/user/getAllUsers', userCtl.getAllUsers);                              
 app.get('/user/getUserByEmail', userCtl.getUserByEmail);                        // READY
 app.get('/user/getUserByID', userCtl.getUserByID);                              // READY
 app.put('/user/updateUserDetails', userCtl.updateUserDetails);                  // READY
-app.post('/user/createNewUser', userCtl.createNewUser);                         // READY
+app.post('/user/createNewUser', userCtl.createNewUser);                         // wrong birthday when sending from frontend, need to add profile picture
 
 /*** Customer routes ***/
 app.post('/customer/addBusinessToFavorites', customerCtl.addBusinessToFavorites);               // READY
