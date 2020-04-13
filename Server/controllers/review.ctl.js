@@ -25,11 +25,11 @@ module.exports = {
         const description = req.body.description;
 
         const query = 
-            `INSERT INTO Review 
+            `INSERT INTO Review
             (customer, business, reviewedat, description, rating) 
             VALUES 
             (${userID}, ${businessID}, NOW() AT TIME ZONE 'EETDST', '${description}', ${rating})
-            RETURNING *`;
+            RETURNING Customer, Business, (NOW() AT TIME ZONE 'EETDST') AT TIME ZONE 'UTC' as reviewedat, description, rating`;
         
         db.query(query)
             .then(result => res.json(result.rows[0]))

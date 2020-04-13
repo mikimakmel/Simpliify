@@ -8,8 +8,10 @@ module.exports = {
 
         const businessID = req.body.businessID;
 
-        const query = `SELECT * FROM Users ORDER BY birthday ASC`;
-        
+        //const query = `SELECT * FROM Users ORDER BY birthday ASC`;
+        const query = `SELECT orders.business, orders.customer, users.birthday, EXTRACT(YEAR FROM AGE(users.birthday)) as age
+                       FROM orders LEFT OUTER JOIN users ON (orders.customer = users.userid) where business=${businessID} ORDER BY age`;
+
         db.query(query)
             .then(result => res.json(result.rows))
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))

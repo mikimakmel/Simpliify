@@ -30,9 +30,9 @@ app.post('/customer/removeBusinessFromFavorites', customerCtl.removeBusinessFrom
 app.get('/customer/getFavoritesList', customerCtl.getFavoritesList);                            // READY
 
 /*** Order routes ***/
-app.post('/order/createNewOrder', orderCtl.createNewOrder);                     // need to take care of starttime
+app.post('/order/createNewOrder', orderCtl.createNewOrder);                     // READY
 app.put('/order/updateOrderStatus', orderCtl.updateOrderStatus);                // READY
-app.get('/order/getAllCustomerOrders', orderCtl.getAllCustomerOrders);          // dosen't show all the orders
+app.get('/order/getAllCustomerOrders', orderCtl.getAllCustomerOrders);          // READY - Dosen't show all the orders?
 app.get('/order/getAllBusinessOrders', orderCtl.getAllBusinessOrders);          // READY
 
 /*** Business routes ***/
@@ -42,7 +42,7 @@ app.get('/business/getAllCustomers', businessCtl.getAllCustomers);              
 app.get('/business/getBusinessAvailability', businessCtl.getBusinessAvailability);          // READY
 app.get('/business/getAllBusinessesByCategory', businessCtl.getAllBusinessesByCategory);    // READY
 app.post('/business/createNewBusiness', businessCtl.createNewBusiness);                     // READY, needs check what about images
-app.post('/business/deleteYourBusiness', businessCtl.deleteYourBusiness);                   // can't delete because of foriegn keys
+app.post('/business/deleteYourBusiness', businessCtl.deleteYourBusiness);                   // READY
 app.put('/business/updateBusinessDetails', businessCtl.updateBusinessDetails);              // READY, needs check what about images
 
 /*** Service routes ***/
@@ -55,10 +55,10 @@ app.post('/service/deleteService', serviceCtl.deleteService);                   
 
 /*** Statistics routes ***/
 app.get('/statistics/getDailyCounter', statisticsCtl.getDailyCounter);                  // READY
-app.get('/statistics/getCustomersSortedByAge', statisticsCtl.getCustomersSortedByAge);  // 
+app.get('/statistics/getCustomersSortedByAge', statisticsCtl.getCustomersSortedByAge);  // READY
 
 /*** Review routes ***/
-app.post('/review/createNewReview', reviewCtl.createNewReview);                  // READY, but needs check with time zone
+app.post('/review/createNewReview', reviewCtl.createNewReview);                  // READY
 app.get('/review/getBusinessReviews', reviewCtl.getBusinessReviews);             // READY
 app.post('/review/deleteReview', reviewCtl.deleteReview);                        // READY
 

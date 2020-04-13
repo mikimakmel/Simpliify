@@ -17,7 +17,7 @@ module.exports = {
             (Customer, Business, Service, status, starttime, orderedat) 
             VALUES 
             ('${userID}', '${businessID}', '${serviceID}', '${status}', '${startTime}', NOW() AT TIME ZONE 'EETDST')
-            RETURNING *`;
+            RETURNING Customer, Business, Service, status, starttime AT TIME ZONE 'UTC' as starttime, orderedat AT TIME ZONE 'UTC' as orderedat`;
         
         db.query(query)
             .then(result => res.json(result.rows))
