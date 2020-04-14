@@ -69,8 +69,25 @@ app.all('*', (req, res) => { res.send("Wrong route, please try again.") });
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 
+// New Queries //
 
+/* Return all businesses' AVG and order by best to worst */
+/* SELECT Business, Business.name, to_char(AVG (review.rating),'9D9') AS avgrating FROM Review INNER JOIN Business ON Review.Business = Business.BusinessID GROUP BY REVIEW.Business, business.businessid ORDER BY avgrating DESC */
 
+/* Increment visitor in a business */
+/* UPDATE Business SET Dailycounter = Dailycounter + 1 WHERE BusinessID=${businessID} */
+
+/* Best Customer in a business */
+/* SELECT Customer, Business, COUNT(Customer) FROM Orders WHERE Business=${Business} GROUP BY Customer, Orders.Business ORDER BY Count DESC */
+
+/* Avarage of a business rating in the last day + week + month */
+/* SELECT Business, (SELECT to_char(AVG (review.rating),'9D9') as avgperday FROM review WHERE Business=${Business} AND reviewedat BETWEEN (NOW() - INTERVAL '1 DAY')::DATE AND NOW()::DATE GROUP BY Review.Business), (SELECT to_char(AVG (review.rating),'9D9') as avgperweek FROM review WHERE Business=${Business} AND reviewedat BETWEEN (NOW() - INTERVAL '1 WEEK')::DATE AND NOW()::DATE GROUP BY Review.Business), (SELECT to_char(AVG (review.rating),'9D9') as avgpermonth FROM review WHERE Business=${Business} AND reviewedat BETWEEN (NOW() - INTERVAL '1 MONTH')::DATE AND NOW()::DATE GROUP BY Review.Business) FROM review WHERE Business=${Business} GROUP BY Review.Business */
+
+/* Summary of revenue per service of specific customer */
+/* SELECT Orders.Business, Orders.Service, Service.Name, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${Business} GROUP BY Orders.Service, Orders.Business, Service.Name */
+
+/* Popularity of a bussiness's service by a certain hour */
+/* SELECT Service, EXTRACT(HOUR FROM Starttime) as Hour, COUNT(EXTRACT(HOUR FROM Starttime)) AS Popularity FROM Orders WHERE Business=${Business} GROUP BY Service, Hour ORDER BY Popularity DESC */
 
 // const fileupload = require('express-fileupload');
 
