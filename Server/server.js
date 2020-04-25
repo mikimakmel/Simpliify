@@ -104,8 +104,11 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 /* Most profitable customers in a business */
 /* SELECT Orders.Customer, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${Business} GROUP BY Orders.Customer ORDER BY Total DESC */
 
+/* Cancelation history of a business */
+/* SELECT * FROM Orders WHERE Status = 'Cancelled' AND Business=${Business} */
 
-
+/* Orders between date A and date B */
+/* SELECT * FROM Orders WHERE Starttime BETWEEN SYMMETRIC '2020-06-11'::timestamp AND '2020-06-13'::timestamp AND Business=${Business} */
 
 // const fileupload = require('express-fileupload');
 
