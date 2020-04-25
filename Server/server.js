@@ -71,7 +71,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 
 // New Queries //
 
-/* Return all businesses' AVG and order by best to worst */
+/* Return all businesses' AVG Rating and order by best to worst */
 /* SELECT Business, Business.name, to_char(AVG (review.rating),'9D9') AS avgrating FROM Review INNER JOIN Business ON Review.Business = Business.BusinessID GROUP BY REVIEW.Business, business.businessid ORDER BY avgrating DESC */
 
 /* Increment visitor in a business */
@@ -83,11 +83,29 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 /* Avarage of a business rating in the last day + week + month */
 /* SELECT Business, (SELECT to_char(AVG (review.rating),'9D9') as avgperday FROM review WHERE Business=${Business} AND reviewedat BETWEEN (NOW() - INTERVAL '1 DAY')::DATE AND NOW()::DATE GROUP BY Review.Business), (SELECT to_char(AVG (review.rating),'9D9') as avgperweek FROM review WHERE Business=${Business} AND reviewedat BETWEEN (NOW() - INTERVAL '1 WEEK')::DATE AND NOW()::DATE GROUP BY Review.Business), (SELECT to_char(AVG (review.rating),'9D9') as avgpermonth FROM review WHERE Business=${Business} AND reviewedat BETWEEN (NOW() - INTERVAL '1 MONTH')::DATE AND NOW()::DATE GROUP BY Review.Business) FROM review WHERE Business=${Business} GROUP BY Review.Business */
 
-/* Summary of revenue per service of specific customer */
+/* Summary of revenue per service of specific business */
 /* SELECT Orders.Business, Orders.Service, Service.Name, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${Business} GROUP BY Orders.Service, Orders.Business, Service.Name */
 
 /* Popularity of a bussiness's service by a certain hour */
 /* SELECT Service, EXTRACT(HOUR FROM Starttime) as Hour, COUNT(EXTRACT(HOUR FROM Starttime)) AS Popularity FROM Orders WHERE Business=${Business} GROUP BY Service, Hour ORDER BY Popularity DESC */
+
+/* Popularity of a business by hours */
+/* SELECT Business, EXTRACT(HOUR FROM Starttime) as Hour, COUNT(EXTRACT(HOUR FROM Starttime)) AS Popularity FROM Orders WHERE Business=${Business} GROUP BY Business, Hour ORDER BY Popularity DESC */
+
+/* Return a business with his services' names */
+/* SELECT Business.BusinessID, Service.Name as Service FROM Business LEFT OUTER JOIN Service ON (Business.BusinessID = Service.BusinessID) WHERE Business.BusinessID=${Business} */
+
+/* Return sum of customers by gender */
+/* SELECT Gender, COUNT(Gender) FROM Orders LEFT OUTER JOIN Users ON (Orders.customer = Users.UserID) WHERE Business.BusinessID=${Business} GROUP BY Gender */
+
+/* Return sum of customers by city */
+/* SELECT Address.City, COUNT(Address.City) FROM Orders INNER JOIN Users ON (Orders.Customer = Users.UserID) INNER JOIN Address ON (Users.Address = Address.AddressID) WHERE Orders.Business=${Business} GROUP BY Address.City */
+
+/* Most profitable customers in a business */
+/* SELECT Orders.Customer, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${Business} GROUP BY Orders.Customer ORDER BY Total DESC */
+
+
+
 
 // const fileupload = require('express-fileupload');
 
