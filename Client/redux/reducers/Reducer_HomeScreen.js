@@ -1,7 +1,7 @@
 import actionsTypes from '../actions/types/Types_HomeScreen';
 
 const initialState = {
-    counter: 0
+    counter: 3
 }
 
 const HomeScreenReducer = (state = initialState, action) => {

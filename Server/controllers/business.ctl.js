@@ -16,20 +16,20 @@ module.exports = {
     // get business by id.
     async getBusinessesByID(req, res) {
         console.log("getBusinessesByID()");
+        // const businessID = req.body.businessID;
+        console.log(req.params)
 
-        const businessID = req.body.businessID;
-
-        const query = `SELECT *, (SELECT to_char(AVG(rating),'9D9') AS Rating FROM Review WHERE business=${businessID}) FROM Business WHERE businessid=${businessID}`;
+        // const query = `SELECT *, (SELECT to_char(AVG(rating),'9D9') AS Rating FROM Review WHERE business=${businessID}) FROM Business WHERE businessid=${businessID}`;
         
-        db.query(query)
-            .then(result => res.json(result.rows))
-            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+        // db.query(query)
+        //     .then(result => res.json(result.rows))
+        //     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
     // get all businesses in Simpliify by category.
     async getAllBusinessesByCategory(req, res) {
         console.log("getAllBusinessesByCategory()");
-
+        
         const category = req.body.category;
 
         const query = `SELECT * FROM Business WHERE category='${category}'`;
@@ -39,29 +39,75 @@ module.exports = {
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
+    // get all categories.
+    async getCategoriesList(req, res) {
+        console.log("getCategoriesList()");
+
+        const query = `SELECT enum_range(NULL::categories) as Categories`;
+        
+        db.query(query)
+            .then(result => res.json(result.rows[0]))
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    },
+
     // create a new business page.
     async createNewBusiness(req, res) {
         console.log("createNewBusiness()");
+        let business = JSON.parse(req.body.business);
+        console.log(business);
+        // console.log(req.files);
 
-        const managerID = req.body.managerID;
-        const name = req.body.name;
-        const category = req.body.category;
-        const addressID = req.body.addressID;
-        const phone = req.body.phone;
-        const website = req.body.website;
-        const description = req.body.description;
-        const avatar = req.body.avatar;
+        const managerID = business.managerID;
+        const name = business.name;
+        const category = business.category;
+        const tags = business.tags;//////////////////////
+        const street = business.street;
+        const city = business.city;
+        const country = business.country;
+        const phone = business.phone;
+        const website = business.website;
+        const description = business.description;
+        const availability = business.availability;////////////////
 
-        const query = 
-            `INSERT INTO Business 
-            (address, manager, name, category, phone, website, description, DailyCounter, avatar) 
-            VALUES 
-            (${addressID}, ${managerID}, '${name}', '${category}', '${phone}', '${website}', '${description}',0 , '${avatar}')
-            RETURNING *`;
+        const carousel = req.files.carousel;///////////////////////
+        const avatar = req.files.avatar;///////////////////////
+
+        // console.log(addressID, managerID, name, category, phone, website, description, avatar);
         
-        db.query(query)
-          .then(result => res.json(result.rows))
-          .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+        // const addressQuery =
+        // `INSERT INTO Address 
+        //     (street, city, country)
+        //     VALUES 
+        //     ('${street}', '${city}', '${country}')
+        //     RETURNING addressid`;
+
+            // const businessQuery = 
+            //     `INSERT INTO Business 
+            //     (address, manager, name, category, phone, website, description, DailyCounter, avatar) 
+            //     VALUES 
+            //     (${addressID}, ${managerID}, '${name}', '${category}', '${phone}', '${website}', '${description}',0 , '${avatar}')
+            //     RETURNING *`;
+
+
+        // db.query(addressQuery)
+        // .then(result => {
+        //     let addressID = result.rows[0].addressid;
+
+        //     const businessQuery = 
+        //         `INSERT INTO Business 
+        //         (address, manager, name, category, phone, website, description, DailyCounter, avatar) 
+        //         VALUES 
+        //         (${addressID}, ${managerID}, '${name}', '${category}', '${phone}', '${website}', '${description}',0 , '${avatar}')
+        //         RETURNING *`;
+
+        //     db.query(businessQuery)
+        //     .then(result => {
+        //         console.log('here')
+        //         res.json(result.rows[0].businessid)
+        //     })
+        //     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+        // })
+        // .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
     // close and delete a business page.

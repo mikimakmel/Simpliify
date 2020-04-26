@@ -6,13 +6,17 @@ const serviceCtl = require('./controllers/service.ctl');
 const orderCtl = require('./controllers/order.ctl');
 const reviewCtl = require('./controllers/review.ctl');
 const statisticsCtl = require('./controllers/statistics.ctl');
+const fileupload = require('express-fileupload');
 const cors = require('cors');
+
+
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.set('port', port);
 app.use(cors());
+app.use(fileupload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -40,6 +44,7 @@ app.get('/business/getAllBusinesses', businessCtl.getAllBusinesses);            
 app.get('/business/getBusinessesByID', businessCtl.getBusinessesByID);                      // READY
 app.get('/business/getAllCustomers', businessCtl.getAllCustomers);                          // READY
 app.get('/business/getBusinessAvailability', businessCtl.getBusinessAvailability);          // READY
+app.get('/business/getCategoriesList', businessCtl.getCategoriesList);                      // READY
 app.get('/business/getAllBusinessesByCategory', businessCtl.getAllBusinessesByCategory);    // READY
 app.post('/business/createNewBusiness', businessCtl.createNewBusiness);                     // READY, needs check what about images
 app.post('/business/deleteYourBusiness', businessCtl.deleteYourBusiness);                   // READY
@@ -48,7 +53,7 @@ app.put('/business/updateBusinessDetails', businessCtl.updateBusinessDetails);  
 /*** Service routes ***/
 app.get('/service/getAllServices', serviceCtl.getAllServices);                          // READY
 app.get('/service/getServiceByID', serviceCtl.getServiceByID);                          // READY
-app.get('/service/getAllBusinessServices', serviceCtl.getAllBusinessServices);          // READY
+app.post('/service/getAllBusinessServices', serviceCtl.getAllBusinessServices);          // READY
 app.post('/service/createNewService', serviceCtl.createNewService);                     // READY
 app.put('/service/updateServiceDetails', serviceCtl.updateServiceDetails);              // READY
 app.post('/service/deleteService', serviceCtl.deleteService);                           // READY
@@ -70,6 +75,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 
 
 // New Queries //
+// SELECT enum_range(NULL::categories) as Categories
 
 /* Return all businesses' AVG and order by best to worst */
 /* SELECT Business, Business.name, to_char(AVG (review.rating),'9D9') AS avgrating FROM Review INNER JOIN Business ON Review.Business = Business.BusinessID GROUP BY REVIEW.Business, business.businessid ORDER BY avgrating DESC */
@@ -89,9 +95,6 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 /* Popularity of a bussiness's service by a certain hour */
 /* SELECT Service, EXTRACT(HOUR FROM Starttime) as Hour, COUNT(EXTRACT(HOUR FROM Starttime)) AS Popularity FROM Orders WHERE Business=${Business} GROUP BY Service, Hour ORDER BY Popularity DESC */
 
-// const fileupload = require('express-fileupload');
-
-// app.use(fileupload());
 
 // app.post('/uploadPhoto', (req, res) => {
 //     // console.log('file', req.files);

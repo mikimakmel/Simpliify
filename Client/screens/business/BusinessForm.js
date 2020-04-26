@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
-import { Avatar, Rating, Divider, Button } from 'react-native-elements';
+import { Text, View, ScrollView, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, FlatList } from 'react-native';
+import { Avatar, Rating, Divider, Button, Overlay, Input } from 'react-native-elements';
 import colors from '../../constants/Colors';
 import styles from '../../styles/business/Style_BusinessForm';
 import Layout from '../../constants/Layout';
 import ImagesSwiper from 'react-native-image-swiper';
 import database from '../../database';
-import { MaterialCommunityIcons, MaterialIcons, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons, FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import ViewMoreText from 'react-native-view-more-text';
 import RNPickerSelect from 'react-native-picker-select';
 import { Collapse, CollapseHeader, CollapseBody } from 'accordion-collapse-react-native';
@@ -14,17 +14,28 @@ import TimePicker from "react-native-24h-timepicker";
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
-// import { Input, CheckBox } from 'react-native-elements';
+import GradientButton from 'react-native-gradient-buttons';
+// import MultiSelect from 'react-native-multiple-select';
+import ScrollableTabView from 'react-native-scrollable-tab-view';
+import { connect } from "react-redux";
+
+const items = [
+  { label: 'Football', value: 'football' },
+  { label: 'Baseball', value: 'baseball' },
+  { label: 'Hockey', value: 'hockey' },
+  { label: 'Soccer', value: 'soccer' },
+  { label: 'Vollyball', value: 'vollyball' },
+]
 
 class BusinessForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-       managerID: null,
+       managerID: 1,
        name: 'Business Name',
        nameIsEditing: false,
-       descriptionion: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-       descriptionionIsEditing: false,
+       description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+       descriptionIsEditing: false,
        phone: '03-9011111',
        phoneIsEditing: false,
        website: 'www.example.com',
@@ -36,11 +47,16 @@ class BusinessForm extends Component {
        cityIsEditing: false,
        country: 'Country',
        countryIsEditing: false,
+       categoriesList: [],
        category: 'Category',
        categoryIsEditing: false,
-       tag: 'Tag',
+       tagsList: [],
+       tags: [],
        avatar: database.businesses[0].Pictures.Avatar,
+       avatarEdited: false,
        carousel: database.businesses[0].Pictures.Carousel,
+       carouselEdited: false,
+       isServicFormVisible: false,
        availability: {
          sunday: {
           isOpen: true,
@@ -78,6 +94,18 @@ class BusinessForm extends Component {
           closes: '0:00'
          },
        },
+       currentBusinessID: 1,
+       serviceName: 'Service Name',
+       price: 111,
+       durationMinutes: 9,
+       qouta: 1,
+       ServicesList: [],
+       currentService: {
+        name: 'Enter Name',
+        durationminutes: 'Enter Duration',
+        price: 'Enter Price',
+        qouta: 'Enter Qota',
+       }
     };
 
     this.renderViewMore = this.renderViewMore.bind(this);
@@ -86,10 +114,147 @@ class BusinessForm extends Component {
     this.renderOutlineButon = this.renderOutlineButon.bind(this);
     this.renderSolidButon = this.renderSolidButon.bind(this);
     this.handleCloseButton = this.handleCloseButton.bind(this);
+    this.createOrUpdateBusiness = this.createOrUpdateBusiness.bind(this);
+    this.fetchCategories = this.fetchCategories.bind(this);
+    this.renderAbout = this.renderAbout.bind(this);
+    this.renderServices = this.renderServices.bind(this);
+    this.renderPricingCard = this.renderPricingCard.bind(this);
+    this.createOrUpdateService = this.createOrUpdateService.bind(this);
+    this.renderFormOverlay = this.renderFormOverlay.bind(this);
   }
 
   componentDidMount() {
     this.getPermissionAsync();
+    this.fetchCategories();
+    this.fetchBusinessServicesList();
+  }
+
+  async fetchCategories() {
+    const url = `http://192.168.1.198:3000/business/getCategoriesList`;
+    const options = { method: 'GET', headers: { 'Content-Type': 'application/json' } }
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(async data => {
+        let splits = data.categories.slice(1, data.categories.length - 1).split(',');
+        let categoriesArr = splits.map((item) => {
+          return { label: item, value: item }
+        });
+        this.setState({ categoriesList: categoriesArr });
+      })
+      .catch(error => console.log(error))
+  }
+
+  async fetchBusinessServicesList() {
+    const url = `http://192.168.1.198:3000/service/getAllBusinessServices`;
+    const options = { 
+      method: 'POST', 
+      headers: { 
+          'Accept': 'application/json',
+          'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({businessID: this.state.currentBusinessID})
+    };
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(async data => {
+        // console.log(data)
+        this.setState({ServicesList: data});
+      })
+      .catch(error => console.log(error))
+  }
+
+  async createOrUpdateBusiness() {
+    let formData = new FormData();
+
+    const business = {
+      managerID: this.state.managerID,
+      name: this.state.name,
+      category: this.state.category,
+      tags: this.state.tags,
+      street: this.state.street,
+      city: this.state.city,
+      country: this.state.country,
+      phone: this.state.phone,
+      website: this.state.website,
+      description: this.state.description,
+      availability: this.state.availability
+    };
+    
+    const avatar = {
+      name: 'avatar',
+      type: 'image/jpeg', 
+      uri: Platform.OS === 'android' ? this.state.avatar : this.state.avatar.replace('file://', '')
+    };
+
+    formData.append('business', JSON.stringify(business));
+    formData.append('avatar', avatar);
+
+    this.state.carousel.map((item, index) => {
+      let image = {
+        name: `image${index + 1}`,
+        type: 'image/jpeg', 
+        uri: Platform.OS === 'android' ? item : item.replace('file://', '')
+      };
+      formData.append('carousel', image);
+    })
+  
+    const url = 'http://192.168.1.198:3000/business/createNewBusiness';
+    const options = { method: 'POST', body: formData };
+    const request = new Request(url, options);
+
+    await fetch(request)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Something went wrong ...');
+        }
+      })
+      .then(data => console.log(data))
+      .catch(error => console.log(error))
+  }
+
+  async createOrUpdateService() {
+    const service = {
+      BusinessID: this.state.currentBusinessID,
+      name: this.state.serviceName,
+      price: this.state.price,
+      durationMinutes: this.state.durationMinutes,
+      qouta: this.state.qouta,
+    };
+
+    const url = 'http://192.168.1.198:3000/service/createNewService';
+    const options = { 
+      method: 'POST', 
+      headers: { 
+          'Accept': 'application/json',
+          'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify(service)
+    };
+    const request = new Request(url, options);
+
+    await fetch(request)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Something went wrong ...');
+        }
+      })
+      .then(data => {
+        console.log(data);
+        this.fetchBusinessServicesList();
+      })
+      .catch(error => console.log(error))
+  }
+
+  onSelectedItemsChange = (tags) => {
+    this.setState({ tags: tags });
   }
 
   getPermissionAsync = async () => {
@@ -102,26 +267,30 @@ class BusinessForm extends Component {
   }
 
   _pickImage = async (type) => {
-    // console.log(type);///////
-    let test = type
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
       });
-      console.log(test);///////
       if (!result.cancelled) {
-        if(test === 'carousel') {
-          console.log(test);///////
+        // console.log(result);
+        if(type === 'carousel') {
+          if(this.state.carouselEdited) {
+            this.setState({ carousel: [...this.state.carousel, result.uri] });
+          } 
+          else {
+            this.setState({ 
+              carousel: [result.uri],
+              carouselEdited: true
+            });
+          }
         }
-        else if(test === 'avatar') {
-          console.log(test);///////
+        else if(type === 'avatar') {
+          this.setState({ avatar: result.uri });
         }
-        // this.setState({ avatar: result.uri });
       }
-      // console.log(result);
     } catch (e) {
       console.log(e);
     }
@@ -422,10 +591,349 @@ class BusinessForm extends Component {
     )
   }
 
-  render() {
+  renderAbout() {
     const businessData = database.businesses[0];
     let { avatar } = this.state
 
+    return(
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+
+        <View>
+          { this.state.nameIsEditing ?
+            <TextInput
+              value={this.state.name}
+              style={{ ...styles.heading, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, }}
+              onChangeText={(value) => this.setState({ name: value })}
+              onBlur={() => this.setState({ nameIsEditing: false })}
+              autoFocus
+            /> 
+            :
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={styles.heading} onPress={() => this.setState({ nameIsEditing: true })}>
+                {this.state.name}
+              </Text>
+              <MaterialCommunityIcons 
+                name="circle-edit-outline" 
+                size={20} color={colors.gray03} 
+                style={{ marginTop: 10, marginLeft: 5}} 
+              />
+            </View>
+          }
+        </View>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
+          <Rating
+            style={styles.rating}
+            imageSize={22}
+            readonly={true}
+            startingValue={0}
+            ratingColor={'#FED56B'}
+            type={'custom'}
+          />
+          <Text style={{ color: 'grey', fontSize: 12, marginLeft: 4, marginTop: 3 }}>(0)</Text>
+        </View>
+
+        <View style={[{ flexDirection: 'row' }, styles.managerWordContainer]}>
+          <Avatar
+            containerStyle={styles.managerAvatar}
+            rounded
+            size={50}
+            source={{ uri: avatar }}
+            showEditButton
+            editButton={{type: 'MaterialIcons', name: 'add-a-photo', }}
+            onPress={() => this._pickImage('avatar')}
+          />
+          { this.state.descriptionIsEditing ?
+            <TextInput
+              value={this.state.description}
+              style={{ ...styles.managerText, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, marginTop: 5, marginLeft: -5 }}
+              onChangeText={(value) => this.setState({ description: value })}
+              onBlur={() => this.setState({ descriptionIsEditing: false })}
+              autoFocus
+              multiline
+            /> 
+            :
+            <TouchableOpacity style={styles.managerTextContainer} onPress={() => this.setState({descriptionIsEditing: true})}>
+              <View style={styles.managerTextContainer}>
+                <ViewMoreText
+                  numberOfLines={3}
+                  renderViewMore={this.renderViewMore}
+                  renderViewLess={this.renderViewLess}
+                >
+                  <Text adjustsFontSizeToFit style={styles.managerText}>{this.state.description}</Text>
+                </ViewMoreText>
+              </View>
+              <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 5, }}/>
+            </TouchableOpacity>
+          }
+        </View>
+
+        <View style={styles.dividerContainer}>
+          <Divider style={styles.divider}/>
+        </View>
+
+        <TouchableOpacity 
+        style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}
+        onPress={() => this.setState({phoneIsEditing: true})}
+        >
+          <View style={styles.iconsCircle}>
+            <FontAwesome name="phone" size={24} color={colors.blue} style={{ marginLeft: 1 }} />
+          </View>
+          { this.state.phoneIsEditing ?
+            <TextInput
+              value={this.state.phone}
+              style={{ ...styles.iconsText, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, }}
+              onChangeText={(value) => this.setState({ phone: value })}
+              onBlur={() => this.setState({ phoneIsEditing: false })}
+              autoFocus
+              keyboardType='numeric'
+            /> 
+            :
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={styles.iconsText}>{this.state.phone}</Text>
+              <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, }}/>
+            </View>
+          }
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}
+          onPress={() => this.setState({websiteIsEditing: true})}
+        >
+          <View style={styles.iconsCircle}>
+            <FontAwesome name="globe" size={24} color={colors.blue} style={{ marginLeft: 1 }} />
+          </View>
+          { this.state.websiteIsEditing ?
+            <TextInput
+              value={this.state.website}
+              style={{ ...styles.iconsText, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, }}
+              onChangeText={(value) => this.setState({ website: value })}
+              onBlur={() => this.setState({ websiteIsEditing: false })}
+              autoFocus
+            /> 
+            :
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={styles.iconsText}>{this.state.website}</Text>
+              <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, }}/>
+            </View>
+          }
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}
+          onPress={() => this.setState({streetIsEditing: true})}
+        >
+          <View style={styles.iconsCircle}>
+            <FontAwesome name="map-marker" size={24} color={colors.blue} style={{ marginLeft: 1 }} />
+          </View>
+          { this.state.streetIsEditing ?
+            <View style={{flexDirection: 'column'}}>
+              <TextInput
+                value={this.state.street}
+                style={{ ...styles.iconsText, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, }}
+                onChangeText={(value) => this.setState({ street: value })}
+                onBlur={() => this.setState({ streetIsEditing: false })}
+                // autoFocus
+              /> 
+              <TextInput
+                value={this.state.city}
+                style={{ ...styles.iconsText, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, }}
+                onChangeText={(value) => this.setState({ city: value })}
+                onBlur={() => this.setState({ streetIsEditing: false })}
+              /> 
+              <TextInput
+                value={this.state.country}
+                style={{ ...styles.iconsText, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, }}
+                onChangeText={(value) => this.setState({ country: value })}
+                onBlur={() => this.setState({ streetIsEditing: false })}
+              /> 
+            </View>
+            :
+            <View style={{flexDirection: 'row', alignItems: 'center', flexShrink: 1, overflow: 'hidden'}}>
+              <Text style={styles.iconsText}>{this.state.street}, {this.state.city}, {this.state.country}</Text>
+              <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{marginLeft: 10, marginRight: 5}}/>
+            </View>
+          }
+        </TouchableOpacity>
+
+        <View style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}>
+          <View style={styles.iconsCircle}>
+            <FontAwesome5 name="tags" size={18} color={colors.blue} style={{ marginLeft: 1 }} />
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <RNPickerSelect
+              onValueChange={(value) => this.setState({ category: value })}
+              placeholder={{label: 'Select a category...', value: null}}
+              textInputProps={styles.iconsText}
+              items={this.state.categoriesList}
+            />
+          </View>
+          <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, }}/>
+        </View>
+
+        <View style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}>
+          <View style={styles.iconsCircle}>
+            <FontAwesome name="hashtag" size={20} color={colors.blue} style={{ marginLeft: 1 }} />
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <RNPickerSelect
+              onValueChange={(value) => this.setState({ tags: [...this.state.tags, value] })}
+              placeholder={{label: 'Select...', value: null}}
+              textInputProps={styles.iconsText}
+              items={items}
+            />
+            <Text>,</Text>
+            <RNPickerSelect
+              onValueChange={(value) => this.setState({ tags: [...this.state.tags, value] })}
+              placeholder={{label: 'Select...', value: null}}
+              textInputProps={styles.iconsText}
+              items={items}
+            />
+            <Text>,</Text>
+            <RNPickerSelect
+              onValueChange={(value) => this.setState({ tags: [...this.state.tags, value] })}
+              placeholder={{label: 'Select...', value: null}}
+              textInputProps={styles.iconsText}
+              items={items}
+            />
+          </View>
+          <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, marginRight: 10}}/>
+        </View>
+
+        {this.renderOpeningHours(businessData)}
+
+        <View style={{alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: 30,}}>
+          <GradientButton
+            gradientBegin="#7F81D6"
+            gradientEnd="#90E4E4"
+            gradientDirection="diagonal" 
+            style={{ }}
+            textStyle={{ fontSize: 18, fontWeight: '500' }}
+            height={50}
+            width={'90%'}
+            radius={5}
+            impact={true}
+            impactStyle={'Medium'}
+            // onPressAction={() => this.createOrUpdateBusiness()}
+            onPressAction={() => this.fetchBusinessServicesList()}
+          >
+            CREATE BUSINESS
+          </GradientButton>
+        </View>
+
+      </ScrollView>
+    )
+  }
+
+  renderFormOverlay() {
+    // console.log(this.state)
+    return (
+      <Overlay 
+        isVisible={this.state.isServicFormVisible} 
+        onBackdropPress={() => this.setState({ isServicFormVisible: false })}
+        // width="auto"
+        // height="auto"
+      >
+        <Text style={{fontSize: 24, fontWeight: '600', marginBottom: 30, marginTop: 20, alignSelf: 'center'}}>Service Details</Text>
+        <Input
+          label='Service Name'
+          placeholder='Enter Name'
+          errorStyle={{ color: 'red' }}
+          containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
+          // errorMessage='ENTER A VALID ERROR HERE'
+          onChangeText={text => this.setState({serviceName: text})}
+        />
+        <Input
+          label='Price'
+          placeholder='Enter Price'
+          errorStyle={{ color: 'red' }}
+          containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
+          // errorMessage='ENTER A VALID ERROR HERE'
+          onChangeText={text => this.setState({price: text})}
+          keyboardType='numeric'
+        />
+        <Input
+          label='Duration'
+          placeholder='Enter Duration'
+          errorStyle={{ color: 'red' }}
+          containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
+          // errorMessage='ENTER A VALID ERROR HERE'
+          onChangeText={text => this.setState({durationMinutes: text})}
+          keyboardType='numeric'
+        />
+        <Input
+          label='Qouta'
+          placeholder='Enter Qouta'
+          errorStyle={{ color: 'red' }}
+          containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
+          // errorMessage='ENTER A VALID ERROR HERE'
+          onChangeText={text => this.setState({qouta: text})}
+          keyboardType='numeric'
+        />
+        <Button
+          title="Create Service"
+          containerStyle={{alignSelf: 'center', width: '80%', position: 'absolute', bottom: 50}}
+          buttonStyle={{}}
+          onPress={() => {
+            this.createOrUpdateService();
+            this.setState({ isServicFormVisible: false });
+          }}
+        />
+      </Overlay>
+    )
+  }
+
+  renderServices() {
+    const businessData = database.businesses[0];
+    return(
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          <View style={{ alignItems: 'center', marginTop: 35 }}>
+          <FlatList
+              keyExtractor={(item, index) => index.toString()}
+              data={this.state.ServicesList}
+              renderItem={this.renderPricingCard}
+          />
+          </View>
+
+          <Button
+            icon={<Ionicons name="ios-add-circle-outline" size={35} color="white"/>}
+            iconRight
+            title="Add new service"
+            containerStyle={{alignSelf: 'center', width: '60%'}}
+            buttonStyle={{}}
+            onPress={() => this.setState({ isServicFormVisible: true })}
+          />
+
+          {this.renderFormOverlay()}
+      </ScrollView>
+    )
+  }
+
+  renderPricingCard({ item }) {
+    return (
+      <View style={styles.pricingCardContainer}>
+        <View>
+          <Text style={styles.titleText}>{item.name}</Text>
+        </View>
+        <View>
+          <Text style={styles.priceText}>{item.price}$</Text>
+        </View>
+        <View>
+          <Text style={styles.durationText}>Duration: {item.durationminutes}</Text>
+        </View>
+        <View style={styles.bookButtonContainer}>
+          <TouchableOpacity
+            style={styles.bookButton}
+            onPress={() => this.setState({ isServicFormVisible: true })}
+          >
+            <Text style={styles.bookButtonTitle}>Edit</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    )
+  }
+
+  render() {
     return (
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : null} style={{ flex: 1 }}>
         <View style={{flex: 1}}>
@@ -444,205 +952,22 @@ class BusinessForm extends Component {
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-
-            <View>
-              { this.state.nameIsEditing ?
-                <TextInput
-                  value={this.state.name}
-                  style={{ ...styles.heading, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, }}
-                  onChangeText={(value) => this.setState({ name: value })}
-                  onBlur={() => this.setState({ nameIsEditing: false })}
-                  autoFocus
-                /> 
-                :
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={styles.heading} onPress={() => this.setState({ nameIsEditing: true })}>
-                    {this.state.name}
-                  </Text>
-                  <MaterialCommunityIcons 
-                    name="circle-edit-outline" 
-                    size={20} color={colors.gray03} 
-                    style={{ marginTop: 10, marginLeft: 5}} 
-                  />
-                </View>
-              }
+          <ScrollableTabView
+            initialPage={0}
+            locked={true}
+            tabBarUnderlineStyle={styles.tabBarUnderline}
+            tabBarBackgroundColor={'#FEFDFF'}
+            tabBarActiveTextColor={colors.red}
+            tabBarInactiveTextColor={'grey'}
+            tabBarTextStyle={styles.tabBarText}
+          >
+            <View tabLabel='About'>
+              {this.renderAbout()}
             </View>
-
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-              <Rating
-                style={styles.rating}
-                imageSize={22}
-                readonly={true}
-                startingValue={0}
-                ratingColor={'#FED56B'}
-                type={'custom'}
-              />
-              <Text style={{ color: 'grey', fontSize: 12, marginLeft: 4, marginTop: 3 }}>(0)</Text>
+            <View tabLabel='Services'>
+              {this.renderServices()}
             </View>
-
-            <View style={[{ flexDirection: 'row' }, styles.managerWordContainer]}>
-              <Avatar
-                containerStyle={styles.managerAvatar}
-                rounded
-                size={50}
-                source={{ uri: avatar }}
-                showEditButton
-                editButton={{type: 'MaterialIcons', name: 'add-a-photo', }}
-                onPress={this._pickImage}
-              />
-              { this.state.descriptionionIsEditing ?
-                <TextInput
-                  value={this.state.descriptionion}
-                  style={{ ...styles.managerText, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, marginTop: 5, marginLeft: -5 }}
-                  onChangeText={(value) => this.setState({ descriptionion: value })}
-                  onBlur={() => this.setState({ descriptionionIsEditing: false })}
-                  autoFocus
-                  multiline
-                /> 
-                :
-                <TouchableOpacity style={styles.managerTextContainer} onPress={() => this.setState({descriptionionIsEditing: true})}>
-                  <View style={styles.managerTextContainer}>
-                    <ViewMoreText
-                      numberOfLines={3}
-                      renderViewMore={this.renderViewMore}
-                      renderViewLess={this.renderViewLess}
-                    >
-                      <Text adjustsFontSizeToFit style={styles.managerText}>{this.state.descriptionion}</Text>
-                    </ViewMoreText>
-                  </View>
-                  <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 5, }}/>
-                </TouchableOpacity>
-              }
-            </View>
-
-            <View style={styles.dividerContainer}>
-              <Divider style={styles.divider}/>
-            </View>
-
-            <TouchableOpacity 
-            style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}
-            onPress={() => this.setState({phoneIsEditing: true})}
-            >
-              <View style={styles.iconsCircle}>
-                <FontAwesome name="phone" size={24} color={colors.blue} style={{ marginLeft: 1 }} />
-              </View>
-              { this.state.phoneIsEditing ?
-                <TextInput
-                  value={this.state.phone}
-                  style={{ ...styles.iconsText, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, }}
-                  onChangeText={(value) => this.setState({ phone: value })}
-                  onBlur={() => this.setState({ phoneIsEditing: false })}
-                  autoFocus
-                  keyboardType='numeric'
-                /> 
-                :
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={styles.iconsText}>{this.state.phone}</Text>
-                  <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, }}/>
-                </View>
-              }
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}
-              onPress={() => this.setState({websiteIsEditing: true})}
-            >
-              <View style={styles.iconsCircle}>
-                <FontAwesome name="globe" size={24} color={colors.blue} style={{ marginLeft: 1 }} />
-              </View>
-              { this.state.websiteIsEditing ?
-                <TextInput
-                  value={this.state.website}
-                  style={{ ...styles.iconsText, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, }}
-                  onChangeText={(value) => this.setState({ website: value })}
-                  onBlur={() => this.setState({ websiteIsEditing: false })}
-                  autoFocus
-                /> 
-                :
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={styles.iconsText}>{this.state.website}</Text>
-                  <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, }}/>
-                </View>
-              }
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}
-              onPress={() => this.setState({streetIsEditing: true})}
-            >
-              <View style={styles.iconsCircle}>
-                <FontAwesome name="map-marker" size={24} color={colors.blue} style={{ marginLeft: 1 }} />
-              </View>
-              { this.state.streetIsEditing ?
-                <View style={{flexDirection: 'column'}}>
-                  <TextInput
-                    value={this.state.street}
-                    style={{ ...styles.iconsText, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, }}
-                    onChangeText={(value) => this.setState({ street: value })}
-                    onBlur={() => this.setState({ streetIsEditing: false })}
-                    // autoFocus
-                  /> 
-                  <TextInput
-                    value={this.state.city}
-                    style={{ ...styles.iconsText, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, }}
-                    onChangeText={(value) => this.setState({ city: value })}
-                    onBlur={() => this.setState({ streetIsEditing: false })}
-                  /> 
-                  <TextInput
-                    value={this.state.country}
-                    style={{ ...styles.iconsText, borderWidth: 1, borderColor: colors.gray04, marginHorizontal: 10, }}
-                    onChangeText={(value) => this.setState({ country: value })}
-                    onBlur={() => this.setState({ streetIsEditing: false })}
-                  /> 
-                </View>
-                :
-                <View style={{flexDirection: 'row', alignItems: 'center', flexShrink: 1, overflow: 'hidden'}}>
-                  <Text style={styles.iconsText}>{this.state.street}, {this.state.city}, {this.state.country}</Text>
-                  <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{marginLeft: 10, marginRight: 5}}/>
-                </View>
-              }
-            </TouchableOpacity>
-
-            <View style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}>
-              <View style={styles.iconsCircle}>
-                <FontAwesome5 name="hashtag" size={24} color={colors.blue} style={{ marginLeft: 1 }} />
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <RNPickerSelect
-                  onValueChange={(value) => this.setState({ category: value })}
-                  textInputProps={styles.iconsText}
-                  items={[
-                      { label: 'Football', value: 'football' },
-                      { label: 'Baseball', value: 'baseball' },
-                      { label: 'Hockey', value: 'hockey' },
-                  ]}
-                />
-              </View>
-              <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, }}/>
-            </View>
-
-            <View style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}>
-              <View style={styles.iconsCircle}>
-                <FontAwesome name="tags" size={24} color={colors.blue} style={{ marginLeft: 1 }} />
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <RNPickerSelect
-                  onValueChange={(value) => this.setState({ tag: value })}
-                  textInputProps={styles.iconsText}
-                  items={[
-                      { label: 'Football', value: 'football' },
-                      { label: 'Baseball', value: 'baseball' },
-                      { label: 'Hockey', value: 'hockey' },
-                  ]}
-                />
-              </View>
-              <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, }}/>
-            </View>
-
-            {this.renderOpeningHours(businessData)}
-
-          </ScrollView>
+          </ScrollableTabView>
 
         </View>
       </KeyboardAvoidingView>
@@ -650,4 +975,12 @@ class BusinessForm extends Component {
   }
 }
 
-export default BusinessForm;
+const mapStateToProps = ({ HomeScreen }) => {
+  return {
+    counter: HomeScreen.counter,
+  }
+}
+
+export default connect(mapStateToProps)(BusinessForm)
+
+// export default BusinessForm;
