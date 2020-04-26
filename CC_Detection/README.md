@@ -1,10 +1,10 @@
-# Project Title
+# Credit Card Detection
 
 "Detect credit card" is a deep learning project that detects credit card digits (name, number, valid date, type: visa/mastercard)
 
 ## Getting Started
 
-clone 'url'
+clone project
 
 ### Prerequisites
 
@@ -45,15 +45,17 @@ python3 main.py <image_path>
 2. Rest API - running https server
 
 ```bash
-python3 REST_api.py <host_ip> --host <host_ip> --port <port_number>
+python3 REST_api.py --host <host_ip> --port <port_number>
 ```
 
 Default argument:
 
 --host = 127.0.0.1 (local host)
+
 --port = 5000
 
 clinet url should be POST method and looks like this:  http://127.0.0.1:5000/pic
+
 **Attach to the request credit card image that filmed from Simplify application.**
 
 ## Authors
