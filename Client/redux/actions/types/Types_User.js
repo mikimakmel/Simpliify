@@ -1,0 +1,3 @@
+export default {
+    UPDATE_HAS_BUSINESS: 'UPDATE_HAS_BUSINESS',
+};

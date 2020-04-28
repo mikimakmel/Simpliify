@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import FavoriteBusinessCard from './FavoriteBusinessCard'
 import styles from '../../styles/customer/Style_HomeScreen';
 import { connect } from "react-redux";
-import * as ActionCreators from '../../redux/actions/Actions_HomeScreen';
+import * as ActionCreators from '../../redux/actions/Actions_User';
 import database from '../../database';
 
 class HomeScreen extends Component {
@@ -56,64 +56,28 @@ class HomeScreen extends Component {
     return (
       <SafeAreaView style={styles.flexContainer}>
         <View style={styles.flexContainer}>
-            <Text style={styles.heading}>My Services</Text>
-            {this.state.isEmpty === true ? this.renderEmptyScreen() : this.renderFavoritesList()}
+          <Text style={styles.heading}>My Services</Text>
+          {this.state.isEmpty === true ? this.renderEmptyScreen() : this.renderFavoritesList()}
+          {/* <TouchableOpacity onPress={() => this.props.reduxUpdateHasBusiness()}>
+            <Text>Update</Text>
+          </TouchableOpacity>
+          <Text>{this.props.hasBusiness.toString()}</Text> */}
         </View>
       </SafeAreaView>
     )
   }
 }
 
-const mapStateToProps = ({ HomeScreen }) => {
+const mapStateToProps = ({ User }) => {
   return {
-    counter: HomeScreen.counter,
+    hasBusiness: User.hasBusiness,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    reduxIncreaseCounter: () => dispatch(ActionCreators.increaseCounter()),
-    reduxDecreaseCounter: () => dispatch(ActionCreators.decreaseCounter()),
+    reduxUpdateHasBusiness: () => dispatch(ActionCreators.updateHasBusiness()),
   }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
-
-// render() {
-//   return (
-//       // <View style={styles.container}>
-//       <SafeAreaView style={styles.container}>
-//         {/* <Text>Home Screen</Text>
-//         <Button
-//           title={`Go to Business`}
-//           onPress={() => this.props.navigation.navigate('Business')}
-//         /> */}
-//         {/* <View style={{flexDirection: 'row', width: 200, justifyContent: 'space-around'}}>
-//           <TouchableOpacity onPress={() => this.props.reduxIncreaseCounter()}>
-//             <Text>Increase</Text>
-//           </TouchableOpacity>
-//           <Text>{this.props.counter}</Text>
-//           <TouchableOpacity onPress={() => this.props.reduxDecreaseCounter()}>
-//             <Text>Decrease</Text>
-//           </TouchableOpacity>
-//         </View> */}
-//           <SafeAreaView style={styles.flexContainer}>
-//             {/* <NavigationEvents
-//               onDidFocus={() => {
-//                 this.initFavoritesList()
-//               }}
-//             /> */}
-//             <View style={styles.flexContainer}>
-//               <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-//                 <Text style={styles.heading}>My Services</Text>
-//                 {/* {this.state.isEmpty === true ? this.renderEmptyScreen() : this.renderFavoritesList()} */}
-//                 <FavoriteBusinessCard />
-//                 <FavoriteBusinessCard />
-//                 <FavoriteBusinessCard />
-//               </ScrollView>
-//             </View>
-//           </SafeAreaView>
-//       </SafeAreaView>
-//       // </View>
-//   )
-// }

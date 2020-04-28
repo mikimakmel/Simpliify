@@ -43,6 +43,7 @@ class MenuScreen extends Component {
             titleStyle={{ fontWeight: '500', fontSize: 16 }}
             containerStyle={{ marginHorizontal: 6 }}
             chevron={(<FontAwesome name="user-o" size={25} />)}
+            onPress={() => this.props.navigation.navigate('SignUpForm')}
           />
           <ListItem
             title={'Payment and billing'}

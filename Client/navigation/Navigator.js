@@ -10,10 +10,12 @@ import BookingScreen from '../screens/customer/BookingScreen';
 import LoginScreen from '../screens/LoginScreen';
 import CameraScreen from '../screens/CameraScreen';
 import CreditCardScreen from '../screens/CreditCardScreen';
+import SignUpForm from '../screens/user/SignUpForm';
 import { AntDesign, EvilIcons, Feather, Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { connect } from "react-redux";
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = 'Home';
@@ -58,6 +60,7 @@ function MenuStack({navigation}) {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Menu" component={MenuScreen}/>
       <Stack.Screen name="Scan" component={creditCardStack}/>
+      <Stack.Screen name="SignUpForm" component={SignUpForm}/>
     </Stack.Navigator>
   );
 }
@@ -74,7 +77,9 @@ function ExploreStack() {
   );
 }
 
-export default function RootStack() {
+function RootStack(props) {
+  console.log(props.hasBusiness);
+  
   return (
     <Stack.Navigator initialRouteName={"LogIn"}>
       <Stack.Screen
@@ -158,3 +163,10 @@ function BottomTabNavigator({ navigation, route }) {
   );
 }
 
+const mapStateToProps = ({ User }) => {
+  return {
+    hasBusiness: User.hasBusiness,
+  }
+}
+
+export default connect(mapStateToProps, null)(RootStack)

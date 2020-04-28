@@ -41,7 +41,7 @@ app.get('/order/getAllBusinessOrders', orderCtl.getAllBusinessOrders);          
 
 /*** Business routes ***/
 app.get('/business/getAllBusinesses', businessCtl.getAllBusinesses);                        // READY
-app.get('/business/getBusinessesByID', businessCtl.getBusinessesByID);                      // READY
+app.post('/business/getBusinessesByID', businessCtl.getBusinessesByID);                     // READY
 app.get('/business/getAllCustomers', businessCtl.getAllCustomers);                          // READY
 app.get('/business/getBusinessAvailability', businessCtl.getBusinessAvailability);          // READY
 app.get('/business/getCategoriesList', businessCtl.getCategoriesList);                      // READY
@@ -53,9 +53,9 @@ app.put('/business/updateBusinessDetails', businessCtl.updateBusinessDetails);  
 /*** Service routes ***/
 app.get('/service/getAllServices', serviceCtl.getAllServices);                          // READY
 app.get('/service/getServiceByID', serviceCtl.getServiceByID);                          // READY
-app.post('/service/getAllBusinessServices', serviceCtl.getAllBusinessServices);          // READY
+app.post('/service/getAllBusinessServices', serviceCtl.getAllBusinessServices);         // READY
 app.post('/service/createNewService', serviceCtl.createNewService);                     // READY
-app.put('/service/updateServiceDetails', serviceCtl.updateServiceDetails);              // READY
+app.post('/service/updateServiceDetails', serviceCtl.updateServiceDetails);             // READY
 app.post('/service/deleteService', serviceCtl.deleteService);                           // READY
 
 /*** Statistics routes ***/

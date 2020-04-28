@@ -16,14 +16,13 @@ module.exports = {
     // get business by id.
     async getBusinessesByID(req, res) {
         console.log("getBusinessesByID()");
-        // const businessID = req.body.businessID;
-        console.log(req.params)
+        const businessID = req.body.businessID;
 
-        // const query = `SELECT *, (SELECT to_char(AVG(rating),'9D9') AS Rating FROM Review WHERE business=${businessID}) FROM Business WHERE businessid=${businessID}`;
+        const query = `SELECT *, (SELECT to_char(AVG(rating),'9D9') AS Rating FROM Review WHERE business=${businessID}) FROM Business WHERE businessid=${businessID}`;
         
-        // db.query(query)
-        //     .then(result => res.json(result.rows))
-        //     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+        db.query(query)
+            .then(result => res.json(result.rows[0]))
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
     // get all businesses in Simpliify by category.

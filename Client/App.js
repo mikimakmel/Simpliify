@@ -27,8 +27,8 @@ export default class App extends Component {
         <Provider store={Store}>
           <NavigationContainer>
             <StatusBar barStyle="dark-content" />
-            {/* <Navigator /> */}
-            <BusinessForm />
+            <Navigator />
+            {/* <BusinessForm /> */}
           </NavigationContainer>
         </Provider>
       </SafeAreaView>

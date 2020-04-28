@@ -95,17 +95,15 @@ class BusinessForm extends Component {
          },
        },
        currentBusinessID: 1,
+       currentBusiness: {},
+       isEditingBusiness: false,
        serviceName: 'Service Name',
        price: 111,
        durationMinutes: 9,
        qouta: 1,
        ServicesList: [],
-       currentService: {
-        name: 'Enter Name',
-        durationminutes: 'Enter Duration',
-        price: 'Enter Price',
-        qouta: 'Enter Qota',
-       }
+       currentService: {},
+       isEditingService: false
     };
 
     this.renderViewMore = this.renderViewMore.bind(this);
@@ -121,11 +119,15 @@ class BusinessForm extends Component {
     this.renderPricingCard = this.renderPricingCard.bind(this);
     this.createOrUpdateService = this.createOrUpdateService.bind(this);
     this.renderFormOverlay = this.renderFormOverlay.bind(this);
+    this.fetchBusiness = this.fetchBusiness.bind(this);
   }
 
   componentDidMount() {
     this.getPermissionAsync();
     this.fetchCategories();
+    if (this.state.isEditingBusiness) {
+      this.fetchBusiness();
+    }
     this.fetchBusinessServicesList();
   }
 
@@ -142,6 +144,41 @@ class BusinessForm extends Component {
           return { label: item, value: item }
         });
         this.setState({ categoriesList: categoriesArr });
+      })
+      .catch(error => console.log(error))
+  }
+
+  async fetchBusiness() {
+    const url = `http://192.168.1.198:3000/business/getBusinessesByID`;
+    const options = { 
+      method: 'POST', 
+      headers: { 
+          'Accept': 'application/json',
+          'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({businessID: this.state.currentBusinessID})
+    };
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(async data => {
+        console.log(data);
+        this.setState({ 
+          currentBusiness: data,
+          name: data.name,
+          description: data.description,
+          phone: data.phone,
+          website: data.website,
+          addressID: data.address,
+          street: 'bring address',
+          city: 'bring address',
+          country: 'bring address',
+          category: data.category,
+          // tags: [],
+          avatar: data.avatar,
+          // carousel: database.businesses[0].Pictures.Carousel,
+        });
       })
       .catch(error => console.log(error))
   }
@@ -165,6 +202,29 @@ class BusinessForm extends Component {
         this.setState({ServicesList: data});
       })
       .catch(error => console.log(error))
+  }
+
+  async deleteService() {
+    const url = `http://192.168.1.198:3000/service/deleteService`;
+    const options = { 
+      method: 'POST', 
+      headers: { 
+          'Accept': 'application/json',
+          'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({serviceID: this.state.currentService.serviceid})
+    };
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(async data => {
+        console.log(data)
+        this.fetchBusinessServicesList();
+      })
+      .catch(error => console.log(error))
+
+    this.setState({ isServicFormVisible: false, isEditingService: false });
   }
 
   async createOrUpdateBusiness() {
@@ -221,13 +281,16 @@ class BusinessForm extends Component {
   async createOrUpdateService() {
     const service = {
       BusinessID: this.state.currentBusinessID,
+      serviceID: this.state.currentService.serviceid,
       name: this.state.serviceName,
       price: this.state.price,
       durationMinutes: this.state.durationMinutes,
       qouta: this.state.qouta,
     };
 
-    const url = 'http://192.168.1.198:3000/service/createNewService';
+    let action = this.state.isEditingService ? 'updateServiceDetails' : 'createNewService';
+
+    const url = `http://192.168.1.198:3000/service/${action}`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -251,6 +314,8 @@ class BusinessForm extends Component {
         this.fetchBusinessServicesList();
       })
       .catch(error => console.log(error))
+
+    this.setState({ isServicFormVisible: false, isEditingService: false });
   }
 
   onSelectedItemsChange = (tags) => {
@@ -766,6 +831,7 @@ class BusinessForm extends Component {
               placeholder={{label: 'Select a category...', value: null}}
               textInputProps={styles.iconsText}
               items={this.state.categoriesList}
+              value={this.state.category}
             />
           </View>
           <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, }}/>
@@ -781,6 +847,7 @@ class BusinessForm extends Component {
               placeholder={{label: 'Select...', value: null}}
               textInputProps={styles.iconsText}
               items={items}
+              // value={this.state.tags[0]}
             />
             <Text>,</Text>
             <RNPickerSelect
@@ -788,6 +855,7 @@ class BusinessForm extends Component {
               placeholder={{label: 'Select...', value: null}}
               textInputProps={styles.iconsText}
               items={items}
+              // value={this.state.tags[1]}
             />
             <Text>,</Text>
             <RNPickerSelect
@@ -795,6 +863,7 @@ class BusinessForm extends Component {
               placeholder={{label: 'Select...', value: null}}
               textInputProps={styles.iconsText}
               items={items}
+              // value={this.state.tags[2]}
             />
           </View>
           <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, marginRight: 10}}/>
@@ -817,7 +886,7 @@ class BusinessForm extends Component {
             // onPressAction={() => this.createOrUpdateBusiness()}
             onPressAction={() => this.fetchBusinessServicesList()}
           >
-            CREATE BUSINESS
+            {this.state.isEditingBusiness ? 'UPDATE BUSINESS' : 'CREATE BUSINESS'}
           </GradientButton>
         </View>
 
@@ -826,59 +895,65 @@ class BusinessForm extends Component {
   }
 
   renderFormOverlay() {
-    // console.log(this.state)
+    // console.log(this.state.currentService)
     return (
       <Overlay 
         isVisible={this.state.isServicFormVisible} 
-        onBackdropPress={() => this.setState({ isServicFormVisible: false })}
-        // width="auto"
-        // height="auto"
+        onBackdropPress={() => this.setState({ isServicFormVisible: false, isEditingService: false })}
       >
-        <Text style={{fontSize: 24, fontWeight: '600', marginBottom: 30, marginTop: 20, alignSelf: 'center'}}>Service Details</Text>
-        <Input
-          label='Service Name'
-          placeholder='Enter Name'
-          errorStyle={{ color: 'red' }}
-          containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
-          // errorMessage='ENTER A VALID ERROR HERE'
-          onChangeText={text => this.setState({serviceName: text})}
-        />
-        <Input
-          label='Price'
-          placeholder='Enter Price'
-          errorStyle={{ color: 'red' }}
-          containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
-          // errorMessage='ENTER A VALID ERROR HERE'
-          onChangeText={text => this.setState({price: text})}
-          keyboardType='numeric'
-        />
-        <Input
-          label='Duration'
-          placeholder='Enter Duration'
-          errorStyle={{ color: 'red' }}
-          containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
-          // errorMessage='ENTER A VALID ERROR HERE'
-          onChangeText={text => this.setState({durationMinutes: text})}
-          keyboardType='numeric'
-        />
-        <Input
-          label='Qouta'
-          placeholder='Enter Qouta'
-          errorStyle={{ color: 'red' }}
-          containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
-          // errorMessage='ENTER A VALID ERROR HERE'
-          onChangeText={text => this.setState({qouta: text})}
-          keyboardType='numeric'
-        />
-        <Button
-          title="Create Service"
-          containerStyle={{alignSelf: 'center', width: '80%', position: 'absolute', bottom: 50}}
-          buttonStyle={{}}
-          onPress={() => {
-            this.createOrUpdateService();
-            this.setState({ isServicFormVisible: false });
-          }}
-        />
+        <View style={{flex: 1}}>
+          <Text style={{fontSize: 24, fontWeight: '600', marginBottom: 30, marginTop: 20, alignSelf: 'center'}}>Service Details</Text>
+          <Input
+            label='Service Name'
+            placeholder='Enter Name'
+            containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
+            onChangeText={text => this.setState({serviceName: text})}
+            value={this.state.serviceName}
+          />
+          <Input
+            label='Price'
+            placeholder='Enter Price'
+            containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
+            onChangeText={text => this.setState({price: text})}
+            keyboardType='numeric'
+            value={this.state.price.toString()}
+          />
+          <Input
+            label='Duration'
+            placeholder='Enter Duration'
+            containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
+            onChangeText={text => this.setState({durationMinutes: text})}
+            keyboardType='numeric'
+            value={this.state.durationMinutes.toString()}
+          />
+          <Input
+            label='Qouta'
+            placeholder='Enter Qouta'
+            containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
+            onChangeText={text => this.setState({qouta: text})}
+            keyboardType='numeric'
+            value={this.state.qouta.toString()}
+          />
+          <View style={{alignSelf: 'center', alignItems: 'center', width: '100%', position: 'absolute', bottom: 20}}>
+            <Button
+              title={this.state.isEditingService ? 'Update Service' : 'Create Service'}
+              containerStyle={{width: '70%', }}
+              buttonStyle={{}}
+              onPress={() => this.createOrUpdateService()}
+            />
+            {
+              this.state.isEditingService === false ? null :
+              <Button
+                title="Delete Service"
+                titleStyle={{color: 'red'}}
+                type="outline"
+                containerStyle={{width: '70%', marginTop: 20}}
+                buttonStyle={{borderColor: 'red'}}
+                onPress={() => this.deleteService()}
+              />
+            }
+          </View>
+        </View>
       </Overlay>
     )
   }
@@ -896,12 +971,20 @@ class BusinessForm extends Component {
           </View>
 
           <Button
-            icon={<Ionicons name="ios-add-circle-outline" size={35} color="white"/>}
-            iconRight
+            // icon={<Ionicons name="ios-add-circle-outline" size={35} color="white"/>}
+            // iconRight
             title="Add new service"
             containerStyle={{alignSelf: 'center', width: '60%'}}
             buttonStyle={{}}
-            onPress={() => this.setState({ isServicFormVisible: true })}
+            onPress={() => {
+              this.setState({ 
+                isServicFormVisible: true,
+                serviceName: '',
+                price: '',
+                durationMinutes: '',
+                qouta: '',
+              })
+            }}
           />
 
           {this.renderFormOverlay()}
@@ -924,7 +1007,17 @@ class BusinessForm extends Component {
         <View style={styles.bookButtonContainer}>
           <TouchableOpacity
             style={styles.bookButton}
-            onPress={() => this.setState({ isServicFormVisible: true })}
+            onPress={() => {
+              this.setState({ 
+                currentService: item,
+                isServicFormVisible: true,
+                isEditingService: true,
+                serviceName: item.name,
+                price: item.price,
+                durationMinutes: item.durationminutes,
+                qouta: item.qouta,
+              });
+            }}
           >
             <Text style={styles.bookButtonTitle}>Edit</Text>
           </TouchableOpacity>

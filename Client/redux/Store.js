@@ -1,9 +1,9 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import HomeScreenReducer from './reducers/Reducer_HomeScreen';
+import UserReducer from './reducers/Reducer_User';
 
 const rootReducer = combineReducers({
-    HomeScreen: HomeScreenReducer,
+    User: UserReducer,
 })
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
