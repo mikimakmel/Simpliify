@@ -29,9 +29,9 @@ import { Feather } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import * as Facebook from 'expo-facebook';
 import * as Google from 'expo-google-app-auth';
-
+import { connect } from 'react-redux';
 import * as firebase from 'firebase';
-
+import * as ActionCreators from '../redux/actions/Actions_User';
 import firebaseApp from '../firebaseConfig';
 
 class LoginScreen extends Component {
@@ -113,6 +113,7 @@ class LoginScreen extends Component {
     this.logInViaGoogle = this.logInViaGoogle.bind(this);
     this.isUserEqual = this.isUserEqual.bind(this);
     this.onSignIn = this.onSignIn.bind(this);
+    this.fetchUserProfile = this.fetchUserProfile.bind(this);
   }
 
 //   async _cacheResourcesAsync() {
@@ -125,11 +126,12 @@ class LoginScreen extends Component {
 //   }
 
   componentDidMount() {
-        firebase.auth().signOut().then(function() {
-            console.log('Sign-out successful');
-        }).catch(function(error) {
-            console.log('An error happened: ' + error);
-        });
+        // firebase.auth().signOut().then(function() {
+        //     console.log('Sign-out successful');
+        // }).catch(function(error) {
+        //     console.log('An error happened: ' + error);
+        // });
+        // this.checkIfLoggedIn();
         this.checkIfLoggedIn();
   }
 
@@ -159,6 +161,29 @@ class LoginScreen extends Component {
             logoSize: {width: Dimensions.get('window').width}
         })
     }  
+
+    async fetchUserProfile(email) {
+        console.log(email);
+        const url = 'http://192.168.1.198:3000/user/getUserByEmail';
+        const options = { 
+          method: 'POST', 
+          headers: { 
+              'Accept': 'application/json',
+              'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({email})
+        };
+        const request = new Request(url, options)
+    
+        await fetch(request)
+          .then(response => response.json())
+          .then(async data => {
+            // console.log(this.props.currentUser)
+            // console.log(data.user)
+            this.props.dispatch(ActionCreators.updateCurrentUser(data.user));
+          })
+          .catch(error => console.log(error))
+    }
 
     validateEmail(email) {
         const expression = /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([\t]*\r\n)?[\t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([\t]*\r\n)?[\t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
@@ -336,15 +361,17 @@ class LoginScreen extends Component {
     }
 
     checkIfLoggedIn = () => {
+        // console.log(firebase.auth().currentUser);
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
+                this.fetchUserProfile(user.email);
                 this.setState({ isReady: true });
                 console.log("Signed IN");
-                if (this.state.signed) {
-                    this.props.navigation.navigate('Profile');
-                }
+                this.props.navigation.navigate('Profile');
+                // if (this.state.signed) {
+                // }
             } else {
-                this.setState({ isReady: true });
+                // this.setState({ isReady: false });
                 console.log("Signed OUT");
                 this.props.navigation.navigate('LogIn');
             }
@@ -359,17 +386,21 @@ class LoginScreen extends Component {
 
           if (type === 'success') {
             const FBcredential = firebase.auth.FacebookAuthProvider.credential(token);
-            firebase.auth().signInWithCredential(FBcredential).catch((error) => { console.log(error) })
-
-            // Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
-            console.log("success");
+            firebase.auth().signInWithCredential(FBcredential)
+            .then((result) => {
+                this.fetchUserProfile(result.user.email);
+                console.log(result.user.email);
+                console.log("Facebook Login Success");
+                this.props.navigation.navigate('Profile');
+            })
+            .catch((error) => { console.log(`Facebook Login Error: ${error}`) });
           } else {
             // type === 'cancel'
             console.log("cancel");
           }
         } catch ({ message }) {
           alert(`Facebook Login Error: ${message}`);
-          console.log("error");
+          console.log(`Facebook Login Error: ${message}`);
         }
     }
 
@@ -441,11 +472,6 @@ class LoginScreen extends Component {
   render() {
     if (!this.state.isReady) {
         return (
-        //   <AppLoading
-        //     startAsync={this._cacheResourcesAsync}
-        //     onFinish={() => this.setState({ isReady: true })}
-        //     onError={console.warn}
-        //   />
             <View style={{ flex: 1, backgroundColor: 'white', alignContent: 'center', justifyContent: 'center'}}>
                 <ActivityIndicator size="large"/>
             </View>
@@ -586,13 +612,14 @@ class LoginScreen extends Component {
 }
 }
 
-            {/* <LinearGradient
-            colors={['#4c669f', '#4c669f', '#22c1c3', '#22c1c3', ]}
-            style={{ flex: 1, alignItems: 'center' }}
-            >
-            </LinearGradient> */}
+const mapStateToProps = ({ User }) => {
+    return {
+      hasBusiness: User.hasBusiness,
+      currentUser: User.currentUser
+    }
+}
 
-export default LoginScreen;
+export default connect(mapStateToProps)(LoginScreen);
 
 function runTiming(clock, value, dest) {
     const state = {

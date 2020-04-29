@@ -17,13 +17,24 @@ module.exports = {
     async getUserByEmail(req, res) {
         console.log("getUserByEmail()");
 
-        const email = req.body.email;
+        // const email = req.body.email;
+        const email = 'tsellen1@loc.gov';
 
-        const query = `SELECT * FROM Users WHERE email='${email}'`;
+        const query = 
+            `SELECT * FROM Users 
+            LEFT OUTER JOIN address ON (users.address = address.addressid) 
+            WHERE email='${email}'`;
         
         db.query(query)
-          .then(result => res.json(result.rows))
-          .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+            .then(result => {
+                if(result.rows.length === 1) {
+                    res.json({user: result.rows[0]});
+                } 
+                else {
+                    res.json({user: null});
+                }
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
     // get user by his ID.
@@ -38,7 +49,7 @@ module.exports = {
             WHERE userid='${userID}'`;
         
         db.query(query)
-            .then(result => res.json(result.rows))
+            .then(result => res.json(result.rows[0]))
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 

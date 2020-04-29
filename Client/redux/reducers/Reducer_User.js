@@ -1,7 +1,8 @@
 import actionsTypes from '../actions/types/Types_User';
 
 const initialState = {
-    hasBusiness: true,
+    hasBusiness: false,
+    currentUser: null
 }
 
 const UserReducer = (state = initialState, action) => {
@@ -11,6 +12,13 @@ const UserReducer = (state = initialState, action) => {
             return {
                 ...state,
                 hasBusiness: !state.hasBusiness
+            }
+        }
+
+        case actionsTypes.UPDATE_CURRENT_USER: {
+            return {
+                ...state,
+                currentUser: action.data
             }
         }
 

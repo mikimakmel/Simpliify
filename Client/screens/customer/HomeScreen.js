@@ -71,13 +71,15 @@ class HomeScreen extends Component {
 const mapStateToProps = ({ User }) => {
   return {
     hasBusiness: User.hasBusiness,
+    currentUser: User.currentUser
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    reduxUpdateHasBusiness: () => dispatch(ActionCreators.updateHasBusiness()),
-  }
-}
+export default connect(mapStateToProps)(HomeScreen)
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
+
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     reduxUpdateHasBusiness: () => dispatch(ActionCreators.updateHasBusiness()),
+//   }
+// }
