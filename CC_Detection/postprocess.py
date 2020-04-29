@@ -109,6 +109,32 @@ def IOU(box1, box2):
     return iou
 
 
+def split_to_groups(sorted_by_y):
+    arrays = []
+    j = 0
+    for i in range(len(sorted_by_y)):
+        # add last element
+        if i == (len(sorted_by_y) - 1):
+            temp = [x for x in sorted_by_y[j:i + 1]]
+            arrays.append(temp)
+            continue
+
+        y1 = sorted_by_y[i][0][1]
+        y1_h = sorted_by_y[i][0][1] + sorted_by_y[i][0][3]
+        y2 = sorted_by_y[i+1][0][1]
+        y2_h = sorted_by_y[i+1][0][1] + sorted_by_y[i+1][0][3]
+        per = abs(y1_h-y2)/abs(y1-y2_h)
+
+        if per > 0.5:
+            continue
+        else:
+            # if distance is above 20: enter all values below to array and continue
+            temp = [x for x in sorted_by_y[j:i+1]]
+            arrays.append(temp)
+            j = i+1
+    return arrays
+
+
 # parse name array
 def get_name(array, classes):
     name = ""
@@ -169,10 +195,10 @@ def get_card_number(array, classes):
 def postprocess(_frame, outs, image_name):
 
     # Load names of classes
-    classesFile = "models/classes.names"
+    classes_file = "models/classes.names"
 
     classes = []
-    with open(classesFile, 'rt') as f:
+    with open(classes_file, 'rt') as f:
         classes = f.read().rstrip('\n').split('\n')
 
     # random color for each class
@@ -215,53 +241,58 @@ def postprocess(_frame, outs, image_name):
             sorted_by_y.remove(item)
 
     # split to groups (valid, card number, name)
-    arrays = []
-    j = 0
-    for i in range(len(sorted_by_y)):
-        # add last element
-        if i == (len(sorted_by_y) - 1):
-            temp = [x for x in sorted_by_y[j:i + 1]]
-            arrays.append(temp)
-            continue
+    arrays = split_to_groups(sorted_by_y)
 
-        y1 = sorted_by_y[i][0][1]
-        y1_h = sorted_by_y[i][0][1] + sorted_by_y[i][0][3]
-        y2 = sorted_by_y[i+1][0][1]
-        y2_h = sorted_by_y[i+1][0][1] + sorted_by_y[i+1][0][3]
-        per = abs(y1_h-y2)/abs(y1-y2_h)
-
-        if per > 0.5:
-            continue
-        else:
-            # if distance is above 20: enter all values below to array and continue
-            temp = [x for x in sorted_by_y[j:i+1]]
-            arrays.append(temp)
-            j = i+1
-
-    # second: sort by x every group
+    # second: sort by x every group and get the data
     name = ""
     valid_date = ""
     card_number = ""
     for array in arrays:
         sort_by_x = sorted(array, key=lambda x: x[0][0])
 
-        # card number
-        if (0 <= sort_by_x[0][1] <= 9) and (not card_number):
-            card_number = get_card_number(sort_by_x, classes)
-            card_details_dict["card_number"] = card_number
-            cv.putText(_frame, "Card number : " + card_number, (10, 25), cv.FONT_HERSHEY_DUPLEX, 0.75, (255, 255, 255), 2)
-        # name
-        if (10 <= sort_by_x[0][1] <= 35) and (not name):
-            name = get_name(sort_by_x, classes)
-            card_details_dict["full_name"] = name
-            cv.putText(_frame, "Card holder : " + name, (10, 50), cv.FONT_HERSHEY_DUPLEX, 0.75, (255, 255, 255), 2)
         # valid
-        for index, item in enumerate(sort_by_x):
-            if (item[1] == 36) and (not valid_date):
-                valid_date = get_valid_date(sort_by_x, classes, index)
+        # check if '/' is in array
+        if not valid_date:
+            digit_idx = -1
+            for index, item in enumerate(sort_by_x):
+                if item[1] == 36:
+                    digit_idx = index
+            if digit_idx > -1:
+                valid_date = get_valid_date(sort_by_x, classes, digit_idx)
                 card_details_dict["valid_date"] = valid_date
                 cv.putText(_frame, "Card valid date : " + valid_date, (10, 75), cv.FONT_HERSHEY_DUPLEX, 0.75,
                            (255, 255, 255), 2)
+                continue
+
+        # card number
+        # check if the array contain the name by calculate: letters in array/all elements in array
+        if not card_number:
+            count_letters = 0
+            for digit in sort_by_x:
+                if 0 <= digit[1] <= 9:
+                    count_letters += 1
+            per = count_letters/len(sort_by_x)
+            print("card number per:", per)
+            if per > 0.8:
+                card_number = get_card_number(sort_by_x, classes)
+                card_details_dict["card_number"] = card_number
+                cv.putText(_frame, "Card number : " + card_number, (10, 25), cv.FONT_HERSHEY_DUPLEX, 0.75, (255, 255, 255), 2)
+                continue
+
+        # name
+        # check if the array contain the name by calculate: letters in array/all elements in array
+        if not name:
+            count_letters = 0
+            for digit in sort_by_x:
+                if 10 <= digit[1] <= 35:
+                    count_letters += 1
+            per = count_letters/len(sort_by_x)
+            print("name per:", per)
+            if per > 0.8:
+                name = get_name(sort_by_x, classes)
+                card_details_dict["full_name"] = name
+                cv.putText(_frame, "Card holder : " + name, (10, 50), cv.FONT_HERSHEY_DUPLEX, 0.75, (255, 255, 255), 2)
+                continue
 
     cv.imwrite("output_imgs/output_" + image_name, _frame)
 
