@@ -26,6 +26,7 @@
     "expo-image-picker": "~8.0.1",
     "expo-permissions": "~8.0.0",
     "firebase": "^7.14.0",
+    "moment": "^2.24.0",
     "native-base": "2.13.8",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",

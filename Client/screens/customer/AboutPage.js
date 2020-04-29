@@ -9,6 +9,7 @@ import ViewMoreText from 'react-native-view-more-text';
 import { Collapse, CollapseHeader, CollapseBody } from 'accordion-collapse-react-native';
 import MapView from 'react-native-maps';
 import { AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import database from '../../database';
 
 class AboutPage extends Component {
   constructor(props) {
@@ -36,6 +37,8 @@ class AboutPage extends Component {
   }
 
   renderOpeningHours() {
+    const test_businessData = database.businesses[0];
+
     return (
       <View>
         <Collapse
@@ -58,31 +61,31 @@ class AboutPage extends Component {
           <CollapseBody style={{ marginBottom: 5, marginTop: -8 }}>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Sunday</Text>
-              <Text style={styles.hoursText}>{this.props.businessData.Availability.Sunday}</Text>
+              <Text style={styles.hoursText}>{test_businessData.Availability.Sunday}</Text>
             </View>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Monday</Text>
-              <Text style={styles.hoursText}>{this.props.businessData.Availability.Monday}</Text>
+              <Text style={styles.hoursText}>{test_businessData.Availability.Monday}</Text>
             </View>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Tuesday</Text>
-              <Text style={styles.hoursText}>{this.props.businessData.Availability.Tuesday}</Text>
+              <Text style={styles.hoursText}>{test_businessData.Availability.Tuesday}</Text>
             </View>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Wednesday</Text>
-              <Text style={styles.hoursText}>{this.props.businessData.Availability.Wednesday}</Text>
+              <Text style={styles.hoursText}>{test_businessData.Availability.Wednesday}</Text>
             </View>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Thursday</Text>
-              <Text style={styles.hoursText}>{this.props.businessData.Availability.Thursday}</Text>
+              <Text style={styles.hoursText}>{test_businessData.Availability.Thursday}</Text>
             </View>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Friday</Text>
-              <Text style={styles.hoursText}>{this.props.businessData.Availability.Friday}</Text>
+              <Text style={styles.hoursText}>{test_businessData.Availability.Friday}</Text>
             </View>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Saturday</Text>
-              <Text style={styles.hoursText}>{this.props.businessData.Availability.Saturday}</Text>
+              <Text style={styles.hoursText}>{test_businessData.Availability.Saturday}</Text>
             </View>
           </CollapseBody>
         </Collapse>
@@ -96,16 +99,18 @@ class AboutPage extends Component {
 
 
   render() {
+    const test_businessData = database.businesses[0];
+
     return (
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View>
-          <Text style={styles.heading}>{this.props.businessData.Name}</Text>
+          <Text style={styles.heading}>{this.props.businessData.name}</Text>
           <View style={{ flexDirection: 'row' }}>
             <Rating
               style={styles.rating}
               imageSize={22}
               readonly={!this.props.isInUserFavorites}
-              startingValue={this.props.businessData.Ranking}
+              startingValue={this.props.businessData.rating}
               onFinishRating={this.handleRatingPress}
               ratingColor={'#FED56B'}
               type={'custom'}
@@ -117,7 +122,7 @@ class AboutPage extends Component {
               containerStyle={styles.managerAvatar}
               rounded
               size={50}
-              source={{ uri: this.props.businessData.Pictures.Avatar }}
+              source={{ uri: this.props.businessData.avatar }}
             />
             <View style={styles.managerTextContainer}>
               <ViewMoreText
@@ -126,7 +131,7 @@ class AboutPage extends Component {
                 renderViewLess={this.renderViewLess}
               >
                 <Text adjustsFontSizeToFit style={styles.managerText}>
-                  {this.props.businessData.Description}
+                  {this.props.businessData.description}
                 </Text>
               </ViewMoreText>
             </View>
@@ -138,7 +143,7 @@ class AboutPage extends Component {
             style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}
             onPress={() => {
               const args = {
-                number: '0525368689',
+                number: this.props.businessData.phone,
                 prompt: false
               }
               PhoneCall(args).catch(console.error)
@@ -152,7 +157,7 @@ class AboutPage extends Component {
           <TouchableOpacity
             style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}
             onPress={() => {
-              Linking.openURL('https://google.com')
+              Linking.openURL(this.props.businessData.website)
             }}
           >
             <View style={styles.iconsCircle}>
@@ -166,11 +171,11 @@ class AboutPage extends Component {
               <FontAwesome name="tags" size={23} color={colors.blue} style={{ marginLeft: 3 }} />
             </View>
             <Text style={styles.iconsText}>
-              {this.props.businessData.Tags[0] +
+              {test_businessData.Tags[0] +
                 ', ' +
-                this.props.businessData.Tags[1] +
+                test_businessData.Tags[1] +
                 ', ' +
-                this.props.businessData.Tags[2]}
+                test_businessData.Tags[2]}
             </Text>
           </View>
           <TouchableOpacity
@@ -187,7 +192,7 @@ class AboutPage extends Component {
                 style={{ marginLeft: 1 }}
               />
             </View>
-            <Text style={styles.iconsText}>{this.props.businessData.Location.Address}</Text>
+            <Text style={styles.iconsText}>{test_businessData.Location.Address}</Text>
           </TouchableOpacity>
           {/* <Popup
             isVisible={this.state.isPopupVisble}
@@ -211,9 +216,9 @@ class AboutPage extends Component {
             <MapView
               style={styles.map}
               region={{
-                latitude: this.props.businessData.Location.Lat,
+                latitude: test_businessData.Location.Lat,
                 latitudeDelta: 0.002,
-                longitude: this.props.businessData.Location.Lon,
+                longitude: test_businessData.Location.Lon,
                 longitudeDelta: 0.002
               }}
               provider={'google'}
@@ -221,8 +226,8 @@ class AboutPage extends Component {
             >
               <MapView.Marker
                 coordinate={{
-                  latitude: this.props.businessData.Location.Lat,
-                  longitude: this.props.businessData.Location.Lon
+                  latitude: test_businessData.Location.Lat,
+                  longitude: test_businessData.Location.Lon
                 }}
               />
             </MapView>

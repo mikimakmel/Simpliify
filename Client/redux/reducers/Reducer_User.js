@@ -1,6 +1,7 @@
-import actionsTypes from '../actions/types/Types_User';
+import { actionsTypes } from '../actions/Actions_User';
 
 const initialState = {
+    view: 'Customer',
     hasBusiness: false,
     currentUser: null
 }
@@ -19,6 +20,13 @@ const UserReducer = (state = initialState, action) => {
             return {
                 ...state,
                 currentUser: action.data
+            }
+        }
+
+        case actionsTypes.CHANGE_APP_VIEW: {
+            return {
+                ...state,
+                view: state.view === 'Customer' ? 'Business' : 'Customer'
             }
         }
 

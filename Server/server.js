@@ -31,17 +31,17 @@ app.post('/user/createNewUser', userCtl.createNewUser);                         
 /*** Customer routes ***/
 app.post('/customer/addBusinessToFavorites', customerCtl.addBusinessToFavorites);               // READY
 app.post('/customer/removeBusinessFromFavorites', customerCtl.removeBusinessFromFavorites);     // READY
-app.get('/customer/getFavoritesList', customerCtl.getFavoritesList);                            // READY
+app.post('/customer/getFavoritesList', customerCtl.getFavoritesList);                           // READY
 
 /*** Order routes ***/
 app.post('/order/createNewOrder', orderCtl.createNewOrder);                     // READY
 app.put('/order/updateOrderStatus', orderCtl.updateOrderStatus);                // READY
-app.get('/order/getAllCustomerOrders', orderCtl.getAllCustomerOrders);          // READY - Dosen't show all the orders?
-app.get('/order/getAllBusinessOrders', orderCtl.getAllBusinessOrders);          // READY
+app.post('/order/getAllCustomerOrders', orderCtl.getAllCustomerOrders);         // READY - Dosen't show all the orders?
+app.post('/order/getAllBusinessOrders', orderCtl.getAllBusinessOrders);         // READY
 
 /*** Business routes ***/
 app.get('/business/getAllBusinesses', businessCtl.getAllBusinesses);                        // READY
-app.post('/business/getBusinessesByID', businessCtl.getBusinessesByID);                     // READY
+app.post('/business/getBusinessByID', businessCtl.getBusinessByID);                         // READY
 app.get('/business/getAllCustomers', businessCtl.getAllCustomers);                          // READY
 app.get('/business/getBusinessAvailability', businessCtl.getBusinessAvailability);          // READY
 app.get('/business/getCategoriesList', businessCtl.getCategoriesList);                      // READY

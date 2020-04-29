@@ -42,6 +42,7 @@ module.exports = {
         console.log("getFavoritesList()");
 
         const userID = req.body.userID;
+        console.log(userID)
 
         const query = `SELECT * FROM Favorited WHERE userid='${userID}'`;
         

@@ -31,7 +31,8 @@ import * as Facebook from 'expo-facebook';
 import * as Google from 'expo-google-app-auth';
 import { connect } from 'react-redux';
 import * as firebase from 'firebase';
-import * as ActionCreators from '../redux/actions/Actions_User';
+import * as Actions_User from '../redux/actions/Actions_User';
+import * as Actions_Customer from '../redux/actions/Actions_Customer';
 import firebaseApp from '../firebaseConfig';
 
 class LoginScreen extends Component {
@@ -114,16 +115,11 @@ class LoginScreen extends Component {
     this.isUserEqual = this.isUserEqual.bind(this);
     this.onSignIn = this.onSignIn.bind(this);
     this.fetchUserProfile = this.fetchUserProfile.bind(this);
+    this.initBeforeLogin = this.initBeforeLogin.bind(this);
+    this.fetchFavoritesList = this.fetchFavoritesList.bind(this);
+    this.fetchBusiness = this.fetchBusiness.bind(this);
+    this.isBusinessInFavorites = this.isBusinessInFavorites.bind(this);
   }
-
-//   async _cacheResourcesAsync() {
-//     const images = [require('../assets/images/SimpliifyLogo.png')];
-
-//     const cacheImages = images.map(image => {
-//       return Asset.fromModule(image).downloadAsync();
-//     }); 
-//     return Promise.all(cacheImages);
-//   }
 
   componentDidMount() {
         // firebase.auth().signOut().then(function() {
@@ -131,7 +127,6 @@ class LoginScreen extends Component {
         // }).catch(function(error) {
         //     console.log('An error happened: ' + error);
         // });
-        // this.checkIfLoggedIn();
         this.checkIfLoggedIn();
   }
 
@@ -160,10 +155,15 @@ class LoginScreen extends Component {
             visibleHeight: layout.window.height,
             logoSize: {width: Dimensions.get('window').width}
         })
-    }  
+    } 
+    
+    initBeforeLogin() {
+        // console.log(this.props.currentUser);///////////
+        this.fetchFavoritesList();
+    }
 
     async fetchUserProfile(email) {
-        console.log(email);
+        // console.log(email);
         const url = 'http://192.168.1.198:3000/user/getUserByEmail';
         const options = { 
           method: 'POST', 
@@ -180,9 +180,68 @@ class LoginScreen extends Component {
           .then(async data => {
             // console.log(this.props.currentUser)
             // console.log(data.user)
-            this.props.dispatch(ActionCreators.updateCurrentUser(data.user));
+            this.props.dispatch(Actions_User.updateCurrentUser(data.user));
           })
           .catch(error => console.log(error))
+
+        this.initBeforeLogin();
+    }
+
+    async fetchFavoritesList() {
+        // console.log(this.props.currentUser);
+        const url = 'http://192.168.1.198:3000/customer/getFavoritesList';
+        const options = { 
+          method: 'POST', 
+          headers: { 
+              'Accept': 'application/json',
+              'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({userID: this.props.currentUser.userid})
+        };
+        const request = new Request(url, options)
+    
+        await fetch(request)
+          .then(response => response.json())
+          .then(async data => {
+            // console.log(data)
+            data.map((item) => {
+              this.fetchBusiness(item.business);
+            })
+          })
+          .catch(error => console.log(error))
+    }
+    
+    async fetchBusiness(businessID) {
+        const url = 'http://192.168.1.198:3000/business/getBusinessByID';
+        const options = { 
+            method: 'POST', 
+            headers: { 
+                'Accept': 'application/json',
+                'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify({businessID})
+        };
+        const request = new Request(url, options)
+
+        await fetch(request)
+            .then(response => response.json())
+            .then(async data => {
+                // console.log(data)
+                if (!this.isBusinessInFavorites(data.businessid)) {
+                    this.props.dispatch(Actions_Customer.addToFavoritesList(data))
+                }
+            })
+            .catch(error => console.log(error))
+    }
+
+    isBusinessInFavorites(businessID) {
+        this.props.favoritesList.map((item) => {
+          if(item.businessid === businessID) {
+            return true;
+          }
+        });
+    
+        return false;
     }
 
     validateEmail(email) {
@@ -371,7 +430,7 @@ class LoginScreen extends Component {
                 // if (this.state.signed) {
                 // }
             } else {
-                // this.setState({ isReady: false });
+                this.setState({ isReady: true });
                 console.log("Signed OUT");
                 this.props.navigation.navigate('LogIn');
             }
@@ -612,12 +671,13 @@ class LoginScreen extends Component {
 }
 }
 
-const mapStateToProps = ({ User }) => {
+const mapStateToProps = ({ User, Customer }) => {
     return {
       hasBusiness: User.hasBusiness,
-      currentUser: User.currentUser
+      currentUser: User.currentUser,
+      favoritesList: Customer.favoritesList
     }
-}
+  }
 
 export default connect(mapStateToProps)(LoginScreen);
 

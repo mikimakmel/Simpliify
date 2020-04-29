@@ -17,8 +17,8 @@ module.exports = {
     async getUserByEmail(req, res) {
         console.log("getUserByEmail()");
 
-        // const email = req.body.email;
-        const email = 'tsellen1@loc.gov';
+        const email = req.body.email;
+        // const email = 'tsellen1@loc.gov';
 
         const query = 
             `SELECT * FROM Users 

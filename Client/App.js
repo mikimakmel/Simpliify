@@ -19,6 +19,7 @@ import { Provider } from "react-redux";
 import Store from "./redux/Store";
 
 console.disableYellowBox = true;
+console.warn = () => {};
 
 export default class App extends Component {
   render() {

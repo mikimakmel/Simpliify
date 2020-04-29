@@ -6,11 +6,11 @@ module.exports = {
     async createNewOrder(req, res) {
         console.log("createNewOrder()");
 
-        const userID = req.body.userID;
-        const businessID = req.body.businessID;
-        const serviceID = req.body.serviceID;
-        const status = 'Pending';
-        const startTime = req.body.startTime;
+        const userID = req.body.order.userID;
+        const businessID = req.body.order.businessID;
+        const serviceID = req.body.order.serviceID;
+        const status = 'Confirmed';
+        const startTime = req.body.order.startTime;
 
         const query = 
             `INSERT INTO Orders 
@@ -20,7 +20,7 @@ module.exports = {
             RETURNING Customer, Business, Service, status, starttime AT TIME ZONE 'UTC' as starttime, orderedat AT TIME ZONE 'UTC' as orderedat`;
         
         db.query(query)
-            .then(result => res.json(result.rows))
+            .then(result => res.json(result.rows[0]))
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 

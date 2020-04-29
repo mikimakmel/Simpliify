@@ -7,6 +7,7 @@ import colors from '../../constants/Colors';
 import ImagesSwiper from 'react-native-image-swiper';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import Layout from '../../constants/Layout';
+import database from '../../database';
 
 export default class BusinessScreen extends Component {
   constructor(props) {
@@ -46,12 +47,13 @@ export default class BusinessScreen extends Component {
 
   render() {
     const { businessData } = this.state;
+    const test_businessData = database.businesses[0];
 
     return (
       <View style={styles.flexContainer}>
         <View style={styles.ImagesSwiperContainer}>
           <ImagesSwiper
-            images={businessData.Pictures.Carousel}
+            images={test_businessData.Pictures.Carousel}
             autoplay={true}
             autoplayTimeout={5}
             showsPagination

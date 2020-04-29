@@ -149,7 +149,7 @@ class BusinessForm extends Component {
   }
 
   async fetchBusiness() {
-    const url = `http://192.168.1.198:3000/business/getBusinessesByID`;
+    const url = `http://192.168.1.198:3000/business/getBusinessByID`;
     const options = { 
       method: 'POST', 
       headers: { 

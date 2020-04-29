@@ -4,24 +4,28 @@ import styles from '../../styles/Style_MenuScreen';
 import { ListItem, Divider } from 'react-native-elements'
 import colors from '../../constants/Colors';
 import { AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
-
+import { connect } from "react-redux";
+import * as Actions_User from '../../redux/actions/Actions_User';
 import * as firebase from 'firebase';
-// const firebaseApp = require('../firebaseConfig');
+// const firebaseApp = require('../../firebaseConfig');
 
 class MenuScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
     };
+    this.signOut = this.signOut.bind(this);
   }
 
-  signOut = () => {
-    firebase.auth().signOut().then(function() {
-      console.log('Sign-out successful');
-    }).catch(function(error) {
-      console.log('An error happened: ' + error);
-    });
-    // this.props.navigation.navigate('LogIn');
+  signOut() {
+    firebase.auth().signOut()
+      .then(() => {
+        console.log('Sign-out successful');
+        this.props.navigation.navigate('LogIn');
+      })
+      .catch((error) => {
+        console.log('An error happened: ' + error);
+      });
   }
 
   render() {
@@ -65,6 +69,7 @@ class MenuScreen extends Component {
             titleStyle={{ fontWeight: '500', fontSize: 16, color: colors.green01 }}
             containerStyle={{ marginHorizontal: 6 }}
             chevron={(<MaterialCommunityIcons name="swap-horizontal-variant" size={25} color={colors.green01} />)}
+            onPress={() => this.props.dispatch(Actions_User.changeAppView())}
           />
           <Divider style={{ backgroundColor: colors.gray01, marginHorizontal: 24, height: 0.8 }} />
           <Text style={styles.secondaryHeadline}>Support</Text>
@@ -79,7 +84,7 @@ class MenuScreen extends Component {
             title={'Log Out'}
             titleStyle={{ fontWeight: '400', fontSize: 16, color: 'red' }}
             containerStyle={{ marginHorizontal: 6, marginTop: 20 }}
-            onPress={() => this.signOut}
+            onPress={() => this.signOut()}
           />
         </ScrollView>
     </SafeAreaView>
@@ -87,4 +92,14 @@ class MenuScreen extends Component {
   }
 }
 
-export default MenuScreen;
+
+const mapStateToProps = ({ User, Customer }) => {
+  return {
+    hasBusiness: User.hasBusiness,
+    currentUser: User.currentUser,
+    favoritesList: Customer.favoritesList,
+    view: User.view
+  }
+}
+
+export default connect(mapStateToProps)(MenuScreen);

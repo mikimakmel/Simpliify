@@ -6,17 +6,42 @@ import database from '../../database';
 import colors from '../../constants/Colors';
 import Swipeout from 'react-native-swipeout';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { connect } from "react-redux";
 
-export default class ScheduleScreen extends Component {
+class ScheduleScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
       isEmpty: false,
       scheduleList: database.bookedServices,
     }
+    this.fetchOrdersList = this.fetchOrdersList.bind(this);
   }
 
-  keyExtractor = (item, index) => index.toString()
+  componentDidMount() {
+    this.fetchOrdersList();
+  }
+
+  async fetchOrdersList() {
+    const url = 'http://192.168.1.198:3000/order/getAllCustomerOrders';
+    const options = { 
+      method: 'POST', 
+      headers: { 
+          'Accept': 'application/json',
+          'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({userID: this.props.currentUser.userid})
+    };
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(async data => {
+        console.log(data);
+        this.setState({scheduleList: data});
+      })
+      .catch(error => console.log(error))
+  }
 
   renderEmptySchedule() {
     return (
@@ -98,7 +123,7 @@ export default class ScheduleScreen extends Component {
   renderScheduleList() {
     const { scheduleList } = this.state
     return (
-      <FlatList data={scheduleList} renderItem={this.renderRow} keyExtractor={this.keyExtractor} />
+      <FlatList data={scheduleList} renderItem={this.renderRow} keyExtractor={(item, index) => index.toString()} />
     )
   }
 
@@ -114,3 +139,13 @@ export default class ScheduleScreen extends Component {
     )
   }
 }
+
+const mapStateToProps = ({ User, Customer }) => {
+  return {
+    hasBusiness: User.hasBusiness,
+    currentUser: User.currentUser,
+    favoritesList: Customer.favoritesList
+  }
+}
+
+export default connect(mapStateToProps)(ScheduleScreen);

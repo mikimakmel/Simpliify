@@ -15,7 +15,7 @@ class CameraScreen extends Component {
         };
     }
 
-    async componentWillMount() {
+    async componentDidMount() {
         const { status } = await Camera.requestPermissionsAsync();
         this.setState({ hasCameraPermission: status === 'granted' });
     }

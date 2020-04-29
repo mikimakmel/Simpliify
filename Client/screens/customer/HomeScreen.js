@@ -5,20 +5,83 @@ import { useNavigation } from '@react-navigation/native';
 import FavoriteBusinessCard from './FavoriteBusinessCard'
 import styles from '../../styles/customer/Style_HomeScreen';
 import { connect } from "react-redux";
-import * as ActionCreators from '../../redux/actions/Actions_User';
+import * as Actions_User from '../../redux/actions/Actions_User';
+import * as Actions_Customer from '../../redux/actions/Actions_Customer';
 import database from '../../database';
 
 class HomeScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isEmpty: false,
-      favoritesList: database.businesses
     }
 
     this.renderEmptyScreen = this.renderEmptyScreen.bind(this);
     this.renderFavoritesList = this.renderFavoritesList.bind(this);
+    // this.fetchFavoritesList = this.fetchFavoritesList.bind(this);
+    // this.fetchBusiness = this.fetchBusiness.bind(this);
+    // this.isBusinessInFavorites = this.isBusinessInFavorites.bind(this);
   }
+
+  componentDidMount() {
+    // this.fetchFavoritesList();
+  }
+
+  // async fetchFavoritesList() {
+  //   const url = 'http://192.168.1.198:3000/customer/getFavoritesList';
+  //   const options = { 
+  //     method: 'POST', 
+  //     headers: { 
+  //         'Accept': 'application/json',
+  //         'Content-Type': 'application/json' 
+  //     },
+  //     body: JSON.stringify({userID: this.props.currentUser.userid})
+  //   };
+  //   const request = new Request(url, options)
+
+  //   await fetch(request)
+  //     .then(response => response.json())
+  //     .then(async data => {
+  //       // console.log(data)
+  //       // this.props.dispatch(ActionCreators.updateCurrentUser(data.user));
+  //       data.map((item) => {
+  //         this.fetchBusiness(item.business);
+  //       })
+  //     })
+  //     .catch(error => console.log(error))
+  // }
+
+  // async fetchBusiness(businessID) {
+  //   const url = 'http://192.168.1.198:3000/business/getBusinessByID';
+  //   const options = { 
+  //     method: 'POST', 
+  //     headers: { 
+  //         'Accept': 'application/json',
+  //         'Content-Type': 'application/json' 
+  //     },
+  //     body: JSON.stringify({businessID})
+  //   };
+  //   const request = new Request(url, options)
+
+  //   await fetch(request)
+  //     .then(response => response.json())
+  //     .then(async data => {
+  //       // console.log(data)
+  //       if (!this.isBusinessInFavorites(data.businessid)) {
+  //         this.props.dispatch(Actions_Customer.addToFavoritesList(data))
+  //       }
+  //     })
+  //     .catch(error => console.log(error))
+  // }
+
+  // isBusinessInFavorites(businessID) {
+  //   this.props.favoritesList.map((item) => {
+  //     if(item.businessid === businessID) {
+  //       return true;
+  //     }
+  //   });
+
+  //   return false;
+  // }
 
   renderEmptyScreen() {
     return (
@@ -42,8 +105,9 @@ class HomeScreen extends Component {
   renderFavoritesList() {
     return (
       <FlatList
-        data={this.state.favoritesList}
-        keyExtractor={item => item.ID.toString()}
+        data={this.props.favoritesList}
+        // keyExtractor={item => item.businessid.toString()}
+        keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <FavoriteBusinessCard businessData={item} navigation={this.props.navigation} />
@@ -53,29 +117,30 @@ class HomeScreen extends Component {
   }
 
   render() {
+    // console.log(this.props.currentUser);//////////
+    // console.log(this.props.view);//////////
+
     return (
       <SafeAreaView style={styles.flexContainer}>
         <View style={styles.flexContainer}>
           <Text style={styles.heading}>My Services</Text>
-          {this.state.isEmpty === true ? this.renderEmptyScreen() : this.renderFavoritesList()}
-          {/* <TouchableOpacity onPress={() => this.props.reduxUpdateHasBusiness()}>
-            <Text>Update</Text>
-          </TouchableOpacity>
-          <Text>{this.props.hasBusiness.toString()}</Text> */}
+          {this.props.favoritesList.length > 0 ? this.renderFavoritesList() : this.renderEmptyScreen()}
         </View>
       </SafeAreaView>
     )
   }
 }
 
-const mapStateToProps = ({ User }) => {
+const mapStateToProps = ({ User, Customer }) => {
   return {
     hasBusiness: User.hasBusiness,
-    currentUser: User.currentUser
+    currentUser: User.currentUser,
+    favoritesList: Customer.favoritesList,
+    view: User.view
   }
 }
 
-export default connect(mapStateToProps)(HomeScreen)
+export default connect(mapStateToProps)(HomeScreen);
 
 
 // const mapDispatchToProps = (dispatch) => {
