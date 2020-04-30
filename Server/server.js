@@ -13,7 +13,7 @@ const cors = require('cors');
 
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 5000;
 
 app.set('port', port);
 app.use(cors());
@@ -69,8 +69,7 @@ app.get('/review/getBusinessReviews', reviewCtl.getBusinessReviews);            
 app.post('/review/deleteReview', reviewCtl.deleteReview);                        // READY
 
 /*** Search routes ***/
-app.get('/search/searchByName', searchCtl.searchByName);
-app.get('/search/searchByRadius', searchCtl.searchByRadius);
+app.post('/search/searc', searchCtl.search);
 
 // in case of a wrong route creating a fallback.
 app.all('*', (req, res) => { res.send("Wrong route, please try again.") });
