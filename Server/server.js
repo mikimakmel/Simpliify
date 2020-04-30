@@ -69,7 +69,7 @@ app.get('/review/getBusinessReviews', reviewCtl.getBusinessReviews);            
 app.post('/review/deleteReview', reviewCtl.deleteReview);                        // READY
 
 /*** Search routes ***/
-app.post('/search/searc', searchCtl.search);
+app.post('/search/search', searchCtl.search);
 
 // in case of a wrong route creating a fallback.
 app.all('*', (req, res) => { res.send("Wrong route, please try again.") });
