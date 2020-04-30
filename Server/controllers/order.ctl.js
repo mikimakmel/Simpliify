@@ -54,8 +54,8 @@ module.exports = {
             `SELECT orderid, customer, business, service, status,
             starttime AT TIME ZONE 'UTC' as starttime,
             orderedat AT TIME ZONE 'UTC' as orderedat
-            FROM Orders 
-            WHERE customer=${userID}`;
+            FROM Orders INNER JOIN Business ON (Orders.Business = Business.BusinessID)
+            WHERE customer=${userID} AND starttime > NOW() ORDER BY starttime`;
         
         db.query(query)
             .then(result => res.json(result.rows))
@@ -68,7 +68,7 @@ module.exports = {
 
         const businessID = req.body.businessID;
 
-        const query = `SELECT * FROM Orders WHERE business=${businessID}`;
+        const query = `SELECT * FROM Orders INNER JOIN Business ON (Orders.Business = Business.BusinessID) WHERE business=${businessID}`;
         
         db.query(query)
             .then(result => res.json(result.rows))
