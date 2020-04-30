@@ -6,7 +6,7 @@ module.exports = {
     async getAllBusinesses(req, res) {
         console.log("getAllBusinesses()");
 
-        const query = `SELECT * FROM Business`;
+        const query = `SELECT * FROM Business FULL OUTER JOIN Address ON (Business.Address = Address.AddressID) WHERE BusinessID IS NOT NULL`;
         
         db.query(query)
             .then(result => res.json(result.rows))
@@ -24,8 +24,8 @@ module.exports = {
             (SELECT to_char(AVG(rating),'9D9') AS Rating 
             FROM Review 
             WHERE business=${businessID}) 
-            FROM Business 
-            WHERE businessid=${businessID}`;
+            FROM Business FULL OUTER JOIN Address ON (Business.Address = Address.AddressID)
+            WHERE businessid=${businessID} AND BusinessID IS NOT NULL`;
         
         db.query(query)
             .then(result => res.json(result.rows[0]))
