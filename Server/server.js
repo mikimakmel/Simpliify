@@ -42,6 +42,7 @@ app.post('/order/getAllBusinessOrders', orderCtl.getAllBusinessOrders);         
 /*** Business routes ***/
 app.get('/business/getAllBusinesses', businessCtl.getAllBusinesses);                        // READY
 app.post('/business/getBusinessByID', businessCtl.getBusinessByID);                         // READY
+app.post('/business/getBusinessByManagerID', businessCtl.getBusinessByManagerID);           // Need bring all business info
 app.get('/business/getAllCustomers', businessCtl.getAllCustomers);                          // READY
 app.get('/business/getBusinessAvailability', businessCtl.getBusinessAvailability);          // READY
 app.get('/business/getCategoriesList', businessCtl.getCategoriesList);                      // READY

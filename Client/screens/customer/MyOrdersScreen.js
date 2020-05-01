@@ -9,6 +9,16 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from "react-redux";
 import * as Actions_Customer from '../../redux/actions/Actions_Customer';
 import { Popup } from 'react-native-map-link';
+import moment from 'moment';
+
+const weekdayArr = new Array(7);
+weekdayArr[0] = "Sunday";
+weekdayArr[1] = "Monday";
+weekdayArr[2] = "Tuesday";
+weekdayArr[3] = "Wednesday";
+weekdayArr[4] = "Thursday";
+weekdayArr[5] = "Friday";
+weekdayArr[6] = "Saturday";
 
 class MyOrdersScreen extends Component {
   constructor(props) {
@@ -17,80 +27,13 @@ class MyOrdersScreen extends Component {
       isPopupVisble: false,
       itemPressed: {}
     }
-    this.fetchOrdersList = this.fetchOrdersList.bind(this);
     this.renderEmptySchedule = this.renderEmptySchedule.bind(this);
     this.renderRow = this.renderRow.bind(this);
-    this.renderOrdersList = this.renderOrdersList.bind(this);
-    this.fetchBusinessAndAddOrderToList = this.fetchBusinessAndAddOrderToList.bind(this);
   }
 
-  componentDidMount() {
-    this.fetchOrdersList();
-  }
+  // componentDidMount() {
 
-  async fetchOrdersList() {
-    const url = 'http://192.168.1.198:3000/order/getAllCustomerOrders';
-    const options = { 
-      method: 'POST', 
-      headers: { 
-          'Accept': 'application/json',
-          'Content-Type': 'application/json' 
-      },
-      body: JSON.stringify({userID: this.props.currentUser.userid})
-    };
-    const request = new Request(url, options)
-
-    await fetch(request)
-      .then(response => response.json())
-      .then(async data => {
-        // console.log(data);
-        // this.setState({ordersList: data});
-        data.map((item) => {
-          // console.log(item.business)
-          this.fetchBusinessAndAddOrderToList(item);
-        })
-      })
-      .catch(error => console.log(error))
-  }
-
-  async fetchBusinessAndAddOrderToList(order) {
-    // console.log(order)
-    const url = 'http://192.168.1.198:3000/business/getBusinessByID';
-    const options = { 
-      method: 'POST', 
-      headers: { 
-        'Accept': 'application/json',
-        'Content-Type': 'application/json' 
-      },
-      body: JSON.stringify({businessID: order.business})
-    };
-    const request = new Request(url, options)
-
-    await fetch(request)
-      .then(response => response.json())
-      .then(async data => {
-        if (!this.isOrderInList(order.orderid)) {
-          let orderWithBusiness = {
-            business: data,
-            order: order
-          }
-          // console.log(orderWithBusiness);
-          this.props.dispatch(Actions_Customer.addToOrdersList(orderWithBusiness));
-        }
-      })
-      .catch(error => console.log(error))
-  }
-
-  isOrderInList(orderID) {
-    this.props.ordersList.map((item) => {
-      // console.log(orderID, item)
-      if(item.order.orderid === orderID) {
-        return true;
-      }
-    });
-
-    return false;
-  }
+  // }
 
   renderEmptySchedule() {
     return (
@@ -118,22 +61,14 @@ class MyOrdersScreen extends Component {
     //   }
     // ]
 
-    // console.log(item.Pictures.Avatar);
-    // console.log(item);
-    const year = item.order.starttime.split('-')[0];
-    const month = item.order.starttime.split('-')[1];
-    const day = item.order.starttime.split('-')[2].split('T')[0];
-    const startTime = item.order.starttime.split('-')[2].split('T')[1].substring(0, 5); 
-
-    const weekdayArr = new Array(7);
-    weekdayArr[0] = "Sunday";
-    weekdayArr[1] = "Monday";
-    weekdayArr[2] = "Tuesday";
-    weekdayArr[3] = "Wednesday";
-    weekdayArr[4] = "Thursday";
-    weekdayArr[5] = "Friday";
-    weekdayArr[6] = "Saturday";
-    const weekday = weekdayArr[new Date(item.order.starttime).getDay()];
+    const year = item.starttime.split('-')[0];
+    const month = item.starttime.split('-')[1];
+    const day = item.starttime.split('-')[2].split('T')[0];
+    const startTime = item.starttime.split('-')[2].split('T')[1].substring(0, 5); 
+    const weekday = weekdayArr[new Date(item.starttime).getDay()];
+    let endTime = new Date(item.starttime);
+    endTime.setMinutes(new Date(item.starttime).getMinutes() + item.durationminutes);
+    endTime = endTime.toUTCString().split(' ')[4].substring(0, 5);
 
     return (
       // <Swipeout right={swipeoutBtns} autoClose sensitivity={1000}>
@@ -144,7 +79,7 @@ class MyOrdersScreen extends Component {
                 containerStyle={styles.avatarContiner}
                 rounded
                 size={60}
-                source={{ uri: item.business.avatar }}
+                source={{ uri: item.avatar }}
               />
               <View style={[styles.textLeftAlign , {
                   overflow: 'hidden',
@@ -152,17 +87,16 @@ class MyOrdersScreen extends Component {
                   marginRight: 20,
               }]}>
                 <View>
-                  <Text style={styles.titleText}>{item.business.name}</Text>
+                  <Text style={styles.titleText}>{item.businessname}</Text>
                 </View>
                 <View>
-                  {/* <Text style={styles.serviceText}>{item.ServiceName}</Text> */}
-                  <Text style={styles.serviceText}>Service Name</Text>
+                  <Text style={styles.serviceText}>{item.servicename}</Text>
                 </View>
                 <View>
                   <Text style={styles.dateText}>{weekday} | {day}.{month}.{year}</Text>
                 </View>
                 <View>
-                  <Text style={styles.dateText}>{startTime} - {startTime}</Text>
+                  <Text style={styles.dateText}>{startTime} - {endTime}</Text>
                 </View>
               </View>
             </View>
@@ -190,10 +124,8 @@ class MyOrdersScreen extends Component {
   }
 
   renderOrdersList() {
-    const { ordersList } = this.props;
-    // console.log(ordersList[0]);
     return (
-      <FlatList data={ordersList} renderItem={this.renderRow} keyExtractor={(item, index) => index.toString()} />
+      <FlatList data={this.props.ordersList} renderItem={this.renderRow} keyExtractor={(item) => item.orderid.toString()}/>
     )
   }
 
@@ -212,9 +144,9 @@ class MyOrdersScreen extends Component {
               appsWhiteList={[]}
               options={{
                 alwaysIncludeGoogle: true,
-                latitude: 32.0904312,
-                longitude: 34.8024365,
-                title: this.state.itemPressed.Address,
+                latitude: this.state.itemPressed.lat,
+                longitude: this.state.itemPressed.lng,
+                title: `${this.state.itemPressed.street}, ${this.state.itemPressed.city}`,
                 dialogTitle: 'Open With',
                 cancelText: 'Cancel'
               }}

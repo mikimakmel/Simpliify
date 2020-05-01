@@ -17,70 +17,10 @@ class HomeScreen extends Component {
 
     this.renderEmptyScreen = this.renderEmptyScreen.bind(this);
     this.renderFavoritesList = this.renderFavoritesList.bind(this);
-    // this.fetchFavoritesList = this.fetchFavoritesList.bind(this);
-    // this.fetchBusiness = this.fetchBusiness.bind(this);
-    // this.isBusinessInFavorites = this.isBusinessInFavorites.bind(this);
   }
 
-  componentDidMount() {
-    // this.fetchFavoritesList();
-  }
+  // componentDidMount() {
 
-  // async fetchFavoritesList() {
-  //   const url = 'http://192.168.1.198:3000/customer/getFavoritesList';
-  //   const options = { 
-  //     method: 'POST', 
-  //     headers: { 
-  //         'Accept': 'application/json',
-  //         'Content-Type': 'application/json' 
-  //     },
-  //     body: JSON.stringify({userID: this.props.currentUser.userid})
-  //   };
-  //   const request = new Request(url, options)
-
-  //   await fetch(request)
-  //     .then(response => response.json())
-  //     .then(async data => {
-  //       // console.log(data)
-  //       // this.props.dispatch(ActionCreators.updateCurrentUser(data.user));
-  //       data.map((item) => {
-  //         this.fetchBusiness(item.business);
-  //       })
-  //     })
-  //     .catch(error => console.log(error))
-  // }
-
-  // async fetchBusiness(businessID) {
-  //   const url = 'http://192.168.1.198:3000/business/getBusinessByID';
-  //   const options = { 
-  //     method: 'POST', 
-  //     headers: { 
-  //         'Accept': 'application/json',
-  //         'Content-Type': 'application/json' 
-  //     },
-  //     body: JSON.stringify({businessID})
-  //   };
-  //   const request = new Request(url, options)
-
-  //   await fetch(request)
-  //     .then(response => response.json())
-  //     .then(async data => {
-  //       // console.log(data)
-  //       if (!this.isBusinessInFavorites(data.businessid)) {
-  //         this.props.dispatch(Actions_Customer.addToFavoritesList(data))
-  //       }
-  //     })
-  //     .catch(error => console.log(error))
-  // }
-
-  // isBusinessInFavorites(businessID) {
-  //   this.props.favoritesList.map((item) => {
-  //     if(item.businessid === businessID) {
-  //       return true;
-  //     }
-  //   });
-
-  //   return false;
   // }
 
   renderEmptyScreen() {
@@ -96,7 +36,7 @@ class HomeScreen extends Component {
           type="outline"
           buttonStyle={styles.FindServicesButton}
           titleStyle={styles.FindServicesButtonTitle}
-          // onPress={() => this.props.navigation.navigate('Search')}
+          onPress={() => this.props.navigation.navigate('Explore')}
         />
       </View>
     )
@@ -106,20 +46,14 @@ class HomeScreen extends Component {
     return (
       <FlatList
         data={this.props.favoritesList}
-        // keyExtractor={item => item.businessid.toString()}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={item => item.businessDetails.business.businessid.toString()}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <FavoriteBusinessCard businessData={item} navigation={this.props.navigation} />
-        )}
+        renderItem={({ item }) => (<FavoriteBusinessCard businessData={item} navigation={this.props.navigation}/>)}
       />
     )
   }
 
   render() {
-    // console.log(this.props.currentUser);//////////
-    // console.log(this.props.view);//////////
-
     return (
       <SafeAreaView style={styles.flexContainer}>
         <View style={styles.flexContainer}>
@@ -141,10 +75,3 @@ const mapStateToProps = ({ User, Customer }) => {
 }
 
 export default connect(mapStateToProps)(HomeScreen);
-
-
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     reduxUpdateHasBusiness: () => dispatch(ActionCreators.updateHasBusiness()),
-//   }
-// }

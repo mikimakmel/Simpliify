@@ -19,16 +19,100 @@ module.exports = {
 
         const businessID = req.body.businessID;
 
-        const query = 
+        const businessQuery = 
             `SELECT *, 
             (SELECT AVG(rating)::NUMERIC(2,1) AS Rating FROM Review WHERE business=${businessID}), 
             (SELECT COUNT(rating) AS RatingCount FROM Review WHERE business=${businessID}) 
             FROM Business 
             FULL OUTER JOIN Address ON (Business.Address = Address.AddressID) 
             WHERE businessid=${businessID} AND BusinessID IS NOT NULL`;  
+
+        const tagsQuery = 
+            `SELECT * FROM Tags WHERE businessid=${businessID}`;
+
+        const availabilityQuery = 
+            `SELECT * FROM availability 
+            WHERE businessid=${businessID}`;
+
+        const reviewsQuery = 
+            `SELECT * FROM Review 
+            WHERE Business=${businessID} AND Description IS NOT NULL ORDER BY Reviewedat DESC`;  
+
+        const servicesQuery = 
+            `SELECT * FROM Service WHERE businessid=${businessID}`;
+
+        const photosQuery = 
+            `SELECT * FROM Carousel WHERE businessid=${businessID}`;
+
+        var finalResult = {
+            businessDetails: {
+                business: {},
+                tags: [],
+                availability: [],
+                services: [],
+                reviews: [],
+                photos: {
+                    cover: '',
+                    carousel: [],
+                }
+            },
+        };
+        
+        db.query(businessQuery)
+            .then(result => {
+                finalResult.businessDetails.business = result.rows[0];
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+        db.query(tagsQuery)
+            .then(result => {
+                finalResult.businessDetails.tags = result.rows;
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+        db.query(availabilityQuery)
+            .then(result => {
+                finalResult.businessDetails.availability = result.rows;
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+        db.query(reviewsQuery)
+            .then(result => {
+                finalResult.businessDetails.reviews = result.rows;
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+        db.query(photosQuery)
+            .then(result => {
+                finalResult.businessDetails.photos.carousel = result.rows;
+                finalResult.businessDetails.photos.cover = result.rows[0];
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+        db.query(servicesQuery)
+            .then(result => {
+                finalResult.businessDetails.services = result.rows;
+                res.json(finalResult);
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    },
+
+    // get business by id.
+    async getBusinessByManagerID(req, res) {
+        console.log("getBusinessByManagerID()");
+
+        const managerID = req.body.managerID;
+
+        const query = 
+            `SELECT * 
+            FROM Business 
+            WHERE manager=${12}`;  
         
         db.query(query)
-            .then(result => res.json(result.rows[0]))
+            .then(result => {
+                console.log(result.rows)
+                res.json(result.rows[0])
+            })
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
@@ -52,7 +136,12 @@ module.exports = {
         const query = `SELECT enum_range(NULL::categories) as Categories`;
         
         db.query(query)
-            .then(result => res.json(result.rows[0]))
+            .then(result => {
+                let data = result.rows[0];
+                let splits = data.categories.slice(1, data.categories.length - 1).split(',');
+                let categoriesArr = splits.map((item) => { return { label: item, value: item } });
+                res.json(categoriesArr)
+            })
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 

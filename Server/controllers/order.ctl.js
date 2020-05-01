@@ -52,8 +52,8 @@ module.exports = {
 
         const query = 
             `SELECT 
-            orderid, customer AS CustomrID, business AS BusinessID, Business.Name AS BusinessName, 
-            Service AS ServiceID, Service.Name as ServiceName, status, 
+            orderid, customer AS CustomrID, business AS BusinessID, Business.Name AS BusinessName, Business.Avatar AS avatar,
+            Service AS ServiceID, Service.Name as ServiceName, status, Service.durationminutes as durationminutes,
             starttime AT TIME ZONE 'UTC' as starttime, 
             orderedat AT TIME ZONE 'UTC' as orderedat, 
             Address.Street, Address.City, Address.Country, 

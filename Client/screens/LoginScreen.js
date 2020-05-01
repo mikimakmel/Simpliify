@@ -114,6 +114,7 @@ class LoginScreen extends Component {
     this.logInViaGoogle = this.logInViaGoogle.bind(this);
     this.isUserEqual = this.isUserEqual.bind(this);
     this.onSignIn = this.onSignIn.bind(this);
+
     this.fetchUserProfile = this.fetchUserProfile.bind(this);
     this.initBeforeLogin = this.initBeforeLogin.bind(this);
     this.fetchFavoritesList = this.fetchFavoritesList.bind(this);
@@ -340,7 +341,9 @@ class LoginScreen extends Component {
                         throw new Error('Something went wrong ...');
                     }
                 })
-              .then(data => console.log(data))
+              .then(data => {
+                  console.log(data);
+                })
               .catch(error => console.log(error))
         } else {
             Alert.alert(
@@ -412,7 +415,7 @@ class LoginScreen extends Component {
 
             firebase.auth().signInWithEmailAndPassword(email, password)
             .then((result) => {
-                console.log(result.user.email);
+                // console.log(result.user.email);
                 this.props.navigation.navigate('Profile');
             })
         } catch (error) {
@@ -450,7 +453,7 @@ class LoginScreen extends Component {
             firebase.auth().signInWithCredential(FBcredential)
             .then((result) => {
                 this.fetchUserProfile(result.user.email);
-                console.log(result.user.email);
+                // console.log(result.user.email);
                 console.log("Facebook Login Success");
                 this.props.navigation.navigate('Profile');
             })

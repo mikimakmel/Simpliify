@@ -56,7 +56,6 @@ export default class FavoriteBusinessCard extends Component {
 
   render() {
     const { businessData } = this.props
-    const test_businessData = database.businesses[0];
 
     return (
       <TouchableOpacity
@@ -70,10 +69,10 @@ export default class FavoriteBusinessCard extends Component {
       >
         <View>
           <View style={styles.imageContainer}>
-            <Image style={styles.image} source={{ uri: test_businessData.Pictures.Carousel[0] }} />
+            <Image style={styles.image} source={{ uri: businessData.businessDetails.photos.cover.imagelink }} />
           </View>
           <View style={styles.nameContainer}>
-            <Text style={styles.name}>{businessData.name}</Text>
+            <Text style={styles.name}>{businessData.businessDetails.business.name}</Text>
             {this.state.eventsCount === 0 ? (
               <Text style={styles.noUpcomingText}>{' \u2022 NO UPCOMING EVENTS'}</Text>
             ) : (
