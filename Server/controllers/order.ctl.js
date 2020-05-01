@@ -51,14 +51,24 @@ module.exports = {
         const userID = req.body.userID;
 
         const query = 
-            `SELECT orderid, customer, business, service, status,
-            starttime AT TIME ZONE 'UTC' as starttime,
-            orderedat AT TIME ZONE 'UTC' as orderedat
-            FROM Orders INNER JOIN Business ON (Orders.Business = Business.BusinessID)
+            `SELECT 
+            orderid, customer AS CustomrID, business AS BusinessID, Business.Name AS BusinessName, 
+            Service AS ServiceID, Service.Name as ServiceName, status, 
+            starttime AT TIME ZONE 'UTC' as starttime, 
+            orderedat AT TIME ZONE 'UTC' as orderedat, 
+            Address.Street, Address.City, Address.Country, 
+            Address.Coordinates[0] AS Lat, Address.Coordinates[1] AS Lng 
+            FROM Orders 
+            INNER JOIN Business ON (Orders.Business = Business.BusinessID) 
+            INNER JOIN Service ON (Orders.Service = Service.ServiceID) 
+            INNER JOIN Address ON (Business.Address = Address.AddressID) 
             WHERE customer=${userID} AND starttime > NOW() ORDER BY starttime`;
         
         db.query(query)
-            .then(result => res.json(result.rows))
+            .then(result => {
+                console.log(result.rows);
+                res.json(result.rows)
+            })
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
@@ -68,8 +78,17 @@ module.exports = {
 
         const businessID = req.body.businessID;
 
-        const query = `SELECT * FROM Orders INNER JOIN Business ON (Orders.Business = Business.BusinessID) WHERE business=${businessID}`;
-        
+        const query = 
+            `SELECT * FROM Orders 
+            INNER JOIN Business ON (Orders.Business = Business.BusinessID) 
+            WHERE business=${businessID}`;
+
+        // const query = 
+        //     `SELECT * FROM Orders 
+        //     INNER JOIN Business ON (Orders.Business = Business.BusinessID) 
+        //     INNER JOIN Service ON (Orders.Service = Orders.Service) 
+        //     WHERE business=${businessID}`;
+
         db.query(query)
             .then(result => res.json(result.rows))
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))

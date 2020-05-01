@@ -11,8 +11,14 @@ export default class ExploreScreen extends Component {
     super(props);
     this.state = {
       searchResults: [],
-      isLoading: true
+      categoryList: [],
+      isLoading: false
     }
+    this.fetchCategoryList = this.fetchCategoryList.bind(this);
+  }
+
+  fetchCategoryList() {
+
   }
 
   componentWillMount() {
@@ -73,6 +79,28 @@ export default class ExploreScreen extends Component {
                   }}
                   >
                     Distance
+                  </Text>
+                </View>
+
+                <View style={{ 
+                    minHeight: 20, 
+                    minWidth: 40, 
+                    padding: 5, 
+                    marginRight: 5,
+                    backgroundColor: 'white', 
+                    borderColor: colors.gray03,
+                    borderWidth: 1,
+                    borderRadius: 25,
+                  }}
+                >
+                  <Text style={{ 
+                    fontSize: 10,
+                    fontWeight: '600',
+                    color: colors.gray04,
+                    padding: 5,
+                  }}
+                  >
+                    Price
                   </Text>
                 </View>
                  

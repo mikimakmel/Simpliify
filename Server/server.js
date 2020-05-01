@@ -11,9 +11,8 @@ const fileupload = require('express-fileupload');
 const cors = require('cors');
 
 
-
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
 
 app.set('port', port);
 app.use(cors());
@@ -71,6 +70,7 @@ app.post('/review/deleteReview', reviewCtl.deleteReview);                       
 /*** Search routes ***/
 app.get('/search/searchByName', searchCtl.searchByName);
 app.get('/search/searchByRadius', searchCtl.searchByRadius);
+
 
 // in case of a wrong route creating a fallback.
 app.all('*', (req, res) => { res.send("Wrong route, please try again.") });

@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/customer/HomeScreen';
 import ExploreScreen from '../screens/customer/ExploreScreen';
-import ScheduleScreen from '../screens/customer/ScheduleScreen';
+import MyOrdersScreen from '../screens/customer/MyOrdersScreen';
 import NotificationsScreen from '../screens/customer/NotificationsScreen';
 import MenuScreen from '../screens/customer/MenuScreen';
 import BusinessScreen from '../screens/customer/BusinessScreen';
@@ -11,6 +11,7 @@ import LoginScreen from '../screens/LoginScreen';
 import CameraScreen from '../screens/CameraScreen';
 import CreditCardScreen from '../screens/CreditCardScreen';
 import SignUpForm from '../screens/user/SignUpForm';
+import SplashScreen from '../screens/SplashScreen';
 import { AntDesign, EvilIcons, Feather, Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -40,6 +41,7 @@ function LogInStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="LogIn" component={LoginScreen}/>
+      <Stack.Screen name="SplashScreen" component={SplashScreen}/>
     </Stack.Navigator>
   );
 }
@@ -121,7 +123,7 @@ function BottomTabNavigator({ navigation, route }) {
       />
       <BottomTab.Screen
         name="Schedule"
-        component={ScheduleScreen}
+        component={MyOrdersScreen}
         options={{
           title: 'Schedule',
           tabBarIcon: ({ color }) => (

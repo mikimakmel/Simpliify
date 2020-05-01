@@ -6,8 +6,8 @@ export default class CategoryCard extends Component {
     render() {
         return (
             <View style={{ 
-                height: 130, 
-                width: 130,  
+                height: 120, 
+                width: 120,  
                 borderRadius: 10, 
                 shadowOffset: { width: 0, height: 1 },
                 shadowRadius: 3,

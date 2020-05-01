@@ -13,10 +13,10 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6",
     "mathjs": "^6.6.4",
-    "pg": "^8.0.0",
+    "pg": "^8.0.3",
     "radians": "^1.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.3"
   }
 }

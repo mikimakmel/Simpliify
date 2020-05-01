@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './screens/customer/HomeScreen';
 import ExploreScreen from './screens/customer/ExploreScreen';
-import ScheduleScreen from './screens/customer/ScheduleScreen';
+import MyOrdersScreen from './screens/customer/MyOrdersScreen';
 import MenuScreen from './screens/customer/MenuScreen';
 import LoginScreen from './screens/LoginScreen';
 import CameraScreen from './screens/CameraScreen';

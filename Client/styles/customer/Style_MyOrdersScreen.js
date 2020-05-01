@@ -21,25 +21,25 @@ export default StyleSheet.create({
     marginBottom: 35,
     color: Colors.gray04,
     marginTop: 50,
-    paddingLeft: 20
+    paddingLeft: 20,
   },
   titleContainer: {
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 20
+    paddingBottom: 20,
   },
   titleText: {
     color: Colors.black,
     opacity: 0.85,
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700'
   },
   serviceText: {
     color: Colors.lightBlack,
     opacity: 0.85,
-    fontSize: 12,
-    fontWeight: '400',
+    fontSize: 14,
+    fontWeight: '500',
     marginBottom: 6
   },
   dateText: {

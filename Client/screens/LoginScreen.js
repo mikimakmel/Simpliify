@@ -29,10 +29,10 @@ import { Feather } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import * as Facebook from 'expo-facebook';
 import * as Google from 'expo-google-app-auth';
-import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import * as Actions_User from '../redux/actions/Actions_User';
 import * as Actions_Customer from '../redux/actions/Actions_Customer';
+import { connect } from 'react-redux';
 import firebaseApp from '../firebaseConfig';
 
 class LoginScreen extends Component {
@@ -181,6 +181,7 @@ class LoginScreen extends Component {
             // console.log(this.props.currentUser)
             // console.log(data.user)
             this.props.dispatch(Actions_User.updateCurrentUser(data.user));
+            console.log('User ID: ' + this.props.currentUser.userid);
           })
           .catch(error => console.log(error))
 
@@ -423,10 +424,11 @@ class LoginScreen extends Component {
         // console.log(firebase.auth().currentUser);
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
-                this.fetchUserProfile(user.email);
+                // this.fetchUserProfile(user.email);
                 this.setState({ isReady: true });
                 console.log("Signed IN");
-                this.props.navigation.navigate('Profile');
+                this.props.navigation.navigate('SplashScreen', {email: user.email});
+                // this.props.navigation.navigate('Profile');
                 // if (this.state.signed) {
                 // }
             } else {

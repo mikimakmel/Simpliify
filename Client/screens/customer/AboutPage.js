@@ -110,7 +110,7 @@ class AboutPage extends Component {
               style={styles.rating}
               imageSize={22}
               readonly={!this.props.isInUserFavorites}
-              startingValue={this.props.businessData.rating}
+              startingValue={this.props.businessData.rating === null ? 0 : Number(this.props.businessData.rating)}
               onFinishRating={this.handleRatingPress}
               ratingColor={'#FED56B'}
               type={'custom'}
