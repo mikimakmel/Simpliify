@@ -1,39 +1,88 @@
 const { degrees, radians } = require('radians')
 const math = require('mathjs')
-const db = require('../database');
+const db = require('../database')
 
-module.exports = {
 
-    // basic search by name.
-    // example:  {
-    //     "businessid": "23",
-    //     "address": "23",
-    //     "manager": "138",
-    //     "name": "McClure Inc",
-    //     "category": "Pets",
-    //     "phone": "0509861702",
-    //     "website": "https://mcclureinc.com",
-    //     "description": "Stand-alone foreground focus group",
-    //     "dailycounter": 13698,
-    //     "avatar": "https://robohash.org/nonminimaet.jpg?size=80x80&set=set1"
-    // }
-    async searchByName(req, res) {
-        console.log("searchByName()");
+radiusFilter = (coordinates, rows) => {
+    const lon = coordinates.lon
+    const lat = coordinates.lat
+    const r = coordinates.r
+    const filterRows = rows.filter((row) => {
+        const coordinates = row.coordinates
+        return math.acos(math.sin(lat) * math.sin(degrees(coordinates.x)) + math.cos(lat) * math.cos(degrees(coordinates.x)) * math.cos(degrees(coordinates.y) - (lon))) <= r
+    })
+    return filterRows
+}
 
-        const name = req.body.name;
+searchQueryFilter = (s, rows) => {
+    filterRows = rows.filter(row => {
+        const name = row.name.toLowerCase()
+        if (name.includes(s.toLowerCase())){
+            return true
+        }
+    })
+    return filterRows
+}
 
-        const query = `SELECT * FROM Business WHERE name='${name}'`;
+categoryFilter = (category, rows) => {
+    return rows
+}
+
+ratingFilter = (rows) => {
+    return rows
+}
+
+applyFilters = (rows, category=null, radius=null, searchString=null, rating=null, coordinates=null) => {
+
+    console.log("Apply filters: ")
+    var filterRows = rows
+
+    if (category !== null){
+        console.log("Apply category")
+        filterRows = categoryFilter(category, filterRows)
+    }
+    if (radius !== null){
+        console.log("Apply radius")
+        filterRows = radiusFilter(coordinates, filterRows)
+    }
+    if (searchString !== null){
+        console.log("Apply searchString")
+        filterRows = searchQueryFilter(searchString, filterRows)
+
+    }
+    if (rating !== null){
+        console.log("Apply rating")
+        filterRows = ratingFilter(filterRows)
+    }
+    return filterRows
+}
+
+
+search = (req, res) => {
+    console.log("Search function");
+    // search by radius parameters:
+    const radius = req.body.radius
+    const lon = req.body.lon
+    const lat = req.body.lat
+    const searchQuery = req.body.searchQuery
+    const category = req.body.category
+    const rating = req.body.rating
+    const ratNum = req.body.ratNum
+
+    
+    if (category){
+        // results: business details, address, rating, service, tag
         
-        db.query(query)
-            .then(result => res.json(result.rows))
-            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-    },
+        // const query = ...
 
-    // search by radius.
-    // lon=y lat=x
-    async searchByRadius(req, res) {
-        console.log("searchByRadius()");
-        // Earth radius
+
+
+    }
+
+    else if (radius){
+        console.log('Query by radius')
+        // results: business details, address, rating, service, tag
+         // Earth radius
         const R = 6371
 
         // angular radius 
@@ -43,7 +92,6 @@ module.exports = {
         // got degrees, convert to radians
         const lon = degrees(req.body.lon);
         const lat = degrees(req.body.lat);
-        console.log(lon, lat)
 
         // query circle = the circle with radius r when the user's location it center
         // bounding box that contains the query circle
@@ -53,7 +101,6 @@ module.exports = {
         const maxLat = radians(lat + r)
         const minLat = radians(lat - r)
 
-        // 
         const query = `SELECT * FROM Business FULL OUTER JOIN Address ON
                         (Business.Address = Address.AddressID)
                         WHERE
@@ -65,13 +112,52 @@ module.exports = {
 
         db.query(query)
             .then(result => {
-                const rows = result.rows
-                const filterRows = rows.filter((row) => {
-                    const coordinates = row.coordinates
-                    return math.acos(math.sin(lat) * math.sin(degrees(coordinates.x)) + math.cos(lat) * math.cos(degrees(coordinates.x)) * math.cos(degrees(coordinates.y) - (lon))) <= r
-                })
-                res.json(result.filterRows)
+                const coordinates = {lon: lon, lat: lat, r:r}
+                var rows = radiusFilter(coordinates, result.rows)
+                var filterRows = applyFilters(rows, null, radius, searchQuery, rating, coordinates)
+                res.json(filterRows)
             })
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-    },
+    }
+
+    else if (searchQuery){
+        // results: business details, address, rating, service, tag
+
+        const query = `SELECT * FROM Business WHERE LOWER(name) LIKE LOWER('%${searchQuery}%')`
+
+        db.query(query)
+            .then(result => {
+
+                var rows = result.rows
+                console.log(rows)
+                var filterRows = applyFilters(rows, null, null, searchQuery, rating, null)
+
+                res.json(filterRows)
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    }
+
+    else if (rating){
+        // results: business details, address, rating, service, tag
+        // const query = `SELECT * FROM Business WHERE LOWER(name) LIKE LOWER('%${searchQuery}%')`
+
+        db.query(query)
+            .then(result => {
+
+                var rows = result.rows
+                var filterRows = applyFilters(rows, null, null, null, rating, null)
+
+                res.json(filterRows)
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+
+    }
 }
+
+
+
+
+module.exports = {
+    search: search 
+} 

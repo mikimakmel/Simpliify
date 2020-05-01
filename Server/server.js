@@ -68,8 +68,7 @@ app.get('/review/getBusinessReviews', reviewCtl.getBusinessReviews);            
 app.post('/review/deleteReview', reviewCtl.deleteReview);                        // READY
 
 /*** Search routes ***/
-app.get('/search/searchByName', searchCtl.searchByName);
-app.get('/search/searchByRadius', searchCtl.searchByRadius);
+app.post('/search/search', searchCtl.search);
 
 
 // in case of a wrong route creating a fallback.
