@@ -155,8 +155,29 @@ search = (req, res) => {
     }
 }
 
+/* ULTIMATE FUCKING QUERY */
+/* SELECT Business.BusinessID, Business.Address, Manager, Business.Name AS BusinessName, Category,
+          Service.name AS ServiceName, Phone, Website, Business.Description, Dailycounter, Avatar,
+          Coordinates[0] AS Lat, Coordinates[1] AS Lng, AVG(Rating)::NUMERIC(2,1) AS Rating FROM Business
+          LEFT JOIN Service ON (Business.BusinessID = Service.BusinessID)
+          LEFT JOIN Address ON (Business.Address = Address.AddressID)
+          LEFT JOIN Review ON (Business.BusinessID = Review.Business) WHERE
+          LOWER(Category) = LOWER('HEALTH') AND
+          Service.Name ILIKE '%Health%' AND
+          (Coordinates[0] >= ${minLat}) AND
+          (Coordinates[0] <= ${maxLat}) AND
+          (Coordinates[1] >= ${minLon}) AND
+          (Coordinates[1] <= ${maxLon})
+          GROUP BY Business.Businessid, Service.Name, Coordinates[0], Coordinates[1] ORDER BY Rating DESC */
 
-
+// Explanation - 
+// If you want to choose a specific category use: Category = 'Foo',
+// If no specific category is required simply use: IS NOT NULL.
+// e.g. Category IS NOT NULL
+// If you want to check whether a service name contains a word use: %Foo%,
+// If no specific category is required simply use: %%.
+// I made sure that nothing is case sensitive so a correct input would be correct.
+// Good Luck <3
 
 module.exports = {
     search: search 
