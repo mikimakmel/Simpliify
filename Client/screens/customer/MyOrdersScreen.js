@@ -61,6 +61,10 @@ class MyOrdersScreen extends Component {
     //   }
     // ]
 
+    if(item.status === 'Cancelled') {
+      return;
+    }
+
     const year = item.starttime.split('-')[0];
     const month = item.starttime.split('-')[1];
     const day = item.starttime.split('-')[2].split('T')[0];

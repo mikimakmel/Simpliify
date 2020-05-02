@@ -14,6 +14,7 @@ export default class BusinessScreen extends Component {
     super(props);
     this.state = {
       businessData: this.props.route.params.businessData,
+      carousel: []
     }
     this.renderBusinessInfo = this.renderBusinessInfo.bind(this);
   }
@@ -33,7 +34,7 @@ export default class BusinessScreen extends Component {
       >
         <AboutPage
           tabLabel="About"
-          isInUserFavorites={this.state.isInUserFavorites}
+          // isInUserFavorites={this.state.isInUserFavorites}
           businessData={businessData}
         />
         <ServicesPage
@@ -46,14 +47,14 @@ export default class BusinessScreen extends Component {
   }
 
   render() {
-    const { businessData } = this.state;
-    const test_businessData = database.businesses[0];
-
     return (
       <View style={styles.flexContainer}>
         <View style={styles.ImagesSwiperContainer}>
           <ImagesSwiper
-            images={test_businessData.Pictures.Carousel}
+            images={
+              this.state.businessData.businessDetails.photos.carousel.map((item) => {
+                return item.imagelink;
+            })}
             autoplay={true}
             autoplayTimeout={5}
             showsPagination

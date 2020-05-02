@@ -7,39 +7,23 @@ class ServicesPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      servicesList: []
     };
     this.renderPricingCard = this.renderPricingCard.bind(this);
-    this.fetchServicesList = this.fetchServicesList.bind(this);
-  }
-
-  componentDidMount() {
-    this.fetchServicesList();
-  }
-
-  async fetchServicesList() {
-    const url = 'http://192.168.1.198:3000/service/getAllBusinessServices';
-    const options = { 
-      method: 'POST', 
-      headers: { 
-          'Accept': 'application/json',
-          'Content-Type': 'application/json' 
-      },
-      body: JSON.stringify({businessID: this.props.businessData.businessid})
-    };
-    const request = new Request(url, options)
-
-    await fetch(request)
-      .then(response => response.json())
-      .then(async data => {
-        // console.log(data)
-        this.setState({servicesList: data});
-      })
-      .catch(error => console.log(error))
   }
 
   renderPricingCard({ item }) {
-    const test_businessData = database.businesses[0];
+    function convertMinsToHrsMins(mins) {
+      let h = Math.floor(mins / 60);
+      let m = mins % 60;
+      let text = h > 0 ? 'hrs' : 'mins'
+      m = m < 10 ? '0' + m : m;
+      if(h === 0) {
+        return `${m} ${text}`;
+      }
+      else {
+        return `${h}:${m} ${text}`;
+      }
+    }
 
     return (
       <View style={styles.pricingCardContainer}>
@@ -47,19 +31,20 @@ class ServicesPage extends Component {
           <Text style={styles.titleText}>{item.name}</Text>
         </View>
         <View>
-          <Text style={styles.priceText}>{item.price}</Text>
+          <Text style={styles.priceText}>{item.price}₪</Text>
         </View>
         <View>
-          <Text style={styles.durationText}>{item.durationminutes}</Text>
+          <Text style={styles.durationText}>
+            {convertMinsToHrsMins(item.durationminutes)}
+          </Text>
         </View>
         <View style={styles.bookButtonContainer}>
           <TouchableOpacity
             style={styles.bookButton}
             onPress={() =>
               this.props.navigation.navigate('Booking', {
-                // serviceData: item,
-                serviceData: test_businessData.Services[0],
-                businessData: this.props.businessData
+                serviceData: item,
+                businessData: this.props.businessData.businessDetails
               })
             }
           >
@@ -71,13 +56,14 @@ class ServicesPage extends Component {
   }
 
   render() {
-    // console.log(this.state.servicesList)
+    const businessData = this.props.businessData.businessDetails;
+
     return (
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
             <View style={{ alignItems: 'center', marginTop: 35 }}>
             <FlatList
-                keyExtractor={(item, index) => index.toString()}
-                data={this.state.servicesList}
+                keyExtractor={(item) => item.serviceid.toString()}
+                data={businessData.services}
                 renderItem={this.renderPricingCard}
             />
             </View>

@@ -55,7 +55,7 @@ export default class FavoriteBusinessCard extends Component {
   // }
 
   render() {
-    const { businessData } = this.props
+    const { businessData } = this.props;
 
     return (
       <TouchableOpacity

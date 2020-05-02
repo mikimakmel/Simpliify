@@ -12,7 +12,7 @@ import CameraScreen from '../screens/CameraScreen';
 import CreditCardScreen from '../screens/CreditCardScreen';
 import SignUpForm from '../screens/user/SignUpForm';
 import SplashScreen from '../screens/SplashScreen';
-import { AntDesign, EvilIcons, Feather, Ionicons } from '@expo/vector-icons';
+import { AntDesign, EvilIcons, Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -157,7 +157,7 @@ function BottomTabNavigator({ navigation, route }) {
         options={{
           title: 'Menu',
           tabBarIcon: ({ color }) => (
-            <Ionicons name="ios-menu" size={40} color={color} style={{ paddingTop: 2 }} />
+            <Feather name="menu" size={34} color={color} style={{}} />
           )
         }}
       />
