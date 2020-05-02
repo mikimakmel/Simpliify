@@ -61,15 +61,28 @@ applyFilters = (rows, category=null, radius=null, searchString=null, rating=null
 search = (req, res) => {
     console.log("Search function");
     // search by radius parameters:
-    const radius = req.body.radius
-    const lon = req.body.lon
-    const lat = req.body.lat
-    const searchQuery = req.body.searchQuery
-    const category = req.body.category
-    const rating = req.body.rating
-    const ratNum = req.body.ratNum
+    const radius = req.body.radius;
+    const lon = req.body.lon;
+    const lat = req.body.lat;
+    const searchQuery = req.body.searchQuery;
+    const category = req.body.category;
+    const rating = req.body.rating;
+    const minPrice = req.body.minPrice;
+    const maxPrice = req.body.maxPrice;
 
-    
+    // default values in frontend
+    // searchQuery: '',
+    // distance: 10,
+    // minPrice: '0',
+    // maxPrice: null,
+    // rating: 0,
+    // category: 'All',
+
+    console.log('searchQuery: ' + searchQuery + ', radius: ' + 
+        radius + ',  category: ' + category + ',   rating: ' 
+        + rating + ',  lon: ' + lon + ',  lat: ' + lat + ',  minPrice: '
+        + minPrice + ',  maxPrice: ' + maxPrice);
+
     if (category){
         // results: business details, address, rating, service, tag
         

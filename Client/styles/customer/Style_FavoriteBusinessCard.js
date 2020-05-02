@@ -70,6 +70,6 @@ export default StyleSheet.create({
     fontWeight: '200',
     color: Colors.green02,
     opacity: 0.6,
-    marginTop: 6
+    marginTop: 3
   }
 })

@@ -12,6 +12,8 @@ import CameraScreen from '../screens/CameraScreen';
 import CreditCardScreen from '../screens/CreditCardScreen';
 import SignUpForm from '../screens/user/SignUpForm';
 import SplashScreen from '../screens/SplashScreen';
+import ResultsList from '../screens/customer/Explore/ResultsList';
+import ResultCard from '../screens/customer/Explore/ResultCard';
 import { AntDesign, EvilIcons, Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -74,7 +76,10 @@ function ExploreStack() {
         headerShown: false
       }}
     >
-      <Stack.Screen name="Explore" component={ExploreScreen} />
+      <Stack.Screen name="Explore" component={ExploreScreen}/>
+      <Stack.Screen name="ResultsList" component={ResultsList}/>
+      <Stack.Screen name="ResultCard" component={ResultCard}/>
+      <Stack.Screen name="Business" component={BusinessScreen} options={{headerShown: true}} />
     </Stack.Navigator>
   );
 }

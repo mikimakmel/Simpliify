@@ -14,38 +14,39 @@ class SearchBar extends Component {
   }
 
   updateSearch(searchQuery) {
-    this.setState({ searchQuery })
-    if (searchQuery !== '') {
-      // this.handleSearch(searchQuery)
-    }
+    this.setState({ searchQuery });
+    this.props.updateSearch(searchQuery);
   }
 
   render() {
     return (
         <View style={styles.searchContainer}>
             <Ionicons
-            name="ios-search"
-            size={24}
-            style={styles.searchIcon}
-            color={colors.gray04}
+              name="ios-search"
+              size={24}
+              style={styles.searchIcon}
+              color={colors.gray04}
             />
             <TextInput
-            placeholder="I'm looking for..."
-            placeholderTextColor={colors.red}
-            underlineColorAndroid="transparent"
-            style={styles.textInputBox}
-            onChangeText={text => this.updateSearch(text)}
-            value={this.state.searchQuery}
+              placeholder="I'm looking for..."
+              placeholderTextColor={colors.red}
+              underlineColorAndroid="transparent"
+              style={styles.textInputBox}
+              onChangeText={text => this.updateSearch(text)}
+              value={this.state.searchQuery}
+              returnKeyType={'search'}
+              onSubmitEditing={() => this.props.fetchSearch()}
             />
-            {this.state.searchQuery !== '' ? (
-            <Ionicons
+            {
+              this.state.searchQuery === '' ? null :
+              (<Ionicons
                 name="ios-close-circle"
                 onPress={() => this.updateSearch('')}
-                size={20}
+                size={22}
                 style={styles.closeIcon}
                 color={colors.gray04}
-            />
-            ) : null}
+              />)
+            }
         </View>
     );
   }

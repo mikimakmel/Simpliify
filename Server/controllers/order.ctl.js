@@ -66,7 +66,6 @@ module.exports = {
         
         db.query(query)
             .then(result => {
-                console.log(result.rows);
                 res.json(result.rows)
             })
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))

@@ -122,6 +122,6 @@ export default StyleSheet.create({
   recommendedCardContainer: {
     width: (screenWidth/2) - 32,
     height: (screenHeight/4),
-    paddingBottom: 25
+    paddingBottom: 25,
   },
 })

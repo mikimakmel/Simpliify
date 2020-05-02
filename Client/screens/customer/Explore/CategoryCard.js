@@ -1,28 +1,31 @@
 import React, { Component } from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import colors from '../../../constants/Colors';
 
 export default class CategoryCard extends Component {
     render() {
         return (
-            <View style={{ 
-                height: 120, 
-                width: 120,  
+            <TouchableOpacity style={{ 
+                height: 110, 
+                width: 110,  
                 borderRadius: 10, 
                 shadowOffset: { width: 0, height: 1 },
-                shadowRadius: 3,
-                shadowColor: colors.gray04,
-                shadowOpacity: 0.25,
+                shadowRadius: this.props.chosenCategory === this.props.categoryData.label ? 4 : 3,
+                shadowColor: this.props.chosenCategory === this.props.categoryData.label ? colors.blue : colors.gray04,
+                shadowOpacity: this.props.chosenCategory === this.props.categoryData.label ? 0.8 : 0.25,
                 elevation: 3,
                 backgroundColor : 'white',
                 margin: 7,
-                marginLeft: this.props.index === 0 ? 24 : 7
-            }}
+                marginLeft: this.props.index === 0 ? 24 : 7,
+                borderWidth: this.props.chosenCategory === this.props.categoryData.label ? 0.1 : null,
+                borderColor: this.props.chosenCategory === this.props.categoryData.label ? colors.blue : null
+                }}
+                onPress={() => this.props.changeCategory(this.props.categoryData.label)}
             >
-                <View style={{ flex: 2 }}>
+                <View style={{ flex: 2, paddingTop: 5 }}>
                     <Image 
-                        source={this.props.categoryData.image} 
-                        style={{ flex: 1, width: null, height: null, resizeMode: 'stretch', borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
+                        source={{ uri: this.props.categoryData.image }}
+                        style={{ flex: 1, width: null, height: null, resizeMode: 'contain', }}
                     />
                 </View>
                 <View style={{ flex: 1, justifyContent: 'center', paddingLeft: 10 }}>
@@ -33,10 +36,10 @@ export default class CategoryCard extends Component {
                         fontWeight: '500',
                     }}
                     >
-                       {this.props.categoryData.text}
+                       {this.props.categoryData.label}
                     </Text>
                 </View>
-            </View>
+            </TouchableOpacity>
         )
     }
 }

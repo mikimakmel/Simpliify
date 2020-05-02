@@ -4,6 +4,7 @@ export default {
   white: '#ffffff',
   green01: '#008388',
   green02: '#02656b',
+  green03: '#00A699',
   darkOrange: '#d93900',
   lightGray: '#d8d8d8',
   pink: '#fc4c54',
@@ -17,5 +18,6 @@ export default {
   brown01: '#ad8763',
   brown02: '#7d4918',
   blue: '#4995cd',
-  red: '#F3777B'
+  red: '#FF5A5F',
+  yellow: '#FEB726',
 };
