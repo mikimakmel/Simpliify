@@ -5,19 +5,19 @@ module.exports = {
     // user's create an new order for a service.
     async createNewOrder(req, res) {
         console.log("createNewOrder()");
-
-        const userID = req.body.order.userID;
-        const businessID = req.body.order.businessID;
-        const serviceID = req.body.order.serviceID;
+        
+        const userID = req.body.userID;
+        const businessID = req.body.businessID;
+        const serviceID = req.body.serviceID;
         const status = 'Confirmed';
-        const startTime = req.body.order.startTime;
+        const startTime = req.body.startTime;
 
         const query = 
             `INSERT INTO Orders 
             (Customer, Business, Service, status, starttime, orderedat) 
             VALUES 
             ('${userID}', '${businessID}', '${serviceID}', '${status}', '${startTime}', NOW() AT TIME ZONE 'EETDST')
-            RETURNING Customer, Business, Service, status, starttime AT TIME ZONE 'UTC' as starttime, orderedat AT TIME ZONE 'UTC' as orderedat`;
+            RETURNING Orderid, Customer, Business, Service, status, starttime AT TIME ZONE 'UTC' as starttime, orderedat AT TIME ZONE 'UTC' as orderedat`;
         
         db.query(query)
             .then(result => res.json(result.rows[0]))
@@ -52,7 +52,7 @@ module.exports = {
 
         const query = 
             `SELECT 
-            orderid, customer AS CustomrID, business AS BusinessID, Business.Name AS BusinessName, Business.Avatar AS avatar,
+            orderid, customer AS CustomerID, business AS BusinessID, Business.Name AS BusinessName, Business.Avatar AS avatar,
             Service AS ServiceID, Service.Name as ServiceName, status, Service.durationminutes as durationminutes,
             starttime AT TIME ZONE 'UTC' as starttime, 
             orderedat AT TIME ZONE 'UTC' as orderedat, 

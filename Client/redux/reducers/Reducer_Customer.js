@@ -15,12 +15,12 @@ const CustomerReducer = (state = initialState, action) => {
             }
         }
 
-        // case actionsTypes.ADD_TO_ORDERS_LIST: {
-        //     return {
-        //         ...state,
-        //         ordersList: [...state.ordersList, action.data]
-        //     }
-        // }
+        case actionsTypes.ADD_TO_ORDERS_LIST: {
+            return {
+                ...state,
+                ordersList: [...state.ordersList, action.data]
+            }
+        }
 
         case actionsTypes.UPDATE_ORDERS_LIST: {
             return {

@@ -12,12 +12,12 @@ export default class CategoryCard extends Component {
                 shadowOffset: { width: 0, height: 1 },
                 shadowRadius: this.props.chosenCategory === this.props.categoryData.label ? 4 : 3,
                 shadowColor: this.props.chosenCategory === this.props.categoryData.label ? colors.blue : colors.gray04,
-                shadowOpacity: this.props.chosenCategory === this.props.categoryData.label ? 0.8 : 0.25,
+                shadowOpacity: this.props.chosenCategory === this.props.categoryData.label ? 0.9 : 0.25,
                 elevation: 3,
                 backgroundColor : 'white',
                 margin: 7,
                 marginLeft: this.props.index === 0 ? 24 : 7,
-                borderWidth: this.props.chosenCategory === this.props.categoryData.label ? 0.1 : null,
+                borderWidth: this.props.chosenCategory === this.props.categoryData.label ? 0.25 : null,
                 borderColor: this.props.chosenCategory === this.props.categoryData.label ? colors.blue : null
                 }}
                 onPress={() => this.props.changeCategory(this.props.categoryData.label)}

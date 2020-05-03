@@ -31,7 +31,7 @@ class ServicesPage extends Component {
           <Text style={styles.titleText}>{item.name}</Text>
         </View>
         <View>
-          <Text style={styles.priceText}>{item.price}₪</Text>
+          <Text style={styles.priceText}>₪{item.price}</Text>
         </View>
         <View>
           <Text style={styles.durationText}>

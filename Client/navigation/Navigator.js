@@ -13,8 +13,9 @@ import CreditCardScreen from '../screens/CreditCardScreen';
 import SignUpForm from '../screens/user/SignUpForm';
 import SplashScreen from '../screens/SplashScreen';
 import ResultsList from '../screens/customer/Explore/ResultsList';
-import ResultCard from '../screens/customer/Explore/ResultCard';
-import { AntDesign, EvilIcons, Feather, Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import MyBusiness from '../screens/business/MyBusiness';
+import CalendarScreen from '../screens/business/CalendarScreen';
+import { AntDesign, EvilIcons, Feather, Ionicons, MaterialIcons, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -133,7 +134,7 @@ function CustomerBottomTabNavigator() {
           )
         }}
       />
-      <BottomTab.Screen
+      {/* <BottomTab.Screen
         name="Notifications"
         component={NotificationsScreen}
         options={{
@@ -142,7 +143,7 @@ function CustomerBottomTabNavigator() {
             <Ionicons name="ios-notifications-outline" size={36} color={color} style={{ paddingTop: 3 }} />
           )
         }}
-      />
+      /> */}
       <BottomTab.Screen
         name="Menu"
         component={MenuStack}
@@ -170,18 +171,18 @@ function BusinessBottomTabNavigator() {
         }}
       >
       <BottomTab.Screen
-        name="Explore"
+        name="Insight"
         component={ExploreStack}
         options={{
-          title: 'Explore',
+          title: 'Insight',
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="bullseye-arrow" size={40} color={color} style={{ paddingTop: 5 }} />
+            <SimpleLineIcons name="chart" size={28} color={color} style={{ paddingTop: 2 }} />
           )
         }}
       />
       <BottomTab.Screen
         name="Schedule"
-        component={MyOrdersScreen}
+        component={CalendarScreen}
         options={{
           title: 'Schedule',
           tabBarIcon: ({ color }) => (
@@ -191,15 +192,15 @@ function BusinessBottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Home"
-        component={HomeStack}
+        component={MyBusiness}
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => (
-            <AntDesign name="home" size={31} color={color} style={{ paddingTop: 2 }} />
+            <Ionicons name="ios-business" size={31} color={color} style={{ paddingTop: 2 }} />
           )
         }}
       />
-      <BottomTab.Screen
+      {/* <BottomTab.Screen
         name="Notifications"
         component={NotificationsScreen}
         options={{
@@ -208,7 +209,7 @@ function BusinessBottomTabNavigator() {
             <Ionicons name="ios-notifications-outline" size={36} color={color} style={{ paddingTop: 3 }} />
           )
         }}
-      />
+      /> */}
       <BottomTab.Screen
         name="Menu"
         component={MenuStack}

@@ -1,7 +1,7 @@
 // actionsTypes
 export const actionsTypes = {
     ADD_TO_FAVORITES_LIST: 'ADD_TO_FAVORITES_LIST',
-    // ADD_TO_ORDERS_LIST: 'ADD_TO_ORDERS_LIST',
+    ADD_TO_ORDERS_LIST: 'ADD_TO_ORDERS_LIST',
     UPDATE_ORDERS_LIST: 'UPDATE_ORDERS_LIST',
 };
 
@@ -12,10 +12,10 @@ export const addToFavoritesList = (data) => ({
     data: data
 });
 
-// export const addToOrdersList = (data) => ({
-//     type: actionsTypes.ADD_TO_ORDERS_LIST,
-//     data: data
-// });
+export const addToOrdersList = (data) => ({
+    type: actionsTypes.ADD_TO_ORDERS_LIST,
+    data: data
+});
 
 export const updateOrdersList = (data) => ({
     type: actionsTypes.UPDATE_ORDERS_LIST,

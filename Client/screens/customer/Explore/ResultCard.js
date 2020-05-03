@@ -12,7 +12,31 @@ class ResultCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      businessPressed: {}
     };
+    this.fetchBusiness = this.fetchBusiness.bind(this);
+  }
+
+  async fetchBusiness(businessID) {
+    const url = 'http://192.168.1.198:3000/business/getBusinessByID';
+    const options = { 
+      method: 'POST', 
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({businessID})
+    };
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(data => {
+        // console.log(data)
+        // return data;
+        this.setState({businessPressed: data})
+      })
+      .catch(error => console.log(error))
   }
 
   calculatePriceRange(servicesList) {
@@ -28,7 +52,7 @@ class ResultCard extends Component {
       }
     });
 
-    return `Price Range: ${minPrice}₪ - ${maxPrice}₪`;
+    return `Price Range: ₪${minPrice} - ₪${maxPrice}`;
   }
 
   isInFavorites() {
@@ -48,7 +72,7 @@ class ResultCard extends Component {
     return(
       <View style={{zIndex: 1}}>
         <Ionicons name="md-heart" size={20} color={colors.white} style={{position: 'absolute', zIndex: 1, right: 8, top: 5}}/>
-        <Ionicons name="md-heart" size={16} color={colors.red} style={{position: 'absolute', zIndex: 2, right: 9.6, top: 6.9}}/>
+        <Ionicons name="md-heart" size={16} color={colors.red} style={{position: 'absolute', zIndex: 2, right: 9.6, top: 6.9, opacity: 0.9}}/>
       </View>
     )
   }
@@ -59,7 +83,13 @@ class ResultCard extends Component {
     return (
       <TouchableOpacity 
         style={styles.recommendedCardContainer}
-        onPress={() => this.props.navigation.navigate('Business', {businessData: this.props.businessData, isInFavorites: this.isInFavorites()})}
+        onPress={async () => {
+          await this.fetchBusiness(businessData.business.businessid);
+          this.props.navigation.navigate('Business', {
+            businessData: this.state.businessPressed, 
+            isInFavorites: this.isInFavorites()
+          })
+        }}
       >
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
@@ -71,7 +101,7 @@ class ResultCard extends Component {
           </View>
         </View>
         <View style={{ alignItems: 'flex-start' }}>
-          <Text style={{ fontSize: 10, color: colors.red, fontWeight: '400', marginTop: 5 }}>
+          <Text style={{ fontSize: 10, color: colors.red, fontWeight: '500', marginTop: 5 }}>
             {businessData.business.category}
           </Text>
           <Text style={{ fontSize: 12, color: colors.gray04, fontWeight: '700', marginTop: 3}}>
@@ -93,7 +123,7 @@ class ResultCard extends Component {
                 ratingColor={colors.green03} 
                 type={'custom'}
               />
-              <Text style={{ fontSize: 8, color: colors.green03, fontWeight: '500', marginLeft: 3 }}>
+              <Text style={{ fontSize: 10, color: colors.green03, fontWeight: '700', marginLeft: 4, marginTop: 1 }}>
                 {businessData.business.rating}
               </Text>
           </View>

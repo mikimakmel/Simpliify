@@ -162,6 +162,7 @@ class SplashScreen extends Component {
     await fetch(request)
       .then(response => response.json())
       .then(data => {
+        // console.log(data)
         this.props.dispatch(Actions_Customer.updateOrdersList(data));
       })
       .catch(error => console.log(error))

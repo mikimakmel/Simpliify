@@ -24,8 +24,8 @@ export default StyleSheet.create({
     color: colors.black,
     opacity: 0.8,
     fontWeight: '600',
-    fontSize: 18,
-    paddingLeft: 5
+    fontSize: 16,
+    marginLeft: 10
   },
   ListSubtitle: {
     color: '#afb8bb',
@@ -33,10 +33,14 @@ export default StyleSheet.create({
     fontWeight: '500',
     fontSize: 14
   },
+  ButtonContainer: {
+    width: 75, 
+    marginRight: 5 
+  },
   ButtonStyling: {
     borderRadius: 20,
     borderColor: '#0E778C',
-    borderWidth: 1.5
+    borderWidth: 1.5,
   },
   ButtonTitleStyling: {
     color: '#0E778C',

@@ -54,7 +54,7 @@ export default StyleSheet.create({
     opacity: 0.85,
     backgroundColor: 'white',
     paddingLeft: 20,
-    marginTop: 2
+    marginTop: 2.5
   },
   categoriesText: {
     color: Colors.gray04,

@@ -210,7 +210,7 @@ class ExploreScreen extends Component {
         overlayStyle={{height: 200}}
       >
         <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{fontSize: 18, fontWeight: '600'}}>Price range:</Text>
+          <Text style={{fontSize: 14, fontWeight: '600'}}>Price range:</Text>
           <View style={{flexDirection: 'row', marginTop: 15, justifyContent: 'center', alignItems: 'center'}}>
             <Text style={{fontSize: 14, fontWeight: '400', marginRight: 10, marginLeft: 10}}>min</Text>
             <TextInput 
@@ -260,8 +260,6 @@ class ExploreScreen extends Component {
   }
 
   render() {
-    // this.props.navigation.navigate('Business');
-    // console.log(this.props.navigation)
     return (
       <SafeAreaView style={styles.flexContainer}>
           <View style={styles.flexContainer}>

@@ -129,7 +129,7 @@ class MyOrdersScreen extends Component {
 
   renderOrdersList() {
     return (
-      <FlatList data={this.props.ordersList} renderItem={this.renderRow} keyExtractor={(item) => item.orderid.toString()}/>
+      <FlatList data={this.props.ordersList} renderItem={this.renderRow} keyExtractor={(item, index) => index.toString()}/>
     )
   }
 

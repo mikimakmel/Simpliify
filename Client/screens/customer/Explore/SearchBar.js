@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, TextInput } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Fontisto } from '@expo/vector-icons';
 import colors from '../../../constants/Colors';
 import styles from '../../../styles/customer/Style_ExploreScreen';
 
@@ -21,9 +21,9 @@ class SearchBar extends Component {
   render() {
     return (
         <View style={styles.searchContainer}>
-            <Ionicons
-              name="ios-search"
-              size={24}
+            <Fontisto
+              name="search"
+              size={22}
               style={styles.searchIcon}
               color={colors.gray04}
             />

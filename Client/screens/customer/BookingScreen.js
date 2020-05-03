@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Children } from 'react';
 import { View, Text, ScrollView, FlatList, Alert, TouchableOpacity, AsyncStorage } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import { ListItem, Button, Overlay } from 'react-native-elements';
@@ -9,6 +9,16 @@ import styles from '../../styles/customer/Style_BookingScreen';
 import moment from 'moment';
 import database from '../../database';
 import { connect } from "react-redux";
+import * as Actions_Customer from '../../redux/actions/Actions_Customer';
+
+const openHours = [
+  { time: '08:00' },
+  { time: '09:00' },
+  { time: '10:00' },
+  { time: '11:00' },
+  { time: '12:00' },
+  { time: '13:00' },
+];
 
 class BookingScreen extends Component {
   constructor(props) {
@@ -18,75 +28,120 @@ class BookingScreen extends Component {
         serviceData: this.props.route.params.serviceData,
         currentBook: {},
         eventDetails: {},
-        overlayVisible: false
+        overlayVisible: false,
+        selectedDate: null,
+        prettyDate: null,
     };
     this.onDayPress = this.onDayPress.bind(this);
-    this.handleBookButtonPressed = this.handleBookButtonPressed.bind(this);
+    this.handleBooking = this.handleBooking.bind(this);
     this.renderRow = this.renderRow.bind(this);
     this.createNewOrder = this.createNewOrder.bind(this);
     this.renderOverlay = this.renderOverlay.bind(this);
+    this.initDate = this.initDate.bind(this);
   }
 
   componentDidMount() {
-    const Tday = new Date().getDate().toString();
+    this.initDate();
+  }
+
+  initDate() {
+    let Tday = new Date().getDate().toString();
     let Tmonth = (new Date().getMonth() + 1).toString();
-    const Tyear = new Date().getFullYear().toString();
+    let Tyear = new Date().getFullYear().toString();
     if (Tmonth.length < 2) {
       Tmonth = '0' + Tmonth
     }
-    const TfullDate = Tyear + '-' + Tmonth.toString() + '-' + Tday.toString();
-    this.setState({ selected: TfullDate, currentDay: TfullDate });
+    if (Tday.length < 2) {
+      Tday = '0' + Tday
+    }
+    const TfullDate = Tyear.toString() + '-' + Tmonth.toString() + '-' + Tday.toString();
+    let pretty = Tday.toString() + '/' + Tmonth.toString() + '/' + Tyear.toString();
+    this.setState({ selectedDate: TfullDate, prettyDate: pretty });
   }
 
   onDayPress(day) {
-    this.setState({ selected: day.dateString });
+    let d, m;
+
+    if (day.day.toString().length < 2) {
+      d = '0' + day.day.toString();
+    }
+    else {
+      d = day.day.toString();
+    }
+    if (day.month.toString().length < 2) {
+      m = '0' + day.month.toString();
+    } 
+    else {
+      m = day.month.toString();
+    }
+
+    let pretty = d + '/' + m + '/' + day.year.toString();
+    this.setState({ selectedDate: day.dateString, prettyDate: pretty });
   }
 
-  handleBookButtonPressed(item) {
+  handleBooking(item) {
     Alert.alert(
       'Are you sure?',
-      `Booking ${this.state.serviceData.Name} at ${item.Time}`,
+      `Booking ${this.props.route.params.serviceData.name} at ${item.time}`,
       [
         {
           text: 'Yes',
-          onPress: () => {
-            this.createNewOrder(item);
-            // this.setState({ overlayVisible: true })
-          }
+          onPress: () => this.createNewOrder(item)
+          // onPress: async () => {
+          //   // this.setState({ overlayVisible: true })
+          //   await this.createNewOrder(item);
+          // }
         },
-        { text: 'Cancel' }
+        { 
+          text: 'Cancel',
+        }
       ],
-      { cancelable: false }
+      // { cancelable: false }
     )
   }
 
   async createNewOrder(item) {
-    const test_businessData = database.businesses[0];
     const { businessData, serviceData } = this.state;
-    // console.log(businessData)
-
-    const order = {
-      userID: this.props.currentUser.userid,
-      businessID: businessData.businessid,
-      serviceID: 12,
-      startTime: `${this.state.selected} ${item.Time}`,
-    }
     
     const url = 'http://192.168.1.198:3000/order/createNewOrder';
     const options = { 
       method: 'POST', 
       headers: { 
-          'Accept': 'application/json',
-          'Content-Type': 'application/json' 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
       },
-      body: JSON.stringify({order: order})
+      body: JSON.stringify({
+        userID: this.props.currentUser.userid,
+        businessID: businessData.business.businessid,
+        serviceID: serviceData.serviceid,
+        startTime: `${this.state.selectedDate} ${item.time}`
+      })
     };
     const request = new Request(url, options)
 
     await fetch(request)
       .then(response => response.json())
-      .then(async data => {
-        console.log(data)
+      .then(data => {
+        let order = {
+          businessid: businessData.business.businessid,
+          businessname: businessData.business.name,
+          avatar: businessData.business.avatar,
+          street: businessData.business.street,
+          city: businessData.business.city,
+          country: businessData.business.country,
+          lat: businessData.business.coordinates.x,
+          lng: businessData.business.coordinates.y,
+          customerid: this.props.currentUser.userid,
+          orderid: data.orderid,
+          serviceid: serviceData.serviceid,
+          servicename: serviceData.name,
+          durationminutes: serviceData.durationminutes,
+          starttime: data.starttime,
+          orderedat: data.orderedat,
+          status: data.status,
+        }
+
+        this.props.dispatch(Actions_Customer.addToOrdersList(order));
       })
       .catch(error => console.log(error))
   }
@@ -126,75 +181,54 @@ class BookingScreen extends Component {
   }
 
   renderRow({ item }) {
-    // console.log(item)
-
     return (
       <View>
         <ListItem
-          title={item.Time}
+          title={item.time}
           titleStyle={styles.ListTitle}
-          // subtitle={item.Hosting}
-          // subtitleStyle={styles.ListSubtitle}
           bottomDivider
           checkmark={
             <Button
               buttonStyle={styles.ButtonStyling}
               titleStyle={styles.ButtonTitleStyling}
-              containerViewStyle={{ witdh: 70 }}
+              containerStyle={styles.ButtonContainer}
               type="outline"
-              large
               title="Book"
-              onPress={() => this.handleBookButtonPressed(item)}
+              onPress={() => this.handleBooking(item)}
             />
           }
         />
       </View>
-    )
+    );
   }
 
   render() {
-    // console.log(this.state.serviceData);
-    
     return (
-        <View style={styles.container}>
-            <CalendarList
-            horizontal
-            pagingEnabled
-            style={styles.calendar}
-            minDate={Date()}
-            onDayPress={this.onDayPress}
-            // onMonthChange={(month) => {console.log('month changed', month)}}
-            markingType={'custom'}
-            markedDates={{
-                [this.state.selected]: {
-                customStyles: {
-                    container: {
-                    backgroundColor: colors.red
-                    },
-                    text: {
-                    color: 'white'
-                    }
-                }
-                },
-                '2019-07-19': {
-                customStyles: {
-                    text: {
-                    color: 'white'
-                    }
-                }
-                }
-            }}
-            />
-            <Text style={styles.text}>{this.state.selected}</Text>
-            <ScrollView>
-            <FlatList
-              data={this.state.serviceData.Availability}
-              renderItem={this.renderRow}
-              keyExtractor={(item, index) => index.toString()}
-            />
-            </ScrollView>
-            {/* {this.renderOverlay()} */}
-        </View>
+      <View style={styles.container}>
+        <CalendarList
+          horizontal
+          pagingEnabled
+          style={styles.calendar}
+          minDate={Date()}
+          onDayPress={this.onDayPress}
+          markingType={'custom'}
+          markedDates={{ 
+            [this.state.selectedDate]: {
+              customStyles: {
+                container: { backgroundColor: colors.red },
+                text: { color: colors.white }
+              }
+            }
+          }}
+        />
+        <Text style={styles.text}>{this.state.prettyDate}</Text>
+        <FlatList
+          data={openHours}
+          renderItem={this.renderRow}
+          keyExtractor={(item, index) => index.toString()}
+        />
+        {/* {this.renderOverlay()} */}
+      </View>
     );
   }
 }
@@ -203,12 +237,12 @@ const mapStateToProps = ({ User, Customer }) => {
   return {
     hasBusiness: User.hasBusiness,
     currentUser: User.currentUser,
-    favoritesList: Customer.favoritesList
+    favoritesList: Customer.favoritesList,
+    ordersList: Customer.Customer
   }
 }
 
 export default connect(mapStateToProps)(BookingScreen);
-
 
 
     // const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
