@@ -72,6 +72,9 @@ search = (req, res) => {
     var minPrice = req.body.minPrice;
     var maxPrice = req.body.maxPrice;
 
+
+    console.log(searchQuery, )
+
     // default values in frontend
     // searchQuery: '',
     // distance: 10,
@@ -80,15 +83,7 @@ search = (req, res) => {
     // rating: 0,
     // category: 'All',
 
-
-    // radius
-    if (radius){
-        console.log("Radius chossen by user:", radius, "km")
-    } else {
-        console.log("Defult radius 10 km")
-        radius = 10
-    }
-
+    console.log('Radius choosen by user is ', radius)
     const coordinates = {
         Lon: lon, 
         Lat: lat
@@ -102,18 +97,19 @@ search = (req, res) => {
     const r = BB.r
 
     // search query
-    if (searchQuery){
-        console.log("String chossen by user:", searchQuery)
+    if (searchQuery == ""){
+        console.log("String choosen by user is sempty")
     } else {
-        searchQuery = ""
+        console.log("String choosen by user:", searchQuery)
     }
 
     // category
-    if (category){
+    if (category == 'All'){
+        console.log('Search for all categories')
+        strCategory = `Category IS NOT NULL`
+    } else {
         console.log("String chossen by user:", category)
         strCategory = `LOWER(Category) = LOWER('${category}')`
-    } else {
-        strCategory = `Category IS NOT NULL`
     }
 
     // Build query by the properties choosen by the client
