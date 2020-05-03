@@ -2,73 +2,75 @@ const { degrees, radians } = require('radians')
 const math = require('mathjs')
 const db = require('../database')
 
+// query circle -> the circle with radius that choosen by the client
 
+// calculate the bounding box containing the query circle
+calculateBBRdius = (radius, coordinates) => {
+        var lon = coordinates.Lon
+        var lat = coordinates.Lat
+        console.log(lon, lat)
+         // Earth radius
+         const R = 6371
+
+         // angular radius 
+         const r = (radius)/R;
+ 
+         // user location: Latitude & Longitude
+         // got degrees, convert to radians
+        lon = degrees(lon);
+        lat = degrees(lat);
+ 
+         // query circle = the circle with radius r when the user's location it center
+         // bounding box that contains the query circle
+         dlon = math.asinh(math.sin(r)/math.cos(lat))
+         const maxLon = radians(lon + dlon)
+         const minLon = radians(lon - dlon)
+         const maxLat = radians(lat + r)
+         const minLat = radians(lat - r)
+
+         return {
+             maxLon: maxLon,
+             minLon: minLon,
+             maxLat: maxLat,
+             minLat: minLat,
+             r: r
+         }
+
+}
+
+// find results in circle query
 radiusFilter = (coordinates, rows) => {
-    const lon = coordinates.lon
-    const lat = coordinates.lat
+    const lon = degrees(coordinates.lon)
+    const lat = degrees(coordinates.lat)
     const r = coordinates.r
-    const filterRows = rows.filter((row) => {
-        const coordinates = row.coordinates
-        return math.acos(math.sin(lat) * math.sin(degrees(coordinates.x)) + math.cos(lat) * math.cos(degrees(coordinates.x)) * math.cos(degrees(coordinates.y) - (lon))) <= r
+    var filterRows = rows.filter((row) => {
+        const rowLat = row.lat
+        const rowLon = row.lng
+        return math.acos(math.sin(lat) * math.sin(degrees(rowLat)) + math.cos(lat) * math.cos(degrees(rowLat)) * math.cos(degrees(rowLon) - (lon))) <= r
     })
     return filterRows
 }
 
-searchQueryFilter = (s, rows) => {
-    filterRows = rows.filter(row => {
-        const name = row.name.toLowerCase()
-        if (name.includes(s.toLowerCase())){
-            return true
-        }
+
+ratingFilter = (rate, rows) => {
+    var filterRows = rows.filter((row) => {
+        return row.rating >= rate
     })
-    return filterRows
-}
-
-categoryFilter = (category, rows) => {
-    return rows
-}
-
-ratingFilter = (rows) => {
-    return rows
-}
-
-applyFilters = (rows, category=null, radius=null, searchString=null, rating=null, coordinates=null) => {
-
-    console.log("Apply filters: ")
-    var filterRows = rows
-
-    if (category !== null){
-        console.log("Apply category")
-        filterRows = categoryFilter(category, filterRows)
-    }
-    if (radius !== null){
-        console.log("Apply radius")
-        filterRows = radiusFilter(coordinates, filterRows)
-    }
-    if (searchString !== null){
-        console.log("Apply searchString")
-        filterRows = searchQueryFilter(searchString, filterRows)
-
-    }
-    if (rating !== null){
-        console.log("Apply rating")
-        filterRows = ratingFilter(filterRows)
-    }
     return filterRows
 }
 
 
 search = (req, res) => {
     console.log("Search function");
-    // search by radius parameters:
-    const radius = req.body.radius;
+    // properties choosen by client (lon & lat is required!)
     const lon = req.body.lon;
     const lat = req.body.lat;
-    const searchQuery = req.body.searchQuery;
-    const category = req.body.category;
-    const rating = req.body.rating;
-    const minPrice = req.body.minPrice;
-    const maxPrice = req.body.maxPrice;
+    var radius = req.body.radius;
+    var searchQuery = req.body.searchQuery;
+    var category = req.body.category;
+    var rating = req.body.rating;
+    var minPrice = req.body.minPrice;
+    var maxPrice = req.body.maxPrice;
 
     // default values in frontend
     // searchQuery: '',
@@ -78,94 +80,75 @@ search = (req, res) => {
     // rating: 0,
     // category: 'All',
 
-    console.log('searchQuery: ' + searchQuery + ', radius: ' + 
-        radius + ',  category: ' + category + ',   rating: ' 
-        + rating + ',  lon: ' + lon + ',  lat: ' + lat + ',  minPrice: '
-        + minPrice + ',  maxPrice: ' + maxPrice);
 
+    // radius
+    if (radius){
+        console.log("Radius chossen by user:", radius, "km")
+    } else {
+        console.log("Defult radius 10 km")
+        radius = 10
+    }
+
+    const coordinates = {
+        Lon: lon, 
+        Lat: lat
+    }
+
+    const BB = calculateBBRdius(radius, coordinates)
+    const minLat = BB.minLat
+    const maxLat = BB.maxLat
+    const minLon = BB.minLon
+    const maxLon = BB.maxLon
+    const r = BB.r
+
+    // search query
+    if (searchQuery){
+        console.log("String chossen by user:", searchQuery)
+    } else {
+        searchQuery = ""
+    }
+
+    // category
     if (category){
-        // results: business details, address, rating, service, tag
-        
-        // const query = ...
-
-
-
+        console.log("String chossen by user:", category)
+        strCategory = `LOWER(Category) = LOWER('${category}')`
+    } else {
+        strCategory = `Category IS NOT NULL`
     }
 
-    else if (radius){
-        console.log('Query by radius')
-        // results: business details, address, rating, service, tag
-         // Earth radius
-        const R = 6371
+    // Build query by the properties choosen by the client
+    var query = `SELECT Business.BusinessID, Business.Address, Manager, Business.Name AS BusinessName, Category,
+                    Service.name AS ServiceName, Phone, Website, Business.Description, Dailycounter, Avatar,
+                    Coordinates[0] AS Lat, Coordinates[1] AS Lng, AVG(Rating)::NUMERIC(2,1) AS Rating FROM Business
+                    LEFT JOIN Service ON (Business.BusinessID = Service.BusinessID)
+                    LEFT JOIN Address ON (Business.Address = Address.AddressID)
+                    LEFT JOIN Review ON (Business.BusinessID = Review.Business) WHERE`
+    query = query.concat(' ', strCategory)
+    query = query.concat(' ', `AND
+                                ((Service.Name ILIKE '%${searchQuery}%') OR (Business.Name ILIKE '%${searchQuery}%')) AND
+                                (Coordinates[0] >= ${minLat}) AND
+                                (Coordinates[0] <= ${maxLat}) AND
+                                (Coordinates[1] >= ${minLon}) AND
+                                (Coordinates[1] <= ${maxLon})
+                                GROUP BY Business.Businessid, Service.Name, Coordinates[0], Coordinates[1] ORDER BY Rating DESC`)
 
-        // angular radius 
-        const r = (req.body.radius * 0.001)/R;
+    
+    
+    db.query(query)
+    .then(result => {
 
-        // user location: Latitude & Longitude
-        // got degrees, convert to radians
-        const lon = degrees(req.body.lon);
-        const lat = degrees(req.body.lat);
+        var rows = result.rows
 
-        // query circle = the circle with radius r when the user's location it center
-        // bounding box that contains the query circle
-        dlon = math.asinh(math.sin(r)/math.cos(lat))
-        const maxLon = radians(lon + dlon)
-        const minLon = radians(lon - dlon)
-        const maxLat = radians(lat + r)
-        const minLat = radians(lat - r)
+        const coordinates = {lon: lon, lat: lat, r:r}
+        var filterRows = radiusFilter(coordinates, rows)
 
-        const query = `SELECT * FROM Business FULL OUTER JOIN Address ON
-                        (Business.Address = Address.AddressID)
-                        WHERE
-                        (coordinates[0] >= ${minLat}) AND 
-                        (coordinates[0] <= ${maxLat}) AND 
-                        (coordinates[1] >= ${minLon}) AND 
-                        (coordinates[1] <= ${maxLon}) AND 
-                        BusinessID IS NOT NULL`
+        if (rating){
+            filterRows = ratingFilter(rating, rows)
+        }
 
-        db.query(query)
-            .then(result => {
-                const coordinates = {lon: lon, lat: lat, r:r}
-                var rows = radiusFilter(coordinates, result.rows)
-                var filterRows = applyFilters(rows, null, radius, searchQuery, rating, coordinates)
-                res.json(filterRows)
-            })
-            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-    }
-
-    else if (searchQuery){
-        // results: business details, address, rating, service, tag
-
-        const query = `SELECT * FROM Business WHERE LOWER(name) LIKE LOWER('%${searchQuery}%')`
-
-        db.query(query)
-            .then(result => {
-
-                var rows = result.rows
-                console.log(rows)
-                var filterRows = applyFilters(rows, null, null, searchQuery, rating, null)
-
-                res.json(filterRows)
-            })
-            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-    }
-
-    else if (rating){
-        // results: business details, address, rating, service, tag
-        // const query = `SELECT * FROM Business WHERE LOWER(name) LIKE LOWER('%${searchQuery}%')`
-
-        db.query(query)
-            .then(result => {
-
-                var rows = result.rows
-                var filterRows = applyFilters(rows, null, null, null, rating, null)
-
-                res.json(filterRows)
-            })
-            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-
-
-    }
+        res.json(filterRows)
+    })
+    .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
 /* ULTIMATE FUCKING QUERY */
