@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import AboutPage from '../customer/AboutPage';
 import ServicesPage from '../customer/ServicesPage';
 import styles from '../../styles/customer/Style_BusinessScreen';
@@ -8,8 +8,12 @@ import ImagesSwiper from 'react-native-image-swiper';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import Layout from '../../constants/Layout';
 import database from '../../database';
+import { Button, Overlay } from 'react-native-elements';
+import { connect } from "react-redux";
+import * as Actions_Customer from '../../redux/actions/Actions_Customer';
+import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
-export default class BusinessScreen extends Component {
+class BusinessScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,6 +21,7 @@ export default class BusinessScreen extends Component {
       carousel: []
     }
     this.renderBusinessInfo = this.renderBusinessInfo.bind(this);
+    this.renderAddToFavoritesButton = this.renderAddToFavoritesButton.bind(this);
   }
 
   renderBusinessInfo() {
@@ -46,6 +51,28 @@ export default class BusinessScreen extends Component {
     )
   }
 
+  renderAddToFavoritesButton() {
+    return (
+      <View style={styles.askToJoinContainer}>
+        <View style={styles.askToJoinInsideContainer}>
+          <Text style={styles.joinText}>Add to your favorites</Text>
+          <Button
+            title="Add"
+            type="outline"
+            containerStyle={styles.joinButtonContainer}
+            buttonStyle={styles.joinButton}
+            titleStyle={styles.joinButtonTitle}
+            onPress={() => {
+              // this.setState({ overlayVisible: true })
+              // this.addBusinessToFavorites()
+              this.props.dispatch(Actions_Customer.addToFavoritesList(this.state.businessData));
+            }}
+          />
+        </View>
+      </View>
+    )
+  }
+
   render() {
     return (
       <View style={styles.flexContainer}>
@@ -63,7 +90,20 @@ export default class BusinessScreen extends Component {
           />
         </View>
         {this.renderBusinessInfo()}
+        {this.props.route.params.isInFavorites ? this.renderAddToFavoritesButton() : null}
       </View>
     )
   }
 }
+
+const mapStateToProps = ({ App, User, Customer, Business }) => {
+  return {
+    hasBusiness: User.hasBusiness,
+    currentUser: User.currentUser,
+    favoritesList: Customer.favoritesList,
+    view: User.view,
+    categoriesList: App.categoriesList,
+  }
+}
+
+export default connect(mapStateToProps)(BusinessScreen);
