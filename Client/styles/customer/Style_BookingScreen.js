@@ -53,16 +53,22 @@ export default StyleSheet.create({
     backgroundColor: colors.white,
     justifyContent: 'center'
   },
+  overlaySucess: {
+    height: 100, 
+    width: 100,
+    position: 'absolute',
+    top: 120
+  },
   overlayHeadingText: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: '500',
     color: colors.red,
-    marginTop: 180,
+    marginTop: 40,
     marginBottom: 20
   },
   overlayText: {
-    fontSize: 14,
-    fontWeight: '300',
+    fontSize: 18,
+    fontWeight: '400',
     color: colors.gray03,
     marginTop: 15,
     textAlign: 'center'

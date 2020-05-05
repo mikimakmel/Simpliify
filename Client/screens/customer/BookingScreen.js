@@ -1,5 +1,5 @@
 import React, { Component, Children } from 'react';
-import { View, Text, ScrollView, FlatList, Alert, TouchableOpacity, AsyncStorage } from 'react-native';
+import { View, Text, ScrollView, FlatList, Alert, TouchableOpacity, Image } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import { ListItem, Button, Overlay } from 'react-native-elements';
 import colors from '../../constants/Colors';
@@ -26,8 +26,7 @@ class BookingScreen extends Component {
     this.state = {
         businessData: this.props.route.params.businessData,
         serviceData: this.props.route.params.serviceData,
-        currentBook: {},
-        eventDetails: {},
+        currentOrder: {},
         overlayVisible: false,
         selectedDate: null,
         prettyDate: null,
@@ -38,6 +37,7 @@ class BookingScreen extends Component {
     this.createNewOrder = this.createNewOrder.bind(this);
     this.renderOverlay = this.renderOverlay.bind(this);
     this.initDate = this.initDate.bind(this);
+    this.getTime = this.getTime.bind(this);
   }
 
   componentDidMount() {
@@ -86,11 +86,10 @@ class BookingScreen extends Component {
       [
         {
           text: 'Yes',
-          onPress: () => this.createNewOrder(item)
-          // onPress: async () => {
-          //   // this.setState({ overlayVisible: true })
-          //   await this.createNewOrder(item);
-          // }
+          onPress: () => {
+            this.createNewOrder(item);
+            this.setState({ overlayVisible: true });
+          }
         },
         { 
           text: 'Cancel',
@@ -141,43 +140,55 @@ class BookingScreen extends Component {
           status: data.status,
         }
 
+        this.setState({currentOrder: order});
         this.props.dispatch(Actions_Customer.addToOrdersList(order));
       })
       .catch(error => console.log(error))
   }
 
+  getTime(dateAndTime) {
+    return dateAndTime.toString().substring(11, 16);
+  }
+
   renderOverlay() {
-    return (
-      <Overlay isVisible={this.state.overlayVisible} fullScreen>
-        <View style={styles.overlayContainer}>
-          <Text style={styles.overlayHeadingText}>Booking Information:</Text>
-          <Text style={styles.overlayText}>{this.state.eventDetails.BusinessName}</Text>
-          <Text style={styles.overlayText}>{this.state.eventDetails.ServiceName}</Text>
-          <Text style={styles.overlayText}>{this.state.eventDetails.Date}</Text>
-          <Text style={styles.overlayText}>{this.state.eventDetails.Time}</Text>
-          <Text style={styles.overlayText}>{this.state.eventDetails.Address}</Text>
-          <TouchableOpacity
-            onPress={() => {
-              this.setState({ overlayVisible: false })
-              this.props.navigation.goBack()
-              this.props.navigation.navigate('Schedule')
-              this.saveToDeviceCalendar()
-            }}
-          >
-            <Text style={styles.overlaySaveButton}>Save to My Device Calandar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              this.setState({ overlayVisible: false })
-              this.props.navigation.goBack()
-              this.props.navigation.navigate('Schedule')
-            }}
-          >
-            <Text style={styles.overlayDontSaveButton}>{"Don't Save"}</Text>
-          </TouchableOpacity>
-        </View>
-      </Overlay>
-    )
+    if(this.state.currentOrder.businessname) {
+      return (
+        <Overlay isVisible={this.state.overlayVisible} fullScreen>
+          <View style={styles.overlayContainer}>
+            <Image style={styles.overlaySucess} source={require('../../assets/images/success.png')} />
+            <Text style={styles.overlayHeadingText}>You are all booked!</Text>
+            {/* <Text style={styles.overlayText}>{this.state.currentOrder.businessname}</Text> */}
+            <Text style={styles.overlayText}>{this.state.currentOrder.servicename}</Text>
+            <Text style={styles.overlayText}>{this.state.prettyDate}</Text>
+            <Text style={styles.overlayText}>
+              {this.state.prettyDate} at {this.getTime(this.state.currentOrder.starttime)}
+            </Text>
+            {/* <Text style={styles.overlayText}>{this.state.currentOrder.street}, {this.state.currentOrder.city}.</Text> */}
+            <TouchableOpacity
+              onPress={() => {
+                console.log('SAVE')
+                // this.setState({ overlayVisible: false })
+                // this.props.navigation.goBack()
+                // this.props.navigation.navigate('Schedule')
+                // this.saveToDeviceCalendar()
+              }}
+            >
+              <Text style={styles.overlaySaveButton}>Save to My Device Calandar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('DONT SAVE')
+                // this.setState({ overlayVisible: false })
+                // this.props.navigation.goBack()
+                // this.props.navigation.navigate('Schedule')
+              }}
+            >
+              <Text style={styles.overlayDontSaveButton}>Don't Save</Text>
+            </TouchableOpacity>
+          </View>
+        </Overlay>
+      )
+    }
   }
 
   renderRow({ item }) {
@@ -227,7 +238,7 @@ class BookingScreen extends Component {
           renderItem={this.renderRow}
           keyExtractor={(item, index) => index.toString()}
         />
-        {/* {this.renderOverlay()} */}
+        {this.renderOverlay()}
       </View>
     );
   }
