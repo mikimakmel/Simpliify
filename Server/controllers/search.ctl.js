@@ -60,6 +60,57 @@ ratingFilter = (rate, rows) => {
 }
 
 
+
+createBusinessCard = (item, price) => {
+    return {
+        businessID: item.businessid,
+        coverPic: '', // the first pic from the carousel table 
+        businessName: item.businessname,
+        category: item.category,
+        minPrice: price.min, // the cheapest service the business offers
+        maxPrice: price.max,  // the most expensive service the business offers
+        rating: item.rating
+      }
+}
+
+
+priceRange = (filterRows, minPrice, maxPrice) => {
+    var price = {min: Number.MAX_SAFE_INTEGER, max: Number.MIN_SAFE_INTEGER}
+    var flag = false
+    var id = -1
+    var businesses = []
+
+    filterRows.map((item) => {
+        if (id == -1){
+            id = item.businessid
+        }
+        if (id != item.businessid){
+            if (flag){
+                businesses.push(createBusinessCard(item, price))
+            }
+            id = item.businessid
+            price.max = Number.MIN_SAFE_INTEGER
+            price.min = Number.MAX_SAFE_INTEGER
+        } else {
+            id = item.businessid
+            if (maxPrice == 'null'){
+                flag = true
+            }
+            else if ((item.price >= minPrice) && (item.price <= maxPrice)){
+                flag = true
+            }
+            if (item.price < price.min){
+                price.min = item.price
+            }
+            if (item.price > price.max){
+                price.max = item.price
+            }
+        }
+    })
+    return businesses
+    
+}
+
 search = (req, res) => {
     console.log("Search function");
     // properties choosen by client (lon & lat is required!)
@@ -72,8 +123,6 @@ search = (req, res) => {
     var minPrice = req.body.minPrice;
     var maxPrice = req.body.maxPrice;
 
-
-    console.log(searchQuery, )
 
     // default values in frontend
     // searchQuery: '',
@@ -113,12 +162,12 @@ search = (req, res) => {
     }
 
     // Build query by the properties choosen by the client
-    var query = `SELECT Business.BusinessID, Business.Address, Manager, Business.Name AS BusinessName, Category,
-                    Service.name AS ServiceName, Phone, Website, Business.Description, Dailycounter, Avatar,
+    var query = `SELECT Business.BusinessID, Business.Name AS BusinessName, Category,
+                    Service.name AS ServiceName, Service.price as price,
                     Coordinates[0] AS Lat, Coordinates[1] AS Lng, AVG(Rating)::NUMERIC(2,1) AS Rating FROM Business
-                    LEFT JOIN Service ON (Business.BusinessID = Service.BusinessID)
-                    LEFT JOIN Address ON (Business.Address = Address.AddressID)
-                    LEFT JOIN Review ON (Business.BusinessID = Review.Business) WHERE`
+                    INNER JOIN Service ON (Business.BusinessID = Service.BusinessID)
+                    INNER JOIN Address ON (Business.Address = Address.AddressID)
+                    INNER JOIN Review ON (Business.BusinessID = Review.Business) WHERE`
     query = query.concat(' ', strCategory)
     query = query.concat(' ', `AND
                                 ((Service.Name ILIKE '%${searchQuery}%') OR (Business.Name ILIKE '%${searchQuery}%')) AND
@@ -126,7 +175,7 @@ search = (req, res) => {
                                 (Coordinates[0] <= ${maxLat}) AND
                                 (Coordinates[1] >= ${minLon}) AND
                                 (Coordinates[1] <= ${maxLon})
-                                GROUP BY Business.Businessid, Service.Name, Coordinates[0], Coordinates[1] ORDER BY Rating DESC`)
+                                GROUP BY Business.Businessid, Service.serviceid, Coordinates[0], Coordinates[1] ORDER BY Businessid`)
 
     
     
@@ -141,35 +190,14 @@ search = (req, res) => {
         if (rating){
             filterRows = ratingFilter(rating, rows)
         }
+        
+        filterRows = priceRange(filterRows, minPrice, maxPrice)
 
         res.json(filterRows)
     })
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
-/* ULTIMATE FUCKING QUERY */
-/* SELECT Business.BusinessID, Business.Address, Manager, Business.Name AS BusinessName, Category,
-          Service.name AS ServiceName, Phone, Website, Business.Description, Dailycounter, Avatar,
-          Coordinates[0] AS Lat, Coordinates[1] AS Lng, AVG(Rating)::NUMERIC(2,1) AS Rating FROM Business
-          LEFT JOIN Service ON (Business.BusinessID = Service.BusinessID)
-          LEFT JOIN Address ON (Business.Address = Address.AddressID)
-          LEFT JOIN Review ON (Business.BusinessID = Review.Business) WHERE
-          LOWER(Category) = LOWER('HEALTH') AND
-          Service.Name ILIKE '%Health%' AND
-          (Coordinates[0] >= ${minLat}) AND
-          (Coordinates[0] <= ${maxLat}) AND
-          (Coordinates[1] >= ${minLon}) AND
-          (Coordinates[1] <= ${maxLon})
-          GROUP BY Business.Businessid, Service.Name, Coordinates[0], Coordinates[1] ORDER BY Rating DESC */
-
-// Explanation - 
-// If you want to choose a specific category use: Category = 'Foo',
-// If no specific category is required simply use: IS NOT NULL.
-// e.g. Category IS NOT NULL
-// If you want to check whether a service name contains a word use: %Foo%,
-// If no specific category is required simply use: %%.
-// I made sure that nothing is case sensitive so a correct input would be correct.
-// Good Luck <3
 
 module.exports = {
     search: search 
