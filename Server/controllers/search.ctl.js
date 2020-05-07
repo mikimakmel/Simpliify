@@ -61,10 +61,10 @@ ratingFilter = (rate, rows) => {
 
 
 
-createBusinessCard = (item, price) => {
+createBusinessCard = (item, price, cover) => {
     return {
         businessID: item.businessid,
-        coverPic: '', // the first pic from the carousel table 
+        coverPic: cover, // the first pic from the carousel table 
         businessName: item.businessname,
         category: item.category,
         minPrice: price.min, // the cheapest service the business offers
@@ -79,6 +79,7 @@ priceRange = (filterRows, minPrice, maxPrice) => {
     var flag = false
     var id = -1
     var businesses = []
+    var coverPic = ''
 
     filterRows.map((item) => {
         if (id == -1){
@@ -86,13 +87,17 @@ priceRange = (filterRows, minPrice, maxPrice) => {
         }
         if (id != item.businessid){
             if (flag){
-                businesses.push(createBusinessCard(item, price))
+                businesses.push(createBusinessCard(item, price, coverPic))
             }
             id = item.businessid
             price.max = Number.MIN_SAFE_INTEGER
             price.min = Number.MAX_SAFE_INTEGER
+            coverPic = ''
         } else {
             id = item.businessid
+            if (coverPic == ''){
+                coverPic = item.img
+            }
             if (maxPrice == 'null'){
                 flag = true
             }
@@ -163,8 +168,9 @@ search = (req, res) => {
 
     // Build query by the properties choosen by the client
     var query = `SELECT Business.BusinessID, Business.Name AS BusinessName, Category,
-                    Service.name AS ServiceName, Service.price as price,
+                    Service.name AS ServiceName, Service.price as price, Carousel.imagelink AS img,
                     Coordinates[0] AS Lat, Coordinates[1] AS Lng, AVG(Rating)::NUMERIC(2,1) AS Rating FROM Business
+                    INNER JOIN Carousel ON (Business.BusinessID = Carousel.BusinessID)
                     INNER JOIN Service ON (Business.BusinessID = Service.BusinessID)
                     INNER JOIN Address ON (Business.Address = Address.AddressID)
                     INNER JOIN Review ON (Business.BusinessID = Review.Business) WHERE`
@@ -175,7 +181,7 @@ search = (req, res) => {
                                 (Coordinates[0] <= ${maxLat}) AND
                                 (Coordinates[1] >= ${minLon}) AND
                                 (Coordinates[1] <= ${maxLon})
-                                GROUP BY Business.Businessid, Service.serviceid, Coordinates[0], Coordinates[1] ORDER BY Businessid`)
+                                GROUP BY Business.Businessid, Service.serviceid, Coordinates[0], Coordinates[1], Carousel.imagelink  ORDER BY Businessid`)
 
     
     
@@ -183,7 +189,7 @@ search = (req, res) => {
     .then(result => {
 
         var rows = result.rows
-
+        console.log(rows)
         const coordinates = {lon: lon, lat: lat, r:r}
         var filterRows = radiusFilter(coordinates, rows)
 
