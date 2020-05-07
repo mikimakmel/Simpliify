@@ -61,15 +61,15 @@ ratingFilter = (rate, rows) => {
 
 
 
-createBusinessCard = (item, price, cover) => {
+createBusinessCard = (id, price, details) => {
     return {
-        businessID: item.businessid,
-        coverPic: cover, // the first pic from the carousel table 
-        businessName: item.businessname,
-        category: item.category,
+        businessID: id,
+        coverPic: details.coverPic, // the first pic from the carousel table 
+        businessName: details.businessName,
+        category: details.category,
         minPrice: price.min, // the cheapest service the business offers
         maxPrice: price.max,  // the most expensive service the business offers
-        rating: item.rating
+        rating: details.rating
       }
 }
 
@@ -79,26 +79,42 @@ priceRange = (filterRows, minPrice, maxPrice) => {
     var flag = false
     var id = -1
     var businesses = []
-    var coverPic = ''
+
+    var details = {
+        coverPic: '',
+        businessName: '',
+        category: '',
+        rating: -1
+    }
 
     filterRows.map((item) => {
+        console.log(item.businessid, id)
         if (id == -1){
             id = item.businessid
         }
+
+        // if new business id -> add item to results and reset data
         if (id != item.businessid){
             if (flag){
-                businesses.push(createBusinessCard(item, price, coverPic))
+                console.log('push id', )
+                businesses.push(createBusinessCard(id, price, details))
             }
             id = item.businessid
             price.max = Number.MIN_SAFE_INTEGER
             price.min = Number.MAX_SAFE_INTEGER
-            coverPic = ''
+            details.coverPic = ''
+            flag = false
         } else {
             id = item.businessid
-            if (coverPic == ''){
-                coverPic = item.img
+            // update new business details
+            if (details.coverPic == ''){
+                details.coverPic = item.img
+                details.businessName = item.businessname
+                details.rating = item.rating
+                details.category = item.category
             }
-            if (maxPrice == 'null'){
+            
+            if (!maxPrice){
                 flag = true
             }
             else if ((item.price >= minPrice) && (item.price <= maxPrice)){
@@ -112,6 +128,12 @@ priceRange = (filterRows, minPrice, maxPrice) => {
             }
         }
     })
+    // add last item
+    if (flag){
+        businesses.push(createBusinessCard(id, price, details))
+    }
+
+
     return businesses
     
 }
@@ -189,7 +211,7 @@ search = (req, res) => {
     .then(result => {
 
         var rows = result.rows
-        console.log(rows)
+        // console.log(rows)
         const coordinates = {lon: lon, lat: lat, r:r}
         var filterRows = radiusFilter(coordinates, rows)
 
