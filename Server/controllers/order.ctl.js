@@ -78,9 +78,11 @@ module.exports = {
         const businessID = req.body.businessID;
 
         const query = 
-            `SELECT * FROM Orders 
-            INNER JOIN Business ON (Orders.Business = Business.BusinessID) 
-            WHERE business=${businessID}`;
+            `SELECT status, starttime AT TIME ZONE 'UTC' as starttime, durationminutes FROM Orders 
+            INNER JOIN Business ON (Orders.Business = Business.BusinessID)
+            INNER JOIN Service ON (Orders.Service= Service.ServiceID)
+            WHERE business=${businessID}
+            ORDER BY starttime ASC`;
 
         // const query = 
         //     `SELECT * FROM Orders 
