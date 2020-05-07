@@ -88,7 +88,6 @@ priceRange = (filterRows, minPrice, maxPrice) => {
     }
 
     filterRows.map((item) => {
-        console.log(item.businessid, id)
         if (id == -1){
             id = item.businessid
         }
@@ -96,7 +95,7 @@ priceRange = (filterRows, minPrice, maxPrice) => {
         // if new business id -> add item to results and reset data
         if (id != item.businessid){
             if (flag){
-                console.log('push id', )
+                console.log('push ', id)
                 businesses.push(createBusinessCard(id, price, details))
             }
             id = item.businessid
@@ -164,56 +163,71 @@ search = (req, res) => {
         Lon: lon, 
         Lat: lat
     }
-
-    const BB = calculateBBRdius(radius, coordinates)
-    const minLat = BB.minLat
-    const maxLat = BB.maxLat
-    const minLon = BB.minLon
-    const maxLon = BB.maxLon
-    const r = BB.r
-
-    // search query
-    if (searchQuery == ""){
-        console.log("String choosen by user is sempty")
-    } else {
-        console.log("String choosen by user:", searchQuery)
+    if (radius){
+        const BB = calculateBBRdius(radius, coordinates)
+        const minLat = BB.minLat
+        const maxLat = BB.maxLat
+        const minLon = BB.minLon
+        const maxLon = BB.maxLon
+        const r = BB.r
     }
 
     // category
     if (category == 'All'){
-        console.log('Search for all categories')
         strCategory = `Category IS NOT NULL`
     } else {
-        console.log("String chossen by user:", category)
         strCategory = `LOWER(Category) = LOWER('${category}')`
+    }
+
+    // radius
+    if (radius){
+        strRadius1 = `Coordinates[0] AS Lat, Coordinates[1] AS Lng,`
+        strRadius2 = `INNER JOIN Address ON (Business.Address = Address.AddressID)`
+        strRadius3 = `AND (Coordinates[0] >= ${minLat})
+                     AND (Coordinates[0] <= ${maxLat})
+                     AND (Coordinates[1] >= ${minLon})
+                     AND (Coordinates[1] <= ${maxLon})`
+
+        strRadius4 = `,Coordinates[0], Coordinates[1]`
+    } else {
+        strRadius1 = ``
+        strRadius2 = ``
+        strRadius3 = ``
+        strRadius4 = ``
     }
 
     // Build query by the properties choosen by the client
     var query = `SELECT Business.BusinessID, Business.Name AS BusinessName, Category,
-                    Service.name AS ServiceName, Service.price as price, Carousel.imagelink AS img,
-                    Coordinates[0] AS Lat, Coordinates[1] AS Lng, AVG(Rating)::NUMERIC(2,1) AS Rating FROM Business
-                    INNER JOIN Carousel ON (Business.BusinessID = Carousel.BusinessID)
-                    INNER JOIN Service ON (Business.BusinessID = Service.BusinessID)
-                    INNER JOIN Address ON (Business.Address = Address.AddressID)
-                    INNER JOIN Review ON (Business.BusinessID = Review.Business) WHERE`
+                    Service.name AS ServiceName, Service.price as price, Carousel.imagelink AS img,`
+    query = query.concat(' ', strRadius1)          
+    query = query.concat(' ', `AVG(Rating)::NUMERIC(2,1) AS Rating FROM Business
+                                INNER JOIN Carousel ON (Business.BusinessID = Carousel.BusinessID)
+                                INNER JOIN Service ON (Business.BusinessID = Service.BusinessID)
+                                INNER JOIN Review ON (Business.BusinessID = Review.Business)`)            
+    query = query.concat(' ', strRadius2)
+    query = query.concat(' ', `WHERE`)           
     query = query.concat(' ', strCategory)
-    query = query.concat(' ', `AND
-                                ((Service.Name ILIKE '%${searchQuery}%') OR (Business.Name ILIKE '%${searchQuery}%')) AND
-                                (Coordinates[0] >= ${minLat}) AND
-                                (Coordinates[0] <= ${maxLat}) AND
-                                (Coordinates[1] >= ${minLon}) AND
-                                (Coordinates[1] <= ${maxLon})
-                                GROUP BY Business.Businessid, Service.serviceid, Coordinates[0], Coordinates[1], Carousel.imagelink  ORDER BY Businessid`)
+    query = query.concat(' ', `AND ((Service.Name ILIKE '%${searchQuery}%') OR (Business.Name ILIKE '%${searchQuery}%'))`)
+    query = query.concat(' ', strRadius3)
+    query = query.concat(' ', `GROUP BY Business.Businessid, Service.serviceid, Carousel.imagelink`)
+    query = query.concat(' ', strRadius4)
+    query = query.concat(' ', `ORDER BY Businessid`)
 
+    console.log(query)
     
     
     db.query(query)
     .then(result => {
 
         var rows = result.rows
+
         // console.log(rows)
-        const coordinates = {lon: lon, lat: lat, r:r}
-        var filterRows = radiusFilter(coordinates, rows)
+        var filterRows
+        if (radius) {
+            const coordinates = {lon: lon, lat: lat, r:r}
+            console.log('Im here')
+            radiusFilter(coordinates, rows)
+        }
 
         if (rating){
             filterRows = ratingFilter(rating, rows)
