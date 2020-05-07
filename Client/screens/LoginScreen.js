@@ -452,8 +452,8 @@ class LoginScreen extends Component {
             const FBcredential = firebase.auth.FacebookAuthProvider.credential(token);
             firebase.auth().signInWithCredential(FBcredential)
             .then((result) => {
-                this.fetchUserProfile(result.user.email);
-                // console.log(result.user.email);
+                this.fetchUserProfile(result.user);
+                console.log(result.user.photoURL);
                 console.log("Facebook Login Success");
                 this.props.navigation.navigate('Profile');
             })

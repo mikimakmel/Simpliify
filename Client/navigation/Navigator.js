@@ -15,6 +15,8 @@ import SplashScreen from '../screens/SplashScreen';
 import ResultsList from '../screens/customer/Explore/ResultsList';
 import MyBusiness from '../screens/business/MyBusiness';
 import CalendarScreen from '../screens/business/CalendarScreen';
+import BusinessForm from '../screens/business/BusinessForm';
+import Insights from '../screens/business/Insights';
 import { AntDesign, EvilIcons, Feather, Ionicons, MaterialIcons, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -77,6 +79,7 @@ function MenuStack() {
       <Stack.Screen name="Menu" component={MenuScreen}/>
       <Stack.Screen name="Scan" component={creditCardStack}/>
       <Stack.Screen name="SignUpForm" component={SignUpForm} options={{headerShown: true}}/>
+      <Stack.Screen name="BusinessForm" component={BusinessForm} options={{headerShown: true}}/>
     </Stack.Navigator>
   );
 }
@@ -172,7 +175,7 @@ function BusinessBottomTabNavigator() {
       >
       <BottomTab.Screen
         name="Insight"
-        component={ExploreStack}
+        component={Insights}
         options={{
           title: 'Insight',
           tabBarIcon: ({ color }) => (

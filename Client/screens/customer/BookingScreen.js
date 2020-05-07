@@ -30,6 +30,7 @@ class BookingScreen extends Component {
         overlayVisible: false,
         selectedDate: null,
         prettyDate: null,
+        availableHours: []
     };
     this.onDayPress = this.onDayPress.bind(this);
     this.handleBooking = this.handleBooking.bind(this);
@@ -38,10 +39,38 @@ class BookingScreen extends Component {
     this.renderOverlay = this.renderOverlay.bind(this);
     this.initDate = this.initDate.bind(this);
     this.getTime = this.getTime.bind(this);
+    this.fetchAvailableHours = this.fetchAvailableHours.bind(this);
   }
 
   componentDidMount() {
     this.initDate();
+  }
+
+  async fetchAvailableHours(day) {
+    const { businessData, serviceData } = this.state;
+
+    // const url = 'http://192.168.1.198:3000/order/createNewOrder';
+    const options = { 
+      method: 'POST', 
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({
+        currentDate: day,
+        businessID: businessData.business.businessid,
+        durationMinutes: serviceData.durationminutes
+      })
+    };
+    const request = new Request(url, options)
+
+    // await fetch(request)
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     console.log(data)
+    //     // this.setState({availableHours: data});
+    //   })
+    //   .catch(error => console.log(error))
   }
 
   initDate() {
@@ -57,6 +86,8 @@ class BookingScreen extends Component {
     const TfullDate = Tyear.toString() + '-' + Tmonth.toString() + '-' + Tday.toString();
     let pretty = Tday.toString() + '/' + Tmonth.toString() + '/' + Tyear.toString();
     this.setState({ selectedDate: TfullDate, prettyDate: pretty });
+
+    this.fetchAvailableHours(TfullDate);
   }
 
   onDayPress(day) {
@@ -77,6 +108,8 @@ class BookingScreen extends Component {
 
     let pretty = d + '/' + m + '/' + day.year.toString();
     this.setState({ selectedDate: day.dateString, prettyDate: pretty });
+
+    this.fetchAvailableHours(day.dateString);
   }
 
   handleBooking(item) {
@@ -94,8 +127,7 @@ class BookingScreen extends Component {
         { 
           text: 'Cancel',
         }
-      ],
-      // { cancelable: false }
+      ]
     )
   }
 
@@ -254,39 +286,3 @@ const mapStateToProps = ({ User, Customer }) => {
 }
 
 export default connect(mapStateToProps)(BookingScreen);
-
-
-    // const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    // let endingTime = moment(`${this.state.selected} ${item.Time}`).format('HH:mm');
-
-    // const duration = serviceData.Duration.split(' ');
-    // if (serviceData.Duration.includes('Hrs')) {
-    //   endingTime = moment(`${this.state.selected} ${item.Time}`).add(duration[0], 'hours').format('HH:mm');
-    // } else {
-    //   endingTime = moment(`${this.state.selected} ${item.Time}`).add(duration[0], 'minutes').format('HH:mm');
-    // }
-
-    // const order = {
-    //   BusinessID: businessData.businessid,
-    //   BusinessName: businessData.name,
-    //   ServiceName: serviceData.Name,
-    //   Avatar: test_businessData.Pictures.Favorite,
-    //   Date: `${days[new Date(this.state.selected).getDay()]} | ${new Date(
-    //     this.state.selected
-    //   ).getDate()}.${new Date(this.state.selected).getMonth() + 1}.${new Date(
-    //     this.state.selected
-    //   ).getFullYear()}`,
-    //   Time: `${item.Time} - ${endingTime}`,
-    //   Address: test_businessData.Location.Address
-    // }
-
-    // console.log(order);
-
-    // AsyncStorage.getItem('Schedule', (err, result) => {
-    //   let arr = []
-    //   if (JSON.parse(result) !== null) arr = JSON.parse(result)
-    //   arr.push(event)
-    //   return AsyncStorage.setItem('Schedule', JSON.stringify(arr))
-    // })
-
-    // this.setState({ currentItem: item, eventDetails: event })

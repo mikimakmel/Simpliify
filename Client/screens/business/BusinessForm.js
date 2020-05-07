@@ -6,7 +6,7 @@ import styles from '../../styles/business/Style_BusinessForm';
 import Layout from '../../constants/Layout';
 import ImagesSwiper from 'react-native-image-swiper';
 import database from '../../database';
-import { MaterialCommunityIcons, MaterialIcons, FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons, FontAwesome, FontAwesome5, Ionicons, Octicons } from '@expo/vector-icons';
 import ViewMoreText from 'react-native-view-more-text';
 import RNPickerSelect from 'react-native-picker-select';
 import { Collapse, CollapseHeader, CollapseBody } from 'accordion-collapse-react-native';
@@ -129,6 +129,17 @@ class BusinessForm extends Component {
       this.fetchBusiness();
     }
     this.fetchBusinessServicesList();
+    this.props.navigation.setOptions({
+      headerRight: () => (
+        <Octicons 
+          name="check" 
+          size={35} 
+          color={colors.green03} 
+          style={{marginRight: 10}} 
+          // onPress={() => this.fetchBusinessServicesList()}
+        />
+      )
+    });
   }
 
   async fetchCategories() {
@@ -871,7 +882,7 @@ class BusinessForm extends Component {
 
         {this.renderOpeningHours(businessData)}
 
-        <View style={{alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: 30,}}>
+        {/* <View style={{alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: 30,}}>
           <GradientButton
             gradientBegin="#7F81D6"
             gradientEnd="#90E4E4"
@@ -888,7 +899,7 @@ class BusinessForm extends Component {
           >
             {this.state.isEditingBusiness ? 'UPDATE BUSINESS' : 'CREATE BUSINESS'}
           </GradientButton>
-        </View>
+        </View> */}
 
       </ScrollView>
     )
@@ -959,7 +970,6 @@ class BusinessForm extends Component {
   }
 
   renderServices() {
-    const businessData = database.businesses[0];
     return(
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           <View style={{ alignItems: 'center', marginTop: 35 }}>
@@ -974,7 +984,7 @@ class BusinessForm extends Component {
             // icon={<Ionicons name="ios-add-circle-outline" size={35} color="white"/>}
             // iconRight
             title="Add new service"
-            containerStyle={{alignSelf: 'center', width: '60%'}}
+            containerStyle={{alignSelf: 'center', width: '60%', marginBottom: 20}}
             buttonStyle={{}}
             onPress={() => {
               this.setState({ 
@@ -1068,9 +1078,8 @@ class BusinessForm extends Component {
   }
 }
 
-const mapStateToProps = ({ HomeScreen }) => {
+const mapStateToProps = ({  }) => {
   return {
-    counter: HomeScreen.counter,
   }
 }
 

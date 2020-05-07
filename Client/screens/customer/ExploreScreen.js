@@ -112,8 +112,8 @@ class ExploreScreen extends Component {
     await fetch(request)
       .then(response => response.json())
       .then(data => {
-        console.log(data)
-        // this.props.dispatch(Actions_User.updateCurrentUser(data.user))
+        // console.log(data)
+        this.setState({searchResults: data});
       })
       .catch(error => console.log(error))
   }
@@ -155,6 +155,7 @@ class ExploreScreen extends Component {
             title="Apply"
             onPress={() => {
               this.setState({ isDistanceOverylayVisible: false });
+              this.fetchSearch();
             }}
           />
         </View>
@@ -195,6 +196,7 @@ class ExploreScreen extends Component {
             title="Apply"
             onPress={() => {
               this.setState({ isRatingOverylayVisible: false });
+              this.fetchSearch();
             }}
           />
         </View>
@@ -251,7 +253,7 @@ class ExploreScreen extends Component {
             title="Apply"
             onPress={() => {
               this.setState({ isPriceOverylayVisible: false });
-              // console.log(this.state.minPrice, this.state.maxPrice)
+              this.fetchSearch();
             }}
           />
         </View>
@@ -361,8 +363,16 @@ class ExploreScreen extends Component {
                 ]
               )}
             >
-              <CategoriesList categoriesList={this.props.categoriesList} changeCategory={this.handleCategoryChange} chosenCategory={this.state.category}/>
-              <ResultsList resultList={this.props.favoritesList} navigation={this.props.navigation}/>
+              <CategoriesList 
+                categoriesList={this.props.categoriesList} 
+                changeCategory={this.handleCategoryChange} 
+                chosenCategory={this.state.category}
+              />
+
+              <ResultsList 
+                resultList={this.state.searchResults} 
+                navigation={this.props.navigation}
+              />
             </ScrollView>
           </View>
       </SafeAreaView>

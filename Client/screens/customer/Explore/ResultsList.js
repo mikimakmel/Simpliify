@@ -22,12 +22,12 @@ class ResultsList extends Component {
     return (
       <View style={{ marginTop: 15 }}>
         <Text style={styles.recomendedHeadline}>
-          {this.props.resultList.length > 0 ? `Explore results` : 'Explore nearby'}
+          {this.props.resultList.length > 0 ? `Explore results` : 'No results'}
         </Text>
         <View style={{marginTop: 20,}}>
           <FlatList
             data={this.props.resultList}
-            keyExtractor={item => item.businessDetails.business.businessid.toString()}
+            keyExtractor={item => item.businessID.toString()}
             renderItem={this.renderItem}
             numColumns={2}
             columnWrapperStyle={{paddingHorizontal: 12, justifyContent: "space-around"}}
