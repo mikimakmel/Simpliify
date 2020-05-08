@@ -64,10 +64,10 @@ app.get('/statistics/statDailyCounter', statisticsCtl.statDailyCounter);        
 app.get('/statistics/StatByGender', statisticsCtl.StatByGender);                          // In progress
 app.get('/statistics/statByService', statisticsCtl.statByService);                        // In progress
 app.get('/statistics/statByAddress', statisticsCtl.statByAddress);                        // In progress
-app.get('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);                    // In progress
+app.get('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);                    // Query not ready
 app.get('/statistics/statStrongHours', statisticsCtl.statStrongHours);                    // In progress
 app.get('/statistics/statTop10Customers', statisticsCtl.statTop10Customers);              // In progress
-
+app.get('/statistics/statRating', statisticsCtl.statRating);                    // Query not ready
 
 /*** Review routes ***/
 app.post('/review/createNewReview', reviewCtl.createNewReview);                             // READY
