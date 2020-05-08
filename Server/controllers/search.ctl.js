@@ -8,7 +8,6 @@ const db = require('../database')
 calculateBBRdius = (radius, coordinates) => {
         var lon = coordinates.Lon
         var lat = coordinates.Lat
-
         console.log(lon, lat)
          // Earth radius
          const R = 6371
@@ -149,6 +148,12 @@ search = (req, res) => {
     var minPrice = req.body.minPrice;
     var maxPrice = req.body.maxPrice;
 
+    console.log('searchQuery: ' + searchQuery + ', radius: ' + 
+        radius + ',  category: ' + category + ',   rating: ' 
+        + rating + ',  lon: ' + lon + ',  lat: ' + lat + ',  minPrice: '
+        + minPrice + ',  maxPrice: ' + maxPrice);
+
+
     // default values in frontend
     // searchQuery: '',
     // distance: 10,
@@ -224,18 +229,20 @@ search = (req, res) => {
     
     db.query(query)
     .then(result => {
-        var filterRows = result.rows
+        var filterRows = result.rows;
 
         if (radius) {
             const coordinates = {lon: lon, lat: lat, r:r}
             radiusFilter(coordinates, filterRows)
         }
+
         if (rating){
-            console.log('rating is', rating)
             filterRows = ratingFilter(rating, filterRows)
         }
 
         filterRows = priceRange(filterRows, minPrice, maxPrice)
+
+        console.log(filterRows.length)
         res.json(filterRows)
     })
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))

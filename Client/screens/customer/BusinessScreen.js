@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import AboutPage from '../customer/AboutPage';
 import ServicesPage from '../customer/ServicesPage';
+import ReviewsPage from '../customer/ReviewsPage';
 import styles from '../../styles/customer/Style_BusinessScreen';
 import colors from '../../constants/Colors';
 import ImagesSwiper from 'react-native-image-swiper';
@@ -39,13 +40,16 @@ class BusinessScreen extends Component {
       >
         <AboutPage
           tabLabel="About"
-          // isInUserFavorites={this.state.isInUserFavorites}
           businessData={businessData}
         />
         <ServicesPage
           tabLabel="Services"
           businessData={businessData}
           navigation={this.props.navigation}
+        />
+        <ReviewsPage
+          tabLabel="Reviews"
+          businessData={businessData}
         />
       </ScrollableTabView>
     )

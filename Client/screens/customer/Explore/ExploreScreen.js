@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { View, Text, SafeAreaView, ScrollView, Animated, TouchableOpacity, TextInput } from 'react-native';
-import colors from '../../constants/Colors';
-import styles from '../../styles/customer/Style_ExploreScreen';
-import CategoriesList from '../customer/Explore/CategoriesList';
-import SearchBar from '../customer/Explore/SearchBar';
-import ResultsList from './Explore/ResultsList';
+import colors from '../../../constants/Colors';
+import styles from '../../../styles/customer/Style_ExploreScreen';
+import CategoriesList from './CategoriesList';
+import SearchBar from './SearchBar';
+import ResultsList from './ResultsList';
 import { connect } from "react-redux";
 import * as Location from 'expo-location';
 import { Overlay, Slider, Button, Rating } from 'react-native-elements';
@@ -17,7 +17,7 @@ class ExploreScreen extends Component {
       searchResults: [],
       isLoading: false,
       currentLocation: {},
-      distance: 10,
+      distance: null,
       isDistanceOverylayVisible: false,
       minPrice: '0',
       maxPrice: null,

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, Image, ScrollView, FlatList, SafeAreaView } from 'react-native';
 import colors from '../../../constants/Colors';
-import CategoryCard from '../Explore/CategoryCard';
+import CategoryCard from './CategoryCard';
 import styles from '../../../styles/customer/Style_ExploreScreen';
 
 export default class CategoriesList extends Component {
