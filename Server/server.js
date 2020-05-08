@@ -10,7 +10,6 @@ const searchCtl = require('./controllers/search.ctl')
 const fileupload = require('express-fileupload');
 const cors = require('cors');
 
-
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -22,42 +21,44 @@ app.use(express.urlencoded({ extended: true }));
 
 
 /*** User routes ***/
-app.get('/user/getAllUsers', userCtl.getAllUsers);                              // READY
-app.post('/user/getUserByEmail', userCtl.getUserByEmail);                       // READY
-app.post('/user/getUserByID', userCtl.getUserByID);                             // READY
-app.put('/user/updateUserDetails', userCtl.updateUserDetails);                  // READY
-app.post('/user/createNewUser', userCtl.createNewUser);                         // wrong birthday when sending from frontend, need to add profile picture
+app.get('/user/getAllUsers', userCtl.getAllUsers);
+app.post('/user/getUserByEmail', userCtl.getUserByEmail);
+app.post('/user/getUserByID', userCtl.getUserByID);
+app.put('/user/updateUserDetails', userCtl.updateUserDetails);
+app.post('/user/createNewUser', userCtl.createNewUser);         // wrong birthday when sending from frontend, need to add profile picture
 
 /*** Customer routes ***/
-app.post('/customer/addBusinessToFavorites', customerCtl.addBusinessToFavorites);               // READY
-app.post('/customer/removeBusinessFromFavorites', customerCtl.removeBusinessFromFavorites);     // READY
-app.post('/customer/getFavoritesList', customerCtl.getFavoritesList);                           // READY
+app.post('/customer/addBusinessToFavorites', customerCtl.addBusinessToFavorites);
+app.post('/customer/removeBusinessFromFavorites', customerCtl.removeBusinessFromFavorites);
+app.post('/customer/getFavoritesList', customerCtl.getFavoritesList);
 
 /*** Order routes ***/
-app.post('/order/createNewOrder', orderCtl.createNewOrder);                     // READY
-app.put('/order/updateOrderStatus', orderCtl.updateOrderStatus);                // READY
+app.post('/order/createNewOrder', orderCtl.createNewOrder);
+app.put('/order/updateOrderStatus', orderCtl.updateOrderStatus);
 app.post('/order/getAllCustomerOrders', orderCtl.getAllCustomerOrders);         // READY - Dosen't show all the orders?
-app.post('/order/getAllBusinessOrders', orderCtl.getAllBusinessOrders);         // READY
+app.post('/order/getAllBusinessOrders', orderCtl.getAllBusinessOrders);          
+app.post('/order/getAllAvailableBusinessTime', orderCtl.getAllAvailableBusinessTime);                      
+app.post('/order/checkIfCustomerReceiveServiceFromBusiness', orderCtl.checkIfCustomerReceiveServiceFromBusiness);
 
 /*** Business routes ***/
-app.get('/business/getAllBusinesses', businessCtl.getAllBusinesses);                        // READY
-app.post('/business/getBusinessByID', businessCtl.getBusinessByID);                         // READY
-app.post('/business/getBusinessByManagerID', businessCtl.getBusinessByManagerID);           // Need bring all business info
-app.get('/business/getAllCustomers', businessCtl.getAllCustomers);                          // READY
-app.get('/business/getBusinessAvailability', businessCtl.getBusinessAvailability);          // READY
-app.get('/business/getCategoriesList', businessCtl.getCategoriesList);                      // READY
-app.get('/business/getAllBusinessesByCategory', businessCtl.getAllBusinessesByCategory);    // READY
+app.get('/business/getAllBusinesses', businessCtl.getAllBusinesses);
+app.post('/business/getBusinessByID', businessCtl.getBusinessByID);
+app.post('/business/getBusinessByManagerID', businessCtl.getBusinessByManagerID);
+app.get('/business/getAllCustomers', businessCtl.getAllCustomers);
+app.get('/business/getBusinessAvailability', businessCtl.getBusinessAvailability);
+app.get('/business/getCategoriesList', businessCtl.getCategoriesList);
+app.get('/business/getAllBusinessesByCategory', businessCtl.getAllBusinessesByCategory);
 app.post('/business/createNewBusiness', businessCtl.createNewBusiness);                     // READY, needs check what about images
-app.post('/business/deleteYourBusiness', businessCtl.deleteYourBusiness);                   // READY
+app.post('/business/deleteYourBusiness', businessCtl.deleteYourBusiness);
 app.put('/business/updateBusinessDetails', businessCtl.updateBusinessDetails);              // READY, needs check what about images
 
 /*** Service routes ***/
-app.get('/service/getAllServices', serviceCtl.getAllServices);                          // READY
-app.get('/service/getServiceByID', serviceCtl.getServiceByID);                          // READY
-app.post('/service/getAllBusinessServices', serviceCtl.getAllBusinessServices);         // READY
-app.post('/service/createNewService', serviceCtl.createNewService);                     // READY
-app.post('/service/updateServiceDetails', serviceCtl.updateServiceDetails);             // READY
-app.post('/service/deleteService', serviceCtl.deleteService);                           // READY
+app.get('/service/getAllServices', serviceCtl.getAllServices);
+app.get('/service/getServiceByID', serviceCtl.getServiceByID);
+app.post('/service/getAllBusinessServices', serviceCtl.getAllBusinessServices);
+app.post('/service/createNewService', serviceCtl.createNewService);
+app.post('/service/updateServiceDetails', serviceCtl.updateServiceDetails);
+app.post('/service/deleteService', serviceCtl.deleteService);
 
 /*** Statistics routes ***/
 app.get('/statistics/statDailyCounter', statisticsCtl.statDailyCounter);                  // READY
@@ -70,14 +71,14 @@ app.get('/statistics/statTop10Customers', statisticsCtl.statTop10Customers);    
 app.get('/statistics/statRating', statisticsCtl.statRating);                    // Query not ready
 
 /*** Review routes ***/
-app.post('/review/createNewReview', reviewCtl.createNewReview);                             // READY
-app.post('/review/getUserReviewOnBusiness', reviewCtl.getUserReviewOnBusiness);             // READY
-app.post('/review/getBusinessReviewsByQuantity', reviewCtl.getBusinessReviewsByQuantity);   // READY
-app.post('/review/getBusinessReviews', reviewCtl.getBusinessReviews);                       // READY
-app.post('/review/deleteReview', reviewCtl.deleteReview);                                   // READY
+app.post('/review/createNewReview', reviewCtl.createNewReview);
+app.post('/review/getUserReviewOnBusiness', reviewCtl.getUserReviewOnBusiness);
+app.post('/review/getBusinessReviewsByQuantity', reviewCtl.getBusinessReviewsByQuantity);
+app.post('/review/getBusinessReviews', reviewCtl.getBusinessReviews);
+app.post('/review/deleteReview', reviewCtl.deleteReview);
 
 /*** Search routes ***/
-app.post('/search/search', searchCtl.search);                                           // READY
+app.post('/search/search', searchCtl.search);
 
 
 // in case of a wrong route creating a fallback.
@@ -95,7 +96,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 /* Increment visitor in a business */
 /* UPDATE Business SET Dailycounter = Dailycounter + 1 WHERE BusinessID=${businessID} */
 
-/* Best Customer in a business */
+/* Best Customers in a business (order by anoumt of orders per business) */
 /* SELECT Customer, Business, COUNT(Customer) FROM Orders WHERE Business=${Business} GROUP BY Customer, Orders.Business ORDER BY Count DESC */
 
 /* Avarage of a business rating in the last day + week + month */

@@ -30,7 +30,8 @@ module.exports = {
             `SELECT Rating, COUNT(Rating) 
             FROM Review 
             WHERE Business=${businessID} 
-            GROUP BY Rating`;  
+            GROUP BY Rating
+            ORDER BY Rating`;  
         
         db.query(query)
             .then(result => res.json(result.rows))
@@ -58,7 +59,7 @@ module.exports = {
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
-    // customer write's a new review on a business.
+    // 
     async getUserReviewOnBusiness(req, res) {
         console.log("getUserReviewOnBusiness()");
 

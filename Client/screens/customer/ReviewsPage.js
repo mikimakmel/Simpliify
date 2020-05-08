@@ -7,49 +7,13 @@ import GradientButton from 'react-native-gradient-buttons';
 import { connect } from "react-redux";
 import Review from "react-native-customer-review-bars";
 
-const reviews = [
-  {
-      "customer": "912",
-      "business": "1",
-      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-      "reviewedat": "2020-03-10T14:17:38.546Z",
-      "rating": 4
-  },
-  {
-      "customer": "91",
-      "business": "1",
-      "description": "Awful experience. A lot of favoritism and bias goes on in there.",
-      "reviewedat": "2020-04-10T12:07:12.249Z",
-      "rating": 3
-  },
-  {
-      "customer": "9",
-      "business": "1",
-      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-      "reviewedat": "2020-02-12T08:53:13.600Z",
-      "rating": 4
-  },
-  {
-      "customer": "7",
-      "business": "1",
-      "description": "bla bla bla",
-      "reviewedat": "2020-11-19T08:52:43.280Z",
-      "rating": 5
-  },
-  {
-      "customer": "1",
-      "business": "1",
-      "description": "Awful experience. A lot of favoritism and bias goes on in there.",
-      "reviewedat": "2020-04-10T08:41:55.749Z",
-      "rating": 1
-  }
-]
 
 class ReviewsPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       reviewsList: [],
+      canWriteReview: false,
       isReviewOverlayVisible: false,
       myRating: 0,
       myDescription: '',
@@ -57,7 +21,7 @@ class ReviewsPage extends Component {
         { value: 0, type: 'Excellent' },
         { value: 0, type: 'Good' },
         { value: 0, type: 'Average' },
-        { value: 0, type: 'Below' },
+        { value: 0, type: 'Below Average' },
         { value: 0, type: 'Poor' }
       ],
     };
@@ -65,11 +29,13 @@ class ReviewsPage extends Component {
     this.createReviewsList = this.createReviewsList.bind(this);
     this.fetchUser = this.fetchUser.bind(this);
     this.renderReviewOverlay = this.renderReviewOverlay.bind(this);
+    this.checkIfRecivedService = this.checkIfRecivedService.bind(this);
   }
 
   componentDidMount() {
     this.fetchUpdatedReviewsList();
     this.fetchReviewsQuantity();
+    this.checkIfRecivedService();
   }
 
   async createReviewsList(reviews) {
@@ -79,6 +45,7 @@ class ReviewsPage extends Component {
         // customerAvatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
         customerAvatar: user.profilepic ? user.profilepic : 'https://www.nicepng.com/png/detail/128-1280406_view-user-icon-png-user-circle-icon-png.png',
         customerName: `${user.firstname} ${user.lastname}`,
+        customerID: item.customer,
         rating: item.rating,
         description: item.description,
         date: item.reviewedat
@@ -170,14 +137,33 @@ class ReviewsPage extends Component {
     await fetch(request)
       .then(response => response.json())
       .then(data => {
-        console.log(data)
-        let reviewsCount = [
-          { value: data[0].count },
-          { value: data[0].count },
-          { value: data[0].count },
-          { value: data[0].count },
-          { value: data[0].count }
+        var tempReviewsCount = [
+          { value: 0, type: 'Excellent' },
+          { value: 0, type: 'Good' },
+          { value: 0, type: 'Average' },
+          { value: 0, type: 'Poor' },
+          { value: 0, type: 'Hideous' }
         ]
+
+        data.map((item) => {
+          if(item.rating === 1) {
+            tempReviewsCount[4].value = Number(item.count);
+          } 
+          else if(item.rating === 2) {
+            tempReviewsCount[3].value = Number(item.count);
+          }
+          else if(item.rating === 3) {
+            tempReviewsCount[2].value = Number(item.count);
+          }
+          else if(item.rating === 4) {
+            tempReviewsCount[1].value = Number(item.count);
+          }
+          else if(item.rating === 5) {
+            tempReviewsCount[0].value = Number(item.count);
+          }
+        });
+
+        this.setState({reviewsCount: tempReviewsCount});
       })
       .catch(error => console.log(error))
   }
@@ -214,14 +200,13 @@ class ReviewsPage extends Component {
     );
   }
 
-  renderReview({item, index}) {
+  renderReview({item}) {
     return(
       <ListItem
         leftAvatar={{ source: { uri: item.customerAvatar }, size: 45, marginBottom: 20, opacity: 0.8}}
         title={this.renderNameAndDate(item)}
         subtitle={this.renderRatingAndDescription(item)}
         bottomDivider={true}
-        topDivider={index === 0 ? true : false}
       />
     );
   }
@@ -232,6 +217,29 @@ class ReviewsPage extends Component {
     const year = reviewedAt.split('-')[0];
 
     return `${day} ${month} ${year}`;
+  }
+
+  async checkIfRecivedService() {
+    const url = 'http://192.168.1.198:3000/order/checkIfCustomerReceiveServiceFromBusiness';
+    const options = { 
+      method: 'POST', 
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({
+        customerID: this.props.currentUser.userid,
+        businessID: this.props.businessData.businessDetails.business.businessid,
+      })
+    };
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then((data) => {
+        this.setState({canWriteReview: data.didReceive})
+      })
+      .catch(error => console.log(error))
   }
 
   renderNoReviews() {
@@ -256,14 +264,16 @@ class ReviewsPage extends Component {
   }
 
   renderWriteReview() {
-    return(
-      <ListItem
-        contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
-        title={'Write a review'}
-        titleStyle={{color: colors.blue}}
-        onPress={() => this.setState({isReviewOverlayVisible: true})}
-      />
-    );
+    if(this.state.canWriteReview) {
+      return(
+        <ListItem
+          contentContainerStyle={{alignItems: 'center', justifyContent: 'center', marginTop: 5}}
+          title={'Write a review'}
+          titleStyle={{color: colors.blue}}
+          onPress={() => this.setState({isReviewOverlayVisible: true})}
+        />
+      );
+    }
   }
 
   renderReviewOverlay() {
@@ -327,7 +337,7 @@ class ReviewsPage extends Component {
         <ScrollView style={{backgroundColor: colors.white}}>
           {this.renderWriteReview()}
           {this.renderReviewOverlay()}
-          <View style={{width: '90%', alignSelf: 'center', marginBottom: 20}}>
+          <View style={{width: '90%', alignSelf: 'center', marginBottom: 20, marginTop: this.state.canWriteReview ? 0 : 20}}>
             <Review reviews={this.state.reviewsCount} showCount={true} barStyle={{backgroundColor: colors.gray01, opacity: 0.8}}/>
           </View>
           {this.renderReviewsList()}
