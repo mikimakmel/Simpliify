@@ -34,9 +34,9 @@ module.exports = {
             `SELECT * FROM availability 
             WHERE businessid=${businessID}`;
 
-        const reviewsQuery = 
-            `SELECT * FROM Review 
-            WHERE Business=${businessID} AND Description IS NOT NULL ORDER BY Reviewedat DESC`;  
+        // const reviewsQuery = 
+        //     `SELECT * FROM Review 
+        //     WHERE Business=${businessID} AND Description IS NOT NULL ORDER BY Reviewedat DESC`;  
 
         const servicesQuery = 
             `SELECT * FROM Service WHERE businessid=${businessID}`;
@@ -50,7 +50,7 @@ module.exports = {
                 tags: [],
                 availability: [],
                 services: [],
-                reviews: [],
+                // reviews: [],
                 photos: {
                     cover: '',
                     carousel: [],
@@ -76,11 +76,11 @@ module.exports = {
             })
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 
-        db.query(reviewsQuery)
-            .then(result => {
-                finalResult.businessDetails.reviews = result.rows;
-            })
-            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+        // db.query(reviewsQuery)
+        //     .then(result => {
+        //         finalResult.businessDetails.reviews = result.rows;
+        //     })
+        //     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 
         db.query(photosQuery)
             .then(result => {

@@ -64,9 +64,11 @@ app.get('/statistics/getDailyCounter', statisticsCtl.getDailyCounter);          
 app.get('/statistics/getCustomersSortedByAge', statisticsCtl.getCustomersSortedByAge);  // READY
 
 /*** Review routes ***/
-app.post('/review/createNewReview', reviewCtl.createNewReview);                  // READY
-app.get('/review/getBusinessReviews', reviewCtl.getBusinessReviews);             // READY
-app.post('/review/deleteReview', reviewCtl.deleteReview);                        // READY
+app.post('/review/createNewReview', reviewCtl.createNewReview);                             // READY
+app.post('/review/getUserReviewOnBusiness', reviewCtl.getUserReviewOnBusiness);             // READY
+app.post('/review/getBusinessReviewsByQuantity', reviewCtl.getBusinessReviewsByQuantity);   // READY
+app.post('/review/getBusinessReviews', reviewCtl.getBusinessReviews);                       // READY
+app.post('/review/deleteReview', reviewCtl.deleteReview);                                   // READY
 
 /*** Search routes ***/
 app.post('/search/search', searchCtl.search);                                   // READY - missing profile image

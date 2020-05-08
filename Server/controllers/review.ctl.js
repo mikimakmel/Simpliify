@@ -8,7 +8,29 @@ module.exports = {
 
         const businessID = req.body.businessID;
 
-        const query = `SELECT * FROM Review WHERE business=${businessID}`;
+        // const query = `SELECT * FROM Review WHERE business=${businessID}`;
+        const query = 
+            `SELECT * FROM Review 
+            WHERE Business=${businessID} 
+            AND Description IS NOT NULL 
+            ORDER BY Reviewedat DESC`;  
+        
+        db.query(query)
+            .then(result => res.json(result.rows))
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    },
+
+    // returns all business reviews from customers.
+    async getBusinessReviewsByQuantity(req, res) {
+        console.log("getBusinessReviewsByQuantity()");
+
+        const businessID = req.body.businessID;
+
+        const query = 
+            `SELECT Rating, COUNT(Rating) 
+            FROM Review 
+            WHERE Business=${businessID} 
+            GROUP BY Rating`;  
         
         db.query(query)
             .then(result => res.json(result.rows))
@@ -33,6 +55,25 @@ module.exports = {
         
         db.query(query)
             .then(result => res.json(result.rows[0]))
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    },
+
+    // customer write's a new review on a business.
+    async getUserReviewOnBusiness(req, res) {
+        console.log("getUserReviewOnBusiness()");
+
+        const userID = req.body.userID;
+        const businessID = req.body.businessID;
+
+        console.log(userID, businessID);
+
+        const query = 
+            `SELECT * FROM Review
+            WHERE business=${businessID} AND customer=${userID}
+            RETURNING Customer, Business, (NOW() AT TIME ZONE 'EETDST') AT TIME ZONE 'UTC' as reviewedat, description, rating`;
+        
+        db.query(query)
+            .then(result => res.json(result.rows))
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
