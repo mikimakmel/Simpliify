@@ -95,7 +95,6 @@ priceRange = (filterRows, minPrice, maxPrice) => {
         // if new business id -> add item to results and reset data
         if (id != item.businessid){
             if (flag){
-                console.log('push ', id)
                 businesses.push(createBusinessCard(id, price, details))
             }
             id = item.businessid
@@ -163,18 +162,27 @@ search = (req, res) => {
     // rating: 0,
     // category: 'All',
 
+    // varaibles declarations - radius
+    var coordinates
+    var BB
+    var minLat
+    var maxLat
+    var minLon
+    var maxLon
+    var r
+
     console.log('Radius choosen by user is ', radius)
-    const coordinates = {
+    coordinates = {
         Lon: lon, 
         Lat: lat
     }
     if (radius){
-        const BB = calculateBBRdius(radius, coordinates)
-        const minLat = BB.minLat
-        const maxLat = BB.maxLat
-        const minLon = BB.minLon
-        const maxLon = BB.maxLon
-        const r = BB.r
+        BB = calculateBBRdius(radius, coordinates)
+        minLat = BB.minLat
+        maxLat = BB.maxLat
+        minLon = BB.minLon
+        maxLon = BB.maxLon
+        r = BB.r
     }
 
     // category
@@ -217,8 +225,6 @@ search = (req, res) => {
     query = query.concat(' ', `GROUP BY Business.Businessid, Service.serviceid, Carousel.imagelink`)
     query = query.concat(' ', strRadius4)
     query = query.concat(' ', `ORDER BY Businessid`)
-
-    console.log(query)
     
     
     db.query(query)
