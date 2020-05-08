@@ -95,6 +95,31 @@ module.exports = {
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
+    // get all business orders (past and future).
+    async checkIfCustomerReceiveServiceFromBusiness(req, res) {
+        console.log("checkIfCustomerReceiveServiceFromBusiness()");
+
+        const customerID = req.body.customerID;
+        const businessID = req.body.businessID;
+
+        const query = 
+            `SELECT * FROM Orders 
+            WHERE business=${businessID} AND customer=${customerID} AND status='Success'
+            ORDER BY starttime ASC`;
+
+        db.query(query)
+            .then(result => {
+                console.log(result.rows)
+                if(result.rows.length > 0) {
+                    res.json({ didReceive: true });
+                }
+                else {
+                    res.json({ didReceive: false });
+                }
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    },
+
 }
 
 
