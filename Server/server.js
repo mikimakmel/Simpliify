@@ -36,7 +36,8 @@ app.post('/customer/getFavoritesList', customerCtl.getFavoritesList);
 app.post('/order/createNewOrder', orderCtl.createNewOrder);
 app.put('/order/updateOrderStatus', orderCtl.updateOrderStatus);
 app.post('/order/getAllCustomerOrders', orderCtl.getAllCustomerOrders);         // READY - Dosen't show all the orders?
-app.post('/order/getAllBusinessOrders', orderCtl.getAllBusinessOrders);                                
+app.post('/order/getAllBusinessOrders', orderCtl.getAllBusinessOrders);          
+app.post('/order/getAllAvailableBusinessTime', orderCtl.getAllAvailableBusinessTime);                      
 app.post('/order/checkIfCustomerReceiveServiceFromBusiness', orderCtl.checkIfCustomerReceiveServiceFromBusiness);
 
 /*** Business routes ***/
@@ -60,13 +61,13 @@ app.post('/service/updateServiceDetails', serviceCtl.updateServiceDetails);
 app.post('/service/deleteService', serviceCtl.deleteService);
 
 /*** Statistics routes ***/
-app.get('/statistics/statDailyCounter', statisticsCtl.statDailyCounter);                  // READY
-app.get('/statistics/StatByGender', statisticsCtl.StatByGender);                          // In progress
-app.get('/statistics/statByService', statisticsCtl.statByService);                        // In progress
-app.get('/statistics/statByAddress', statisticsCtl.statByAddress);                        // In progress
-app.get('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);                    // In progress
-app.get('/statistics/statStrongHours', statisticsCtl.statStrongHours);                    // In progress
-app.get('/statistics/statTop10Customers', statisticsCtl.statTop10Customers);              // In progress
+// app.get('/statistics/statDailyCounter', statisticsCtl.statDailyCounter);                  // READY
+// app.get('/statistics/StatByGender', statisticsCtl.StatByGender);                          // In progress
+// app.get('/statistics/statByService', statisticsCtl.statByService);                        // In progress
+// app.get('/statistics/statByAddress', statisticsCtl.statByAddress);                        // In progress
+// app.get('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);                    // In progress
+// app.get('/statistics/statStrongHours', statisticsCtl.statStrongHours);                    // In progress
+// app.get('/statistics/statTop10Customers', statisticsCtl.statTop10Customers);              // In progress
 
 
 /*** Review routes ***/
@@ -95,7 +96,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 /* Increment visitor in a business */
 /* UPDATE Business SET Dailycounter = Dailycounter + 1 WHERE BusinessID=${businessID} */
 
-/* Best Customer in a business */
+/* Best Customers in a business (order by anoumt of orders per business) */
 /* SELECT Customer, Business, COUNT(Customer) FROM Orders WHERE Business=${Business} GROUP BY Customer, Orders.Business ORDER BY Count DESC */
 
 /* Avarage of a business rating in the last day + week + month */

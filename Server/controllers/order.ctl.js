@@ -1,5 +1,17 @@
 const db = require('../database');
 
+var moment = require('moment');
+var momentRange = require('moment-range');
+momentRange.extendMoment(moment);
+var weekday = new Array(7);
+weekday[0] = "Sunday";
+weekday[1] = "Monday";
+weekday[2] = "Tuesday";
+weekday[3] = "Wednesday";
+weekday[4] = "Thursday";
+weekday[5] = "Friday";
+weekday[6] = "Saturday";
+
 module.exports = {
 
     // user's create an new order for a service.
@@ -120,7 +132,97 @@ module.exports = {
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
+    async getAllAvailableBusinessTime(req, res) {
+        console.log("getAllAvailableBusinessTime()");
+        
+        const businessID = req.body.businessID;
+        const currentDate = req.body.currentDate;
+        const durationMinutes = req.body.durationMinutes;
+
+        const availabilityQuery = `SELECT * FROM availability WHERE businessid=${businessID}`;
+        
+        const ordersQuery = 
+            `SELECT status, starttime, durationminutes FROM Orders 
+            INNER JOIN Service ON (Orders.Service= Service.ServiceID)
+            WHERE business=${businessID} AND Status='Confirmed'
+            ORDER BY starttime ASC`;
+
+        var finalResult = {
+            availability: [],
+            orders: [],
+            };
+
+        db.query(availabilityQuery)
+            .then(result => {
+                finalResult.availability = result.rows;
+
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+        db.query(ordersQuery)
+            .then(result => {
+                finalResult.orders = result.rows;
+
+                var allSegments = []
+                var startAvailability = "" 
+                var endAvailability = "" 
+                
+                // Calculating all available time segments for today and save them in "allSegments".
+                finalResult.availability.forEach(day =>
+                    {
+                      if (weekday[moment.utc(currentDate).day()] == day.dow)
+                      {
+                        var t = day.starttime.split(":")
+                        startAvailability = moment(new Date(moment(currentDate).year(), moment(currentDate).month(), moment(currentDate).date(), parseInt(t[0]), parseInt(t[1]), parseInt(t[2])))
+                        t = day.endtime.split(":")
+                        endAvailability = moment(new Date(moment(currentDate).year(), moment(currentDate).month(), moment(currentDate).date(), parseInt(t[0]), parseInt(t[1]), parseInt(t[2])))
+                      }
+                    })
+        
+                var currentAvailability = startAvailability.clone()
+                var tmpTime = startAvailability.clone().add(durationMinutes, 'minutes')
+                while (tmpTime.isSameOrBefore(endAvailability))
+                {
+                    allSegments.push(moment.range(moment(currentAvailability), moment(currentAvailability).clone().add(durationMinutes, 'minutes')))
+                    currentAvailability.add(durationMinutes, 'minutes')
+                    tmpTime.add(durationMinutes, 'minutes')
+                }
+
+                // Gather orders from the same day
+                let timeSegments = [];
+                finalResult.orders.forEach (order => {
+                  if (moment(order.starttime).format('L') === moment(startAvailability).format('L'))
+                  {
+                    let tmpDate = moment(order.starttime)
+                    timeSegments.push(moment.range(moment(tmpDate), moment(tmpDate).add(order.durationminutes, 'minutes')))
+                  }
+                })
+                
+                // If a range of time overlaps with each other (all & ordered), move it from the list
+                var overlapping = []
+                allSegments.forEach (function(timeFrame, index) {
+                    timeSegments.forEach (segment => {
+                        if(segment.overlaps(timeFrame))
+                        { 
+                        overlapping.push(index)
+                        }
+                    })
+                })
+
+                // Actual remove
+                for (var i = 0; i < overlapping.length; ++i) {
+                allSegments.splice(overlapping[i] - i, 1)
+                }
+                
+                // Parse to an time objects array
+                var openHours = []
+                allSegments.forEach (segment => {
+                    openHours.push({'time':segment.start.format('HH:mm')})
+                })
+
+                res.json(openHours);
+
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    },
 }
-
-
-// SELECT orders.business, orders.status, orders.starttime, service.durationminutes FROM orders LEFT OUTER JOIN service ON (orders.business = service.businessid AND orders.service = service.serviceid) WHERE business = X
