@@ -229,24 +229,20 @@ search = (req, res) => {
     
     db.query(query)
     .then(result => {
+        var filterRows = result.rows;
 
-        var rows = result.rows
-
-        // console.log(rows)
-        var filterRows
         if (radius) {
             const coordinates = {lon: lon, lat: lat, r:r}
-            console.log('Im here')
-            radiusFilter(coordinates, rows)
+            radiusFilter(coordinates, filterRows)
         }
 
         if (rating){
-            filterRows = ratingFilter(rating, rows)
+            filterRows = ratingFilter(rating, filterRows)
         }
-        
+
         filterRows = priceRange(filterRows, minPrice, maxPrice)
 
-        // console.log(filterRows)
+        console.log(filterRows.length)
         res.json(filterRows)
     })
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
