@@ -1,8 +1,34 @@
 const db = require('../database');
 
+// 1. get all business customers sorted by gender.
+getCustomersSortedByGender = async (req, res) => {
+    console.log("getCustomersSortedByGender()");
+
+    const businessID = req.body.businessID;
+
+    const query = `SELECT DailyCounter FROM Business WHERE BusinessID=${businessID}`;
+    
+    db.query(query)
+        .then(result => res.json(result.rows))
+        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+}
 
 
-// get all business customers sorted by ascending age.
+// 2. get business income from each service.
+getIncomeByService = async (req, res) => {
+    console.log("getIncomeByService()");
+
+    const businessID = req.body.businessID;
+
+    const query = `SELECT DailyCounter FROM Business WHERE BusinessID=${businessID}`;
+    
+    db.query(query)
+        .then(result => res.json(result.rows))
+        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+}
+
+
+// 3. get all business customers sorted by ascending age.
 getCustomersSortedByAge = async (req, res) => {
     console.log("getCustomersSortedByAge()");
 
@@ -18,22 +44,8 @@ getCustomersSortedByAge = async (req, res) => {
 }
 
 
-
-
-// get all business customers sorted by gender.
-getCustomersSortedByGender = async (req, res) => {
-    console.log("getCustomersSortedByGender()");
-
-    const businessID = req.body.businessID;
-
-    const query = `SELECT DailyCounter FROM Business WHERE BusinessID=${businessID}`;
     
-    db.query(query)
-        .then(result => res.json(result.rows))
-        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-}
-    
-// get business customers sorted by top *number* addresses (cities).
+// 4. get business customers sorted by top *number* addresses (cities)
 getCustomersSortedByCities = async (req, res) => {
     console.log("getCustomersSortedByCities()");
 
@@ -45,7 +57,21 @@ getCustomersSortedByCities = async (req, res) => {
         .then(result => res.json(result.rows))
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
+
+
+// 5. get business total income under a period of time.
+getIncomeByTimePeriod = async (req, res) => {
+    console.log("getIncomeByTimePeriod()");
+
+    const businessID = req.body.businessID;
+
+    const query = `SELECT DailyCounter FROM Business WHERE BusinessID=${businessID}`;
     
+    db.query(query)
+        .then(result => res.json(result.rows))
+        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+}
+
 // get daily entrance counter for a business page.
 getDailyCounter = async (req, res) =>{
     console.log("getDailyCounter()");
@@ -72,34 +98,6 @@ getTop10Customers = async (req, res) => {
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
     
-// get business income from each service.
-getIncomeByService = async (req, res) => {
-    console.log("getIncomeByService()");
-
-    const businessID = req.body.businessID;
-
-    const query = `SELECT DailyCounter FROM Business WHERE BusinessID=${businessID}`;
-    
-    db.query(query)
-        .then(result => res.json(result.rows))
-        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-}
-    
-// get business total income under a period of time.
-getIncomeByTimePeriod = async (req, res) => {
-    console.log("getIncomeByTimePeriod()");
-
-    const businessID = req.body.businessID;
-
-    const query = `SELECT DailyCounter FROM Business WHERE BusinessID=${businessID}`;
-    
-    db.query(query)
-        .then(result => res.json(result.rows))
-        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-}
-
-
-
 
 
 module.exports = {
