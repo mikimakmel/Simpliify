@@ -4,7 +4,7 @@ import { SplashScreen } from 'expo';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './screens/customer/HomeScreen';
-import ExploreScreen from './screens/customer/ExploreScreen';
+import ExploreScreen from './screens/customer/Explore/ExploreScreen';
 import MyOrdersScreen from './screens/customer/MyOrdersScreen';
 import MenuScreen from './screens/customer/MenuScreen';
 import LoginScreen from './screens/LoginScreen';

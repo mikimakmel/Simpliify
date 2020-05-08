@@ -149,6 +149,11 @@ search = (req, res) => {
     var minPrice = req.body.minPrice;
     var maxPrice = req.body.maxPrice;
 
+    console.log('searchQuery: ' + searchQuery + ', radius: ' + 
+        radius + ',  category: ' + category + ',   rating: ' 
+        + rating + ',  lon: ' + lon + ',  lat: ' + lat + ',  minPrice: '
+        + minPrice + ',  maxPrice: ' + maxPrice);
+
 
     // default values in frontend
     // searchQuery: '',
@@ -235,6 +240,7 @@ search = (req, res) => {
         
         filterRows = priceRange(filterRows, minPrice, maxPrice)
 
+        // console.log(filterRows)
         res.json(filterRows)
     })
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
