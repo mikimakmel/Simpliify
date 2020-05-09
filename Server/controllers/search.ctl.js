@@ -242,7 +242,6 @@ search = (req, res) => {
 
         filterRows = priceRange(filterRows, minPrice, maxPrice)
 
-        console.log(filterRows.length)
         res.json(filterRows)
     })
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
