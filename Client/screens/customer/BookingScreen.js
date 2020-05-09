@@ -1,5 +1,5 @@
 import React, { Component, Children } from 'react';
-import { View, Text, ScrollView, FlatList, Alert, TouchableOpacity, Image } from 'react-native';
+import { View, Text, ScrollView, FlatList, Alert, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import { ListItem, Button, Overlay } from 'react-native-elements';
 import colors from '../../constants/Colors';
@@ -24,13 +24,14 @@ class BookingScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        businessData: this.props.route.params.businessData,
-        serviceData: this.props.route.params.serviceData,
-        currentOrder: {},
-        overlayVisible: false,
-        selectedDate: null,
-        prettyDate: null,
-        availableHours: []
+      businessData: this.props.route.params.businessData,
+      serviceData: this.props.route.params.serviceData,
+      currentOrder: {},
+      overlayVisible: false,
+      selectedDate: null,
+      prettyDate: null,
+      availableHours: [],
+      isLoading: true
     };
     this.onDayPress = this.onDayPress.bind(this);
     this.handleBooking = this.handleBooking.bind(this);
@@ -47,9 +48,10 @@ class BookingScreen extends Component {
   }
 
   async fetchAvailableHours(day) {
+    await this.setState({isLoading: true});
     const { businessData, serviceData } = this.state;
 
-    // const url = 'http://192.168.1.198:3000/order/createNewOrder';
+    const url = 'http://192.168.1.198:3000/order/getAllAvailableBusinessTime';
     const options = { 
       method: 'POST', 
       headers: { 
@@ -64,13 +66,16 @@ class BookingScreen extends Component {
     };
     const request = new Request(url, options)
 
-    // await fetch(request)
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     console.log(data)
-    //     // this.setState({availableHours: data});
-    //   })
-    //   .catch(error => console.log(error))
+    await fetch(request)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        console.log('======================================================================')
+        this.setState({availableHours: data});
+      })
+      .catch(error => console.log(error))
+
+    await this.setState({isLoading: false});
   }
 
   initDate() {
@@ -211,7 +216,7 @@ class BookingScreen extends Component {
               onPress={() => {
                 console.log('DONT SAVE')
                 // this.setState({ overlayVisible: false })
-                // this.props.navigation.goBack()
+                this.props.navigation.goBack()
                 // this.props.navigation.navigate('Schedule')
               }}
             >
@@ -245,6 +250,23 @@ class BookingScreen extends Component {
     );
   }
 
+  renderResults() {
+    if(this.state.availableHours.length > 0) {
+      return(
+        <FlatList
+          data={this.state.availableHours}
+          renderItem={this.renderRow}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      )
+    } 
+    else {
+      return(
+        <Text style={{fontSize: 16, alignSelf: 'center', marginTop: 80}}>There are no available slots left.</Text>
+      )
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -265,11 +287,12 @@ class BookingScreen extends Component {
           }}
         />
         <Text style={styles.text}>{this.state.prettyDate}</Text>
-        <FlatList
-          data={openHours}
-          renderItem={this.renderRow}
-          keyExtractor={(item, index) => index.toString()}
-        />
+        {
+          !this.state.isLoading ? this.renderResults() :
+          <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', backgroundColor: colors.white }}>
+            <ActivityIndicator size="large" color={colors.red}/>
+          </View>
+        }
         {this.renderOverlay()}
       </View>
     );

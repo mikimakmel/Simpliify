@@ -42,8 +42,7 @@ class ReviewsPage extends Component {
     var newList = await Promise.all(reviews.map(async (item) => {
       let user = await this.fetchUser(item.customer);
       let review = {
-        // customerAvatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-        customerAvatar: user.profilepic ? user.profilepic : 'https://www.nicepng.com/png/detail/128-1280406_view-user-icon-png-user-circle-icon-png.png',
+        customerAvatar: user.profilepic ? user.profilepic : 'https://www.lococrossfit.com/wp-content/uploads/2019/02/user-icon-300x300.png',
         customerName: `${user.firstname} ${user.lastname}`,
         customerID: item.customer,
         rating: item.rating,
@@ -203,7 +202,7 @@ class ReviewsPage extends Component {
   renderReview({item}) {
     return(
       <ListItem
-        leftAvatar={{ source: { uri: item.customerAvatar }, size: 45, marginBottom: 20, opacity: 0.8}}
+        leftAvatar={{ source: { uri: item.customerAvatar }, size: 45, marginBottom: 20}}
         title={this.renderNameAndDate(item)}
         subtitle={this.renderRatingAndDescription(item)}
         bottomDivider={true}

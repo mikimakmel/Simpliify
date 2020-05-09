@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Key
 import { CreditCardInput } from 'react-native-credit-card-input';
 import GradientButton from 'react-native-gradient-buttons';
 import Colors from '../constants/Colors';
+import { MaterialCommunityIcons, Octicons, MaterialIcons } from '@expo/vector-icons';
 
 class CreditCardScreen extends Component {
   constructor(props) {
@@ -10,9 +11,44 @@ class CreditCardScreen extends Component {
     this.state = {
     };
     this.setCardInputValues = this.setCardInputValues.bind(this);
+    this.addedAlert = this.addedAlert.bind(this);
   }
+
   componentDidMount() {
     this.setCardInputValues();
+    this.props.navigation.setOptions({
+      title: 'Card Details',
+      headerRight: () => (
+        <Octicons 
+          name="check" 
+          size={35} 
+          color={Colors.green03} 
+          style={{marginRight: 10}} 
+          onPress={(this.addedAlert)}
+        />
+      ),
+      headerLeft: () => (
+        <MaterialIcons 
+          name={'keyboard-arrow-left'} 
+          size={45} 
+          color={Colors.blue}
+          onPress={() => this.props.navigation.navigate('Menu')}
+        />
+      ),
+    });
+  }
+
+  addedAlert() {
+    Alert.alert(
+      'Congrats!',
+      'Card added successfuly',
+      [
+        {
+          text: 'OK',
+          onPress: () => this.props.navigation.navigate('Menu')
+        }
+      ]
+    )
   }
 
   setCardInputValues(){
@@ -41,7 +77,7 @@ class CreditCardScreen extends Component {
   render() {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={{flex: 1, paddingTop: 100, backgroundColor: 'white'}}>
+        <View style={{flex: 1, paddingTop: 50, backgroundColor: 'white'}}>
           <CreditCardInput
             autoFocus={false}
             requiresName
@@ -58,7 +94,7 @@ class CreditCardScreen extends Component {
             placeholderColor={Colors.gray02}
           />
           
-          <View style={{position: 'absolute', bottom: 30, alignItems: 'center', justifyContent: 'center', width: '100%'}}>
+          {/* <View style={{position: 'absolute', bottom: 30, alignItems: 'center', justifyContent: 'center', width: '100%'}}>
             <GradientButton
               // blueViolet   
               gradientBegin="#7F81D6"
@@ -75,7 +111,7 @@ class CreditCardScreen extends Component {
             >
               SAVE CHANGES
             </GradientButton>
-          </View>
+          </View> */}
         </View>
       </TouchableWithoutFeedback>
     );

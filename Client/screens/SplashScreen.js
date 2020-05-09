@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, Image } from 'react-native';
 import * as Actions_App from '../redux/actions/Actions_App';
 import * as Actions_User from '../redux/actions/Actions_User';
 import * as Actions_Customer from '../redux/actions/Actions_Customer';
 import * as Actions_Business from '../redux/actions/Actions_Business';
 import { connect } from 'react-redux';
+import { BarIndicator } from 'react-native-indicators';
+import Colors from '../constants/Colors';
+require('../firebaseConfig');
+import * as firebase from 'firebase';
+import * as Location from 'expo-location';
 
 class SplashScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true,
+      email: this.props.route.params.email,
+      shouldUpdate: false
     };
     this.initApp = this.initApp.bind(this);
     this.fetchCategoriesList = this.fetchCategoriesList.bind(this);
@@ -20,23 +26,56 @@ class SplashScreen extends Component {
     this.fetchBusiness = this.fetchBusiness.bind(this);
     this.isBusinessInFavorites = this.isBusinessInFavorites.bind(this);
     this.fetchCustomerOrdersList = this.fetchCustomerOrdersList.bind(this);
+    // this.checkIfLoggedIn = this.checkIfLoggedIn.bind(this);
+    this.getPermissionAsync = this.getPermissionAsync.bind(this);
   }
 
   componentDidMount() {
+    // this.checkIfLoggedIn();
     this.initApp();
+    // console.log(this.props.route.params)
   }
   
   async initApp() {
+    console.log('initApp');
+    await this.getPermissionAsync();
     await this.fetchCategoriesList();
     await this.fetchUserProfile();
     await this.fetchUserFavoritesList();
     await this.fetchManagerBusiness();
     await this.fetchCustomerOrdersList();
-    // console.log(this.props.ordersList);
     this.props.navigation.navigate('Profile');
   }
 
+  // async checkIfLoggedIn() {
+  //   console.log('checkIfLoggedIn');
+  //   firebase.auth().onAuthStateChanged(async user => {
+  //       if(user) {
+  //         this.props.email ? await this.setState({email: this.props.email, shouldUpdate: true}) : await this.setState({email: user.email, shouldUpdate: true});
+  //         await this.initApp();
+  //         console.log('checkIfLoggedIn: true');
+  //       } else {
+  //         await this.setState({shouldUpdate: false})
+  //         await this.props.navigation.navigate('LogIn');
+  //         console.log('checkIfLoggedIn: false');
+  //       }
+  //   })
+  // }
+
+  async getPermissionAsync() {
+    // console.log('getPermissionAsync');
+    let { status } = await Location.requestPermissionsAsync();
+
+    if (status !== 'granted') {
+      alert('Sorry, we need location permissions to make this work!');
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    this.props.dispatch(Actions_User.updateUserLocation(location));
+  }
+
   async fetchCategoriesList() {
+    // console.log('fetchCategoriesList');
     const url = `http://192.168.1.198:3000/business/getCategoriesList`;
     const options = { method: 'GET', headers: { 'Content-Type': 'application/json' } }
     const request = new Request(url, options)
@@ -48,6 +87,7 @@ class SplashScreen extends Component {
   }
 
   async fetchUserProfile() {
+    // console.log('fetchUserProfile');
     const url = 'http://192.168.1.198:3000/user/getUserByEmail';
     const options = { 
       method: 'POST', 
@@ -55,7 +95,7 @@ class SplashScreen extends Component {
         'Accept': 'application/json',
         'Content-Type': 'application/json' 
       },
-      body: JSON.stringify({ email: this.props.route.params.email })
+      body: JSON.stringify({ email: this.state.email })
     };
     const request = new Request(url, options)
 
@@ -66,6 +106,7 @@ class SplashScreen extends Component {
   }
 
   async fetchBusiness(businessID) {
+    // console.log('fetchBusiness');
     const url = 'http://192.168.1.198:3000/business/getBusinessByID';
     const options = { 
       method: 'POST', 
@@ -80,13 +121,14 @@ class SplashScreen extends Component {
     return await fetch(request)
       .then(response => response.json())
       .then(data => {
-        // console.log(data)
         return data;
       })
       .catch(error => console.log(error))
   }
 
   async fetchUserFavoritesList() {
+    // console.log('fetchUserFavoritesList');
+    // console.log(this.props.currentUser.userid)
     const url = 'http://192.168.1.198:3000/customer/getFavoritesList';
     const options = { 
       method: 'POST', 
@@ -123,6 +165,7 @@ class SplashScreen extends Component {
   }
 
   async fetchManagerBusiness() {
+    // console.log('fetchManagerBusiness');
     if(!this.props.currentUser.hasBusiness) {
       const url = 'http://192.168.1.198:3000/business/getBusinessByManagerID';
       const options = { 
@@ -148,6 +191,7 @@ class SplashScreen extends Component {
   }
 
   async fetchCustomerOrdersList() {
+    // console.log('fetchCustomerOrdersList');
     const url = 'http://192.168.1.198:3000/order/getAllCustomerOrders';
     const options = { 
       method: 'POST', 
@@ -171,7 +215,8 @@ class SplashScreen extends Component {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: 'white', alignContent: 'center', justifyContent: 'center'}}>
-        <ActivityIndicator size={'large'}/>
+        <Image source={require('../assets/images/logo.png')} style={{alignSelf: 'center', bottom: 50}}/>
+        <BarIndicator color={Colors.red} count={5} size={35} style={{position: 'absolute', bottom: 150, alignSelf: 'center'}}/>
       </View>
     );
   }

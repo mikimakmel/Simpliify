@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, Platform, ActivityIndicator } from 'react-native';
 import { Camera } from 'expo-camera';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import BarcodeMask from 'react-native-barcode-mask';
 import Colors from '../constants/Colors';
 
@@ -11,6 +11,7 @@ class CameraScreen extends Component {
         this.state = {
             hasCameraPermission: null,
             type: Camera.Constants.Type.back,
+            flash: false,
             isLoading: false
         };
     }
@@ -70,18 +71,37 @@ class CameraScreen extends Component {
                     <Camera 
                         style={{ flex: 1 }} 
                         type={type}
-                        flashMode="off"
+                        flashMode={this.state.flash ? 'on' : 'off'}
                         ref={ref => { this.camera = ref }}
                     >
                         <View style={{ flex: 1, backgroundColor: 'transparent' }}>
                             <BarcodeMask width={300} height={190} showAnimatedLine={false}/>
-                            <View style={{ alignSelf: 'center', position: 'absolute', top: 80 }}>
-                                <Text style={{ fontWeight: '400', fontSize: 22, color: 'white' }}>Scan Credit Card</Text>
+                            <View style={{ alignSelf: 'center', position: 'absolute', top: 50, right: 20 }}>
+                                <Ionicons 
+                                    name={this.state.flash ? 'md-flash': 'md-flash-off'} 
+                                    size={30} 
+                                    color={Colors.white}
+                                    onPress={() => this.setState({flash: !this.state.flash})}
+                                />
+                            </View>
+                            <View style={{ alignSelf: 'center', position: 'absolute', top: 44, left: 10 }}>
+                                <MaterialIcons 
+                                    name={'keyboard-arrow-left'} 
+                                    size={45} 
+                                    color={Colors.white}
+                                    onPress={() => this.props.navigation.navigate('Menu')}
+                                />
+                            </View>
+                            <View style={{ alignSelf: 'center', position: 'absolute', top: 150 }}>
+                                <Text style={{ fontWeight: '300', fontSize: 22, color: 'white' }}>Scan Credit Card</Text>
                             </View>
                             <View style={{ alignSelf: 'center', position: 'absolute', bottom: 30 }}>
-                                <TouchableOpacity onPress={this.takePicture}>
-                                    <MaterialCommunityIcons name="circle-slice-8" style={{ color: 'white', fontSize: 100 }}/>
-                                </TouchableOpacity>
+                                <MaterialCommunityIcons 
+                                    name={'circle-slice-8'} 
+                                    size={90} 
+                                    color={Colors.white}
+                                    onPress={this.takePicture}
+                                />
                             </View>
                         </View>
                     </Camera>

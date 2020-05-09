@@ -33,14 +33,15 @@ import * as firebase from 'firebase';
 import * as Actions_User from '../redux/actions/Actions_User';
 import * as Actions_Customer from '../redux/actions/Actions_Customer';
 import { connect } from 'react-redux';
-import firebaseApp from '../firebaseConfig';
+// import firebaseApp from '../firebaseConfig';
+require('../firebaseConfig');
 
 class LoginScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
         screenStatus: 'sign-in',
-        isReady: false,
+        // isReady: false,
         visibleHeight: layout.window.height,
         isKeyboardOpen: false,
         email: '',
@@ -49,7 +50,8 @@ class LoginScreen extends Component {
         passwordValidationColor: colors.gray02,
         hidePassword: true,
         logoSize: {width: 100, height: 70},
-        signed: false
+        signed: false,
+        // shouldRender: false
     };
 
     this.buttonOpacity = new Value(1);
@@ -114,22 +116,24 @@ class LoginScreen extends Component {
     this.logInViaGoogle = this.logInViaGoogle.bind(this);
     this.isUserEqual = this.isUserEqual.bind(this);
     this.onSignIn = this.onSignIn.bind(this);
-
     this.fetchUserProfile = this.fetchUserProfile.bind(this);
-    this.initBeforeLogin = this.initBeforeLogin.bind(this);
-    this.fetchFavoritesList = this.fetchFavoritesList.bind(this);
-    this.fetchBusiness = this.fetchBusiness.bind(this);
-    this.isBusinessInFavorites = this.isBusinessInFavorites.bind(this);
+    // this.initBeforeLogin = this.initBeforeLogin.bind(this);
+    // this.fetchFavoritesList = this.fetchFavoritesList.bind(this);
+    // this.fetchBusiness = this.fetchBusiness.bind(this);
+    // this.isBusinessInFavorites = this.isBusinessInFavorites.bind(this);
   }
 
-  componentDidMount() {
-        // firebase.auth().signOut().then(function() {
-        //     console.log('Sign-out successful');
-        // }).catch(function(error) {
-        //     console.log('An error happened: ' + error);
+    componentDidMount() {
+        // firebase.auth().signOut()
+        // .then(() => {
+        //   console.log('Sign-out successful');
+        // //   this.props.navigation.navigate('LogIn');
+        // })
+        // .catch((error) => {
+        //   console.log('An error happened: ' + error);
         // });
         this.checkIfLoggedIn();
-  }
+    }
 
     componentWillMount () {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow.bind(this));
@@ -158,11 +162,6 @@ class LoginScreen extends Component {
         })
     } 
     
-    initBeforeLogin() {
-        // console.log(this.props.currentUser);///////////
-        this.fetchFavoritesList();
-    }
-
     async fetchUserProfile(email) {
         // console.log(email);
         const url = 'http://192.168.1.198:3000/user/getUserByEmail';
@@ -178,73 +177,68 @@ class LoginScreen extends Component {
     
         await fetch(request)
           .then(response => response.json())
-          .then(async data => {
-            // console.log(this.props.currentUser)
-            // console.log(data.user)
+          .then(data => {
             this.props.dispatch(Actions_User.updateCurrentUser(data.user));
-            console.log('User ID: ' + this.props.currentUser.userid);
-          })
-          .catch(error => console.log(error))
-
-        this.initBeforeLogin();
-    }
-
-    async fetchFavoritesList() {
-        // console.log(this.props.currentUser);
-        const url = 'http://192.168.1.198:3000/customer/getFavoritesList';
-        const options = { 
-          method: 'POST', 
-          headers: { 
-              'Accept': 'application/json',
-              'Content-Type': 'application/json' 
-          },
-          body: JSON.stringify({userID: this.props.currentUser.userid})
-        };
-        const request = new Request(url, options)
-    
-        await fetch(request)
-          .then(response => response.json())
-          .then(async data => {
-            // console.log(data)
-            data.map((item) => {
-              this.fetchBusiness(item.business);
-            })
           })
           .catch(error => console.log(error))
     }
-    
-    async fetchBusiness(businessID) {
-        const url = 'http://192.168.1.198:3000/business/getBusinessByID';
-        const options = { 
-            method: 'POST', 
-            headers: { 
-                'Accept': 'application/json',
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({businessID})
-        };
-        const request = new Request(url, options)
 
-        await fetch(request)
-            .then(response => response.json())
-            .then(async data => {
-                // console.log(data)
-                if (!this.isBusinessInFavorites(data.businessid)) {
-                    this.props.dispatch(Actions_Customer.addToFavoritesList(data))
-                }
-            })
-            .catch(error => console.log(error))
-    }
-
-    isBusinessInFavorites(businessID) {
-        this.props.favoritesList.map((item) => {
-          if(item.businessid === businessID) {
-            return true;
-          }
-        });
+    // async fetchFavoritesList() {
+    //     // console.log(this.props.currentUser);
+    //     const url = 'http://192.168.1.198:3000/customer/getFavoritesList';
+    //     const options = { 
+    //       method: 'POST', 
+    //       headers: { 
+    //           'Accept': 'application/json',
+    //           'Content-Type': 'application/json' 
+    //       },
+    //       body: JSON.stringify({userID: this.props.currentUser.userid})
+    //     };
+    //     const request = new Request(url, options)
     
-        return false;
-    }
+    //     await fetch(request)
+    //       .then(response => response.json())
+    //       .then(async data => {
+    //         // console.log(data)
+    //         data.map((item) => {
+    //           this.fetchBusiness(item.business);
+    //         })
+    //       })
+    //       .catch(error => console.log(error))
+    // }
+    
+    // async fetchBusiness(businessID) {
+    //     const url = 'http://192.168.1.198:3000/business/getBusinessByID';
+    //     const options = { 
+    //         method: 'POST', 
+    //         headers: { 
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json' 
+    //         },
+    //         body: JSON.stringify({businessID})
+    //     };
+    //     const request = new Request(url, options)
+
+    //     await fetch(request)
+    //         .then(response => response.json())
+    //         .then(async data => {
+    //             // console.log(data)
+    //             if (!this.isBusinessInFavorites(data.businessid)) {
+    //                 this.props.dispatch(Actions_Customer.addToFavoritesList(data))
+    //             }
+    //         })
+    //         .catch(error => console.log(error))
+    // }
+
+    // isBusinessInFavorites(businessID) {
+    //     this.props.favoritesList.map((item) => {
+    //       if(item.businessid === businessID) {
+    //         return true;
+    //       }
+    //     });
+    
+    //     return false;
+    // }
 
     validateEmail(email) {
         const expression = /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([\t]*\r\n)?[\t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([\t]*\r\n)?[\t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
@@ -424,23 +418,17 @@ class LoginScreen extends Component {
     }
 
     checkIfLoggedIn = () => {
-        // console.log(firebase.auth().currentUser);
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
-                // this.fetchUserProfile(user.email);
-                this.setState({ isReady: true });
-                console.log("Signed IN");
+                // this.setState({shouldRender: false});
                 this.props.navigation.navigate('SplashScreen', {email: user.email});
-                // this.props.navigation.navigate('Profile');
-                // if (this.state.signed) {
-                // }
+                console.log('checkIfLoggedIn: yes');
             } else {
-                this.setState({ isReady: true });
-                console.log("Signed OUT");
-                this.props.navigation.navigate('LogIn');
+                // this.setState({shouldRender: true});
+                console.log('checkIfLoggedIn: no');
             }
+            // this.setState({ isReady: true });
         })
-        // this.setState({ isReady: true });
     }
 
     async logInViaFacebook() {
@@ -451,11 +439,18 @@ class LoginScreen extends Component {
           if (type === 'success') {
             const FBcredential = firebase.auth.FacebookAuthProvider.credential(token);
             firebase.auth().signInWithCredential(FBcredential)
-            .then((result) => {
-                this.fetchUserProfile(result.user);
-                console.log(result.user.photoURL);
+            .then(async (result) => {
+                await this.fetchUserProfile(result.user.email);
+
+                // console.log(!this.props.currentUser)
+                if(this.props.currentUser) {
+                    this.props.navigation.navigate('SplashScreen', {email: result.user.email, profilePic: result.user.photoURL});
+                }
+                else {
+                    this.props.navigation.navigate('SignUpForm', {email: result.user.email, profilePic: result.user.photoURL});
+                }
+
                 console.log("Facebook Login Success");
-                this.props.navigation.navigate('Profile');
             })
             .catch((error) => { console.log(`Facebook Login Error: ${error}`) });
           } else {
@@ -534,13 +529,13 @@ class LoginScreen extends Component {
       }
 
   render() {
-    if (!this.state.isReady) {
-        return (
-            <View style={{ flex: 1, backgroundColor: 'white', alignContent: 'center', justifyContent: 'center'}}>
-                <ActivityIndicator size="large"/>
-            </View>
-        ); 
-    } else {
+    // if (!this.state.shouldRender) {
+    //     return (
+    //         <View style={{ flex: 1, backgroundColor: 'white', alignContent: 'center', justifyContent: 'center'}}>
+    //             {/* <ActivityIndicator size="large"/> */}
+    //         </View>
+    //     ); 
+    // } else {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <KeyboardAvoidingView 
@@ -673,7 +668,7 @@ class LoginScreen extends Component {
         </TouchableWithoutFeedback>
     );
   }
-}
+// }
 }
 
 const mapStateToProps = ({ User, Customer }) => {

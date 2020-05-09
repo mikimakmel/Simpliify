@@ -4,6 +4,7 @@ const initialState = {
     view: 'Customer',
     currentUser: null,
     myBusiness: null,
+    currentLocation: {}, 
 }
 
 const UserReducer = (state = initialState, action) => {
@@ -13,6 +14,13 @@ const UserReducer = (state = initialState, action) => {
             return {
                 ...state,
                 currentUser: action.data
+            }
+        }
+
+        case actionsTypes.UPDATE_USER_LOCATION: {
+            return {
+                ...state,
+                currentLocation: action.data
             }
         }
 

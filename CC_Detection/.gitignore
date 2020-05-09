@@ -1,0 +1,4 @@
+models/*.weights
+.idea
+_pycache_
+output_imgs/*

@@ -19,7 +19,6 @@ class AboutPage extends Component {
     };
     this.renderViewMore = this.renderViewMore.bind(this);
     this.renderViewLess = this.renderViewLess.bind(this);
-    // this.handleRatingPress = this.handleRatingPress.bind(this);
   }
 
   renderViewMore(onPress) {
@@ -136,10 +135,6 @@ class AboutPage extends Component {
     )
   }
 
-  // handleRatingPress() {
-  //   Alert.alert('Your rating was sent successfully', null, [{ text: 'OK' }], { cancelable: false })
-  // }
-
   render() {
     const businessData = this.props.businessData.businessDetails;
 
@@ -147,13 +142,13 @@ class AboutPage extends Component {
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View>
           <Text style={styles.heading}>{businessData.business.name}</Text>
+          {/* <Text style={styles.category}>{businessData.business.category}</Text> */}
           <View style={{ flexDirection: 'row' }}>
             <Rating
               style={styles.rating}
               imageSize={22}
               readonly={true}
               startingValue={businessData.business.rating === null ? 0 : Number(businessData.business.rating)}
-              // onFinishRating={this.handleRatingPress}
               ratingColor={'#FED56B'}
               type={'custom'}
             />
@@ -208,7 +203,7 @@ class AboutPage extends Component {
             <Text style={styles.iconsText}>Website</Text>
           </TouchableOpacity>
           {this.renderOpeningHours()}
-          <View style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}>
+          {/* <View style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}>
             <View style={styles.iconsCircle}>
               <FontAwesome name="tags" size={23} color={colors.blue} style={{ marginLeft: 3 }} />
             </View>
@@ -219,7 +214,7 @@ class AboutPage extends Component {
                 ', ' +
                 businessData.tags[2].tag}
             </Text>
-          </View>
+          </View> */}
           <TouchableOpacity
             style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}
             onPress={() => this.setState({ isPopupVisble: true })}
@@ -260,7 +255,7 @@ class AboutPage extends Component {
                 longitudeDelta: 0.002
               }}
               provider={'google'}
-              zoomTapEnabled
+              zoomTapEnabled={false}
             >
               <MapView.Marker
                 coordinate={{

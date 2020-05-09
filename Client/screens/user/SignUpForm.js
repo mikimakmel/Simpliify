@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { View, Text, Picker, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, SafeAreaView } from 'react-native';
 import { Input, CheckBox } from 'react-native-elements';
-import { Container, Content, DatePicker, Button } from 'native-base';
+// import { Container, Content, DatePicker, Button } from 'native-base';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import GradientButton from 'react-native-gradient-buttons';
 import Colors from '../../constants/Colors';
 import { Avatar } from 'react-native-elements';
+import { MaterialCommunityIcons, Octicons, MaterialIcons } from '@expo/vector-icons';
 
 class SignUpForm extends Component {
   constructor(props) {
@@ -28,7 +30,31 @@ class SignUpForm extends Component {
     this.fetchProfile = this.fetchProfile.bind(this);
   }
 
+  componentDidMount() {
+    this.props.navigation.setOptions({
+      title: 'User Profile',
+      headerRight: () => (
+        <Octicons 
+          name="check" 
+          size={35} 
+          color={Colors.green03} 
+          style={{marginRight: 10}} 
+          // onPress={(this.addedAlert)}
+        />
+      ),
+      headerLeft: () => (
+        <MaterialIcons 
+          name={'keyboard-arrow-left'} 
+          size={45} 
+          color={Colors.blue}
+          onPress={() => this.props.navigation.navigate('Menu')}
+        />
+      ),
+    });
+  }
+
   setDateOfBirth(newDate) {
+    console.log(newDate)
     this.setState({ dateOfBirth: newDate });
   }
 
@@ -102,7 +128,7 @@ class SignUpForm extends Component {
 
   render() {
     return (
-      <SafeAreaView style={{flex: 1}}>
+      <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : null} style={{ flex: 1 }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={{padding: 24, flex: 1, justifyContent: 'space-evenly'}}>
@@ -194,7 +220,7 @@ class SignUpForm extends Component {
             />
           </View>
           <View style={{alignSelf: 'center', alignItems: 'center', width: '100%', marginTop: 5}}>
-            <DatePicker
+            {/* <DatePicker
               defaultDate={new Date()}
               minimumDate={new Date(1920, 1, 1)}
               maximumDate={new Date()}
@@ -208,9 +234,19 @@ class SignUpForm extends Component {
               placeHolderTextStyle={{ color: "#d3d3d3", fontSize: 18, fontWeight: '500' }}
               onDateChange={this.setDateOfBirth}
               disabled={false}
+            /> */}
+            <DateTimePicker
+              testID="dateTimePicker"
+              timeZoneOffsetInMinutes={0}
+              value={new Date()}
+              minimumDate={new Date(1920, 0, 1)}
+              mode={'date'}
+              // is24Hour={true}
+              display="default"
+              onChange={this.setDateOfBirth}
             />
           </View>
-          <View style={{width: '100%', paddingTop: 20, paddingBottom: 10}}>
+          {/* <View style={{width: '100%', paddingTop: 20, paddingBottom: 10}}>
             <GradientButton
               gradientBegin="#7F81D6"
               gradientEnd="#90E4E4"
@@ -226,7 +262,7 @@ class SignUpForm extends Component {
             >
               CONFIRM
             </GradientButton>
-          </View>
+          </View> */}
         </View>
       </SafeAreaView>
     );

@@ -17,6 +17,13 @@ export default StyleSheet.create({
     marginTop: 20,
     paddingLeft: 20
   },
+  category: {
+    fontSize: 14,
+    fontWeight: '300',
+    marginBottom: 10,
+    color: colors.red,
+    paddingLeft: 20
+  },
   rating: {
     alignItems: 'flex-start',
     marginLeft: 20

@@ -60,6 +60,7 @@ function LogInStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="LogIn" component={LoginScreen}/>
       <Stack.Screen name="SplashScreen" component={SplashScreen}/>
+      <Stack.Screen name="SignUpForm" component={SignUpForm}/>
     </Stack.Navigator>
   );
 }
@@ -68,7 +69,7 @@ function creditCardStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Camera" component={CameraScreen}/>
-      <Stack.Screen name="Card" component={CreditCardScreen}/>
+      <Stack.Screen name="Card" component={CreditCardScreen} options={{headerShown: true}}/>
     </Stack.Navigator>
   );
 }

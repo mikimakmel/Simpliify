@@ -10,6 +10,7 @@
   "dependencies": {
     "@expo/vector-icons": "^10.0.6",
     "@hapi/hoek": "^9.0.4",
+    "@react-native-community/datetimepicker": "^2.3.2",
     "@react-native-community/masked-view": "^0.1.7",
     "@react-navigation/bottom-tabs": "^5.2.4",
     "@react-navigation/drawer": "^5.3.4",
@@ -28,7 +29,6 @@
     "expo-permissions": "~8.0.0",
     "firebase": "^7.14.0",
     "moment": "^2.24.0",
-    "native-base": "2.13.8",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
@@ -42,6 +42,7 @@
     "react-native-gesture-handler": "^1.6.1",
     "react-native-gradient-buttons": "^2.0.1",
     "react-native-image-swiper": "0.0.8",
+    "react-native-indicators": "^0.17.0",
     "react-native-map-link": "^2.7.8",
     "react-native-maps": "^0.27.1",
     "react-native-material-menu": "^1.1.3",

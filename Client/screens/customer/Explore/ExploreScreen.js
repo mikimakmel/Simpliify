@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, SafeAreaView, ScrollView, Animated, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Animated, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import colors from '../../../constants/Colors';
 import styles from '../../../styles/customer/Style_ExploreScreen';
 import CategoriesList from './CategoriesList';
@@ -13,9 +13,9 @@ class ExploreScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLoading: true,
       searchQuery: '',
       searchResults: [],
-      isLoading: false,
       currentLocation: {},
       distance: null,
       isDistanceOverylayVisible: false,
@@ -26,7 +26,8 @@ class ExploreScreen extends Component {
       isRatingOverylayVisible: false,
       category: 'All',
     };
-    this.getPermissionAsync = this.getPermissionAsync.bind(this);
+    // this.getPermissionAsync = this.getPermissionAsync.bind(this);
+    this.initAnimation = this.initAnimation.bind(this);
     this.renderDistancePickerOverlay = this.renderDistancePickerOverlay.bind(this);
     this.renderRatingPickerOverlay = this.renderRatingPickerOverlay.bind(this);
     this.renderPricePickerOverlay = this.renderPricePickerOverlay.bind(this);
@@ -35,21 +36,26 @@ class ExploreScreen extends Component {
     this.fetchSearch = this.fetchSearch.bind(this);
   }
 
-  componentDidMount() {
-    this.getPermissionAsync();
-  }
-
-  async getPermissionAsync() {
-    let { status } = await Location.requestPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Sorry, we need location permissions to make this work!');
-    }
-
-    let location = await Location.getCurrentPositionAsync({});
-    this.setState({ currentLocation: location });
+  async componentDidMount() {
+    // await this.getPermissionAsync();
+    this.fetchSearch();
   }
 
   componentWillMount() {
+    this.initAnimation();
+  }
+
+  // async getPermissionAsync() {
+  //   let { status } = await Location.requestPermissionsAsync();
+  //   if (status !== 'granted') {
+  //     alert('Sorry, we need location permissions to make this work!');
+  //   }
+
+  //   let location = await Location.getCurrentPositionAsync({});
+  //   this.setState({ currentLocation: location });
+  // }
+
+  async initAnimation() {
     this.scrollY = new Animated.Value(0);
     this.startHeaderHeight = 120;
     this.endHeaderHeight = 80;
@@ -80,8 +86,9 @@ class ExploreScreen extends Component {
     })
   }
 
-  handleCategoryChange(chosen) {
-    this.setState({ category: chosen});
+  async handleCategoryChange(chosen) {
+    await this.setState({ category: chosen});
+    this.fetchSearch();
   }
 
   updateSearch(text) {
@@ -89,6 +96,8 @@ class ExploreScreen extends Component {
   }
 
   async fetchSearch() {
+    await this.setState({isLoading: true});
+
     const url = 'http://192.168.1.198:3000/search/search';
     const options = { 
       method: 'POST', 
@@ -99,8 +108,8 @@ class ExploreScreen extends Component {
       body: JSON.stringify({ 
         searchQuery: this.state.searchQuery,
         radius: this.state.distance,
-        lon: this.state.currentLocation.coords.longitude,
-        lat: this.state.currentLocation.coords.latitude,
+        lon: this.props.currentLocation.coords.longitude,
+        lat: this.props.currentLocation.coords.latitude,
         category: this.state.category,
         rating: this.state.rating,
         minPrice: this.state.minPrice,
@@ -116,6 +125,8 @@ class ExploreScreen extends Component {
         this.setState({searchResults: data});
       })
       .catch(error => console.log(error))
+
+    await this.setState({isLoading: false});
   }
 
   renderDistancePickerOverlay() {
@@ -369,10 +380,17 @@ class ExploreScreen extends Component {
                 chosenCategory={this.state.category}
               />
 
-              <ResultsList 
-                resultList={this.state.searchResults} 
-                navigation={this.props.navigation}
-              />
+              {
+                this.state.isLoading ? 
+                <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', backgroundColor: colors.white, marginTop: 120}}>
+                  <ActivityIndicator size="large" color={colors.red}/>
+                </View>
+                :
+                <ResultsList 
+                  resultList={this.state.searchResults} 
+                  navigation={this.props.navigation}
+                />
+              }
             </ScrollView>
           </View>
       </SafeAreaView>
@@ -387,6 +405,7 @@ const mapStateToProps = ({ App, User, Customer, Business }) => {
     favoritesList: Customer.favoritesList,
     view: User.view,
     categoriesList: App.categoriesList,
+    currentLocation: User.currentLocation,
   }
 }
 
