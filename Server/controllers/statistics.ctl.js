@@ -234,8 +234,25 @@ statStrongHours = (req, res) => {
 // 7. get top 10 customers who orders services the most times from a business.
 // 7. Get all customers and order by most money spent
 statTop10Customers = (req, res) => {
+    // 
+    // const data = [
+    //      {
+    //          costumerID: name     
+    //      }
+    //      {
+    //          12: 'Shira Levy',
+    //      },
+    //      { 
+    //          16: 'Guy Shriki',
+    //      },
+    //      { 
+    //          5: 'Lev Ari Cohen',
+    //      },
+    //      { 
+    //          1: 'Miki Makmel',
+    //      }
 
-    // const data = ['Shira Levy', 'Guy Shriki', 'Lev Ari Cohen', 'Miki Makmel', ... top10 ... ]
+    // ]
     console.log("getTop10Customers()");
 
     const businessID = req.body.businessID;
@@ -245,13 +262,16 @@ statTop10Customers = (req, res) => {
                         LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID)
                         LEFT OUTER JOIN Users ON (Orders.Customer= Users.UserID)
                         WHERE
-                        Orders.Business=${Business} GROUP BY Customer, Users.Firstname, Users.Lastname ORDER BY Total DESC`;
+                        Orders.Business=${businessID} GROUP BY Customer, Users.Firstname, Users.Lastname ORDER BY Total DESC`;
     db.query(query)
         .then(result => {
+            var data = {}
+            var rows = result.rows
+            rows.map((row) => {
+                data[row.customer] = row.name
+            })
 
-
-
-            res.json(result.rows)
+            res.json(data)
         })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
