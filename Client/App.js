@@ -11,6 +11,7 @@ import LoginScreen from './screens/LoginScreen';
 import CameraScreen from './screens/CameraScreen';
 import SignUpForm from './screens/user/SignUpForm';
 import BusinessForm from './screens/business/BusinessForm';
+import StatisticsScreen from './screens/business/StatisticsScreen';
 import CreditCardScreen from './screens/CreditCardScreen';
 import Navigator from './navigation/Navigator';
 import { createStackNavigator } from '@react-navigation/stack';
