@@ -1,4 +1,4 @@
 models/*.weights
 .idea
-_pycache_
+__pycache__
 output_imgs/*

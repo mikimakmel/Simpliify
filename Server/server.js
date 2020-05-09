@@ -61,14 +61,15 @@ app.post('/service/updateServiceDetails', serviceCtl.updateServiceDetails);
 app.post('/service/deleteService', serviceCtl.deleteService);
 
 /*** Statistics routes ***/
-app.get('/statistics/statDailyCounter', statisticsCtl.statDailyCounter);                  // READY
-app.get('/statistics/StatByGender', statisticsCtl.StatByGender);                          // In progress
-app.get('/statistics/statByService', statisticsCtl.statByService);                        // In progress
-app.get('/statistics/statByAddress', statisticsCtl.statByAddress);                        // In progress
-app.get('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);                    // Query not ready
-app.get('/statistics/statStrongHours', statisticsCtl.statStrongHours);                    // In progress
-app.get('/statistics/statTop10Customers', statisticsCtl.statTop10Customers);              // In progress
-app.get('/statistics/statRating', statisticsCtl.statRating);                    // Query not ready
+app.post('/statistics/statDailyCounter', statisticsCtl.statDailyCounter);                  // READY
+app.post('/statistics/statByGender', statisticsCtl.statByGender);                          // READY
+app.post('/statistics/statByService', statisticsCtl.statByService);                        // READY
+app.post('/statistics/statByAge', statisticsCtl.statByAge);                                // READY
+app.post('/statistics/statByAddress', statisticsCtl.statByAddress);                        // READY
+app.post('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);                    // In progress
+app.post('/statistics/statStrongHours', statisticsCtl.statStrongHours);                    // READY
+app.post('/statistics/statTop10Customers', statisticsCtl.statTop10Customers);              // In progress
+app.post('/statistics/statRating', statisticsCtl.statRating);                              // READY
 
 /*** Review routes ***/
 app.post('/review/createNewReview', reviewCtl.createNewReview);
