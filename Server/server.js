@@ -67,9 +67,9 @@ app.post('/statistics/statByService', statisticsCtl.statByService);             
 app.post('/statistics/statByAge', statisticsCtl.statByAge);                                // READY
 app.post('/statistics/statByAddress', statisticsCtl.statByAddress);                        // READY
 app.post('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);                    // In progress
-app.post('/statistics/statStrongHours', statisticsCtl.statStrongHours);                    // In progress
+app.post('/statistics/statStrongHours', statisticsCtl.statStrongHours);                    // READY
 app.post('/statistics/statTop10Customers', statisticsCtl.statTop10Customers);              // In progress
-app.post('/statistics/statRating', statisticsCtl.statRating);                              // In progress
+app.post('/statistics/statRating', statisticsCtl.statRating);                              // READY
 
 /*** Review routes ***/
 app.post('/review/createNewReview', reviewCtl.createNewReview);

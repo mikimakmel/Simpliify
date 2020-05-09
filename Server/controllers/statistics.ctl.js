@@ -111,6 +111,7 @@ statByAge = (req, res) => {
         .then(result => {
             // console.log(result.rows)
             var data = {
+                "13-17": 0,
                 "18-24": 0,
                 "25-34": 0,
                 "35-44": 0,
@@ -120,7 +121,9 @@ statByAge = (req, res) => {
             }
             var rows = result.rows
             rows.map((row) => {
-                if (row.age >= 18 && row.age <=24){
+                if (row.age >= 13 && row.age <=17){
+                    data["13-17"] += 1
+                } else if (row.age >= 18 && row.age <=24){
                     data["18-24"] += 1
                 } else if (row.age >= 25 && row.age <=34){
                     data["25-34"] += 1
@@ -187,7 +190,13 @@ statTotalIncome = (req, res) => {
 
     const businessID = req.body.businessID;
 
-    const query = `SELECT Orders.Business, Orders.Starttime::date, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=100 AND Status='Confirmed' AND Orders.Starttime::date BETWEEN (NOW() - INTERVAL '1 WEEK') AND NOW() GROUP BY Orders.Starttime::date, Orders.Business ORDER BY Starttime`;
+    const query = `SELECT Orders.Business, Orders.Starttime::date, SUM(Service.Price) as Total FROM Orders
+                    LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID)
+                    WHERE Orders.Business=${businessID}
+                    AND Status='Confirmed'
+                    AND Orders.Starttime::date BETWEEN (NOW() - INTERVAL '1 MONTH')
+                    AND NOW()
+                    GROUP BY Orders.Starttime::date, Orders.Business ORDER BY Starttime`;
     
     db.query(query)
         .then(result => res.json(result.rows))
@@ -199,7 +208,7 @@ statTotalIncome = (req, res) => {
 statStrongHours = (req, res) => {
     // data example
     // const data = [50, 10, 40, 95, -4, -24, null, 85, undefined, 0, 35, 53, -53, 24, 50, -20, -80]
-
+    // good example: businessID=13
 
     console.log("getTop10Customers()");
 
@@ -207,10 +216,17 @@ statStrongHours = (req, res) => {
 
     const query = `SELECT Business, EXTRACT(HOUR FROM Starttime) as Hour, COUNT(EXTRACT(HOUR FROM Starttime)) AS Popularity FROM Orders
                     WHERE
-                    Business=${Business} GROUP BY Business, Hour ORDER BY Popularity DESC`;
+                    Business=${businessID} GROUP BY Business, Hour ORDER BY Popularity DESC`;
     
     db.query(query)
-        .then(result => res.json(result.rows))
+        .then(result => {
+            var data = {}
+            var rows = result.rows
+            rows.map((row) => {
+                data[row.hour] = row.popularity
+            })
+            res.json(data)
+        })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
@@ -223,13 +239,20 @@ statTop10Customers = (req, res) => {
 
     const businessID = req.body.businessID;
 
-    const query = `SELECT Orders.Customer, SUM(Service.Price) as Total FROM Orders
+    const query = `SELECT Orders.Customer, CONCAT(Users.Firstname, ' ',Users.Lastname) AS Name, SUM(Service.Price) as Total FROM Orders
                     LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID)
+                    LEFT OUTER JOIN Users ON (Orders.Customer= Users.UserID)
                     WHERE
-                    Orders.Business=${Business} GROUP BY Orders.Customer ORDER BY Total DESC`;
+                    Orders.Business=100
+                    GROUP BY Customer, Users.Firstname, Users.Lastname ORDER BY Total DESC`;
     
     db.query(query)
-        .then(result => res.json(result.rows))
+        .then(result => {
+
+
+
+            res.json(result.rows)
+        })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
@@ -254,10 +277,17 @@ statRating = (req, res) =>{
 
     const businessID = req.body.businessID;
 
-    const query = `SELECT Rating, COUNT(Rating) FROM Review WHERE Business=1 GROUP BY Rating`;
+    const query = `SELECT Rating, COUNT(Rating) FROM Review WHERE Business=${businessID} GROUP BY Rating`;
     
     db.query(query)
-        .then(result => res.json(result.rows[0]))
+        .then(result => {
+            var data = {}
+            var rows = result.rows
+            rows.map((row) => {
+                data[row.rating] = row.count
+            })
+            res.json(data)
+        })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
