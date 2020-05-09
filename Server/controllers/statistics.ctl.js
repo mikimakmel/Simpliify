@@ -216,24 +216,25 @@ statStrongHours = (req, res) => {
 
 
 // 7. get top 10 customers who orders services the most times from a business.
+// 7. Get all customers and order by most money spent
 statTop10Customers = (req, res) => {
 
-    // const data = ['Shira Levy', 'Guy Chriqui', 'Lev Ari Cohen', 'Miki Makmel', ... top10 ... ]
+    // const data = ['Shira Levy', 'Guy Shriki', 'Lev Ari Cohen', 'Miki Makmel', ... top10 ... ]
     console.log("getTop10Customers()");
 
     const businessID = req.body.businessID;
 
-    const query = `SELECT Orders.Customer, SUM(Service.Price) as Total FROM Orders
-                    LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID)
-                    WHERE
-                    Orders.Business=${Business} GROUP BY Orders.Customer ORDER BY Total DESC`;
-    
+    const query = `SELECT Orders.Customer, CONCAT(Users.Firstname, ' ',Users.Lastname) AS Name,
+                   SUM(Service.Price) AS Total FROM Orders
+                        LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID)
+                        LEFT OUTER JOIN Users ON (Orders.Customer= Users.UserID)
+                        WHERE
+                        Orders.Business=${Business} GROUP BY Customer, Users.Firstname, Users.Lastname ORDER BY Total DESC`;
+
     db.query(query)
         .then(result => res.json(result.rows))
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
-
-
 
 // 8. get daily entrance counter for a business page.
 statDailyCounter = (req, res) =>{
