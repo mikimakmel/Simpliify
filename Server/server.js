@@ -129,6 +129,12 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 /* Orders between date A and date B */
 /* SELECT * FROM Orders WHERE Starttime BETWEEN SYMMETRIC '2020-06-11'::timestamp AND '2020-06-13'::timestamp AND Business=${Business} */
 
+/* Business's revenew for the last X time*/
+/* SELECT Orders.Business, Orders.Starttime::date, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${Business} AND Status='Confirmed' AND Orders.Starttime::date BETWEEN (NOW() - INTERVAL '1 WEEK') AND NOW() GROUP BY Orders.Starttime::date, Orders.Business ORDER BY Starttime */
+
+/* Count Rating by each rating score */
+/* SELECT Rating, COUNT(Rating) FROM Review WHERE Business=${Business} GROUP BY Rating */
+
 // const fileupload = require('express-fileupload');
 
 // app.use(fileupload());
