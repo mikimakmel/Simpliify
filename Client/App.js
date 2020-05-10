@@ -28,10 +28,9 @@ export default class App extends Component {
     return (
       // <SafeAreaView style={{flex: 1}}>
         <Provider store={Store}>
+          <StatusBar barStyle="dark-content"/>
           <NavigationContainer>
-            <StatusBar barStyle="dark-content" />
             <Navigator />
-            {/* <SplashScreen /> */}
           </NavigationContainer>
         </Provider>
       // </SafeAreaView>

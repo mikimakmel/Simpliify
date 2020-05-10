@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, ScrollView, Image, FlatList } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, ScrollView, Image, FlatList, StatusBar } from 'react-native';
 import { Button } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import FavoriteBusinessCard from './FavoriteBusinessCard'
@@ -56,6 +56,7 @@ class HomeScreen extends Component {
   render() {
     return (
       <SafeAreaView style={styles.flexContainer}>
+        <StatusBar barStyle="dark-content"/>
         <View style={styles.flexContainer}>
           <Text style={styles.heading}>My Services</Text>
           {this.props.favoritesList.length > 0 ? this.renderFavoritesList() : this.renderEmptyScreen()}

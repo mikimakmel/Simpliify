@@ -58,15 +58,7 @@ export default class FavoriteBusinessCard extends Component {
     const { businessData } = this.props;
 
     return (
-      <TouchableOpacity
-        onPress={() =>
-          this.props.navigation.navigate('Business', {
-            businessData,
-            // isInUserFavorites: this.state.isInUserFavorites,
-            // prevScreen: 'Home'
-          })
-        }
-      >
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('Business', { businessData: businessData, isInFavorites: true})}>
         <View>
           <View style={styles.imageContainer}>
             <Image style={styles.image} source={{ uri: businessData.businessDetails.photos.cover.imagelink }} />

@@ -9,12 +9,22 @@ class ResultsList extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      align: 'auto'
     };
+    this.renderItem = this.renderItem.bind(this);
   }
 
-  renderItem({item}) {
+  renderItem({item, index}) {
+    var lastAndOddStyle = {};
+
+    if(index === (this.props.resultList.length-1) && this.props.resultList.length % 2 !== 0) {
+      lastAndOddStyle = {flex: 1, paddingHorizontal: 12};
+    }
+
     return(
-      <ResultCard businessData={item}/>
+      <View style={lastAndOddStyle}>
+        <ResultCard businessData={item}/>
+      </View>
     )
   }
 

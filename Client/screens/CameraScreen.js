@@ -38,7 +38,6 @@ class CameraScreen extends Component {
         };
         formData.append('image', image);
 
-        // const url = 'http://192.168.1.198:3000/uploadPhoto'; 172.20.10.2
         const url = 'http://192.168.1.198:5000/pic';
         const options = { method: 'POST', body: formData };
         const request = new Request(url, options);

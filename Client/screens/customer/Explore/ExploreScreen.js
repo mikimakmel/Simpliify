@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, SafeAreaView, ScrollView, Animated, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Animated, TouchableOpacity, TextInput, ActivityIndicator, StatusBar } from 'react-native';
 import colors from '../../../constants/Colors';
 import styles from '../../../styles/customer/Style_ExploreScreen';
 import CategoriesList from './CategoriesList';
@@ -275,6 +275,7 @@ class ExploreScreen extends Component {
   render() {
     return (
       <SafeAreaView style={styles.flexContainer}>
+        <StatusBar barStyle="dark-content"/>
           <View style={styles.flexContainer}>
             <Animated.View style={{
               height: this.startHeaderHeight,
@@ -286,11 +287,11 @@ class ExploreScreen extends Component {
               </Animated.View>
 
               <Animated.View style={{ 
-                flexDirection: 'row', 
-                marginHorizontal: 24, 
-                position: 'relative', 
-                top: this.animatedTagTop, 
-                opacity: this.animatedOpacity,
+                  flexDirection: 'row', 
+                  marginHorizontal: 24, 
+                  position: 'relative', 
+                  top: this.animatedTagTop, 
+                  opacity: this.animatedOpacity,
                 }}
               >
                 <TouchableOpacity style={{ 

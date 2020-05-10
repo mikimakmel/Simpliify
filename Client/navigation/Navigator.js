@@ -32,24 +32,7 @@ function HomeStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen}/>
-      <Stack.Screen 
-        name="Business" 
-        component={BusinessScreen} 
-        // options={{headerShown: true, title: null}}
-        options={{
-          headerShown: true,
-          // title: null,
-          // headerLeft: () => (
-          //   <MaterialIcons
-          //     onPress={() => alert('This is a button!')}
-          //     name="keyboard-arrow-left"
-          //     size={40} 
-          //     color={Colors.red} 
-          //     style={{ marginLeft: 1 }}
-          //   />
-          // ),
-        }}
-      />
+      <Stack.Screen name="Business" component={BusinessScreen} options={{headerShown: true, title: null}}/>
       <Stack.Screen name="Booking" component={BookingScreen} options={{headerShown: true}}/>
     </Stack.Navigator>
   );
@@ -80,7 +63,7 @@ function MenuStack() {
       <Stack.Screen name="Menu" component={MenuScreen}/>
       <Stack.Screen name="Scan" component={creditCardStack}/>
       <Stack.Screen name="SignUpForm" component={SignUpForm} options={{headerShown: true}}/>
-      <Stack.Screen name="BusinessForm" component={BusinessForm} options={{headerShown: true}}/>
+      <Stack.Screen name="BusinessForm" component={BusinessForm} options={{headerShown: true, title: 'Create Business'}}/>
     </Stack.Navigator>
   );
 }
@@ -135,6 +118,7 @@ function CustomerBottomTabNavigator() {
           // tabBarVisible: false,
           tabBarIcon: ({ color }) => (
             <AntDesign name="home" size={31} color={color} style={{ paddingTop: 2 }} />
+            // <MaterialIcons name="favorite-border" size={31} color={color} style={{ paddingTop: 2 }} />
           )
         }}
       />

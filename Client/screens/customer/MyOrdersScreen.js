@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image, SafeAreaView, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, View, Text, Image, SafeAreaView, ScrollView, TouchableOpacity, FlatList, StatusBar } from 'react-native';
 import { Divider, Avatar } from 'react-native-elements';
 import styles from '../../styles/customer/Style_MyOrdersScreen';
 import database from '../../database';
@@ -77,6 +77,7 @@ class MyOrdersScreen extends Component {
     return (
       // <Swipeout right={swipeoutBtns} autoClose sensitivity={1000}>
         <View style={styles.eventContainer}>
+          <StatusBar barStyle="dark-content"/>
           <View style={styles.shadowBox}>
             <View style={styles.infoBoxContainer}>
               <Avatar

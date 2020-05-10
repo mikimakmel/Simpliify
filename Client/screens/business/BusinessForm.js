@@ -52,9 +52,9 @@ class BusinessForm extends Component {
        categoryIsEditing: false,
        tagsList: [],
        tags: [],
-       avatar: database.businesses[0].Pictures.Avatar,
+       avatar: 'https://www.lococrossfit.com/wp-content/uploads/2019/02/user-icon-300x300.png',
        avatarEdited: false,
-       carousel: database.businesses[0].Pictures.Carousel,
+       carousel: ['https://www.interpeace.org/wp-content/themes/geneva/img/image-placeholder.png'],
        carouselEdited: false,
        isServicFormVisible: false,
        availability: {
@@ -94,7 +94,7 @@ class BusinessForm extends Component {
           closes: '0:00'
          },
        },
-       currentBusinessID: 1,
+       currentBusinessID: null,
        currentBusiness: {},
        isEditingBusiness: false,
        serviceName: 'Service Name',
@@ -135,7 +135,7 @@ class BusinessForm extends Component {
           name="check" 
           size={35} 
           color={colors.green03} 
-          style={{marginRight: 10}} 
+          style={{marginRight: 15}} 
           // onPress={() => this.fetchBusinessServicesList()}
         />
       )
@@ -673,7 +673,7 @@ class BusinessForm extends Component {
 
     return(
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-
+        <KeyboardAvoidingView style={{ flex: 1 }} keyboardVerticalOffset={100} behavior={"position"}>
         <View>
           { this.state.nameIsEditing ?
             <TextInput
@@ -881,26 +881,7 @@ class BusinessForm extends Component {
         </View>
 
         {this.renderOpeningHours(businessData)}
-
-        {/* <View style={{alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: 30,}}>
-          <GradientButton
-            gradientBegin="#7F81D6"
-            gradientEnd="#90E4E4"
-            gradientDirection="diagonal" 
-            style={{ }}
-            textStyle={{ fontSize: 18, fontWeight: '500' }}
-            height={50}
-            width={'90%'}
-            radius={5}
-            impact={true}
-            impactStyle={'Medium'}
-            // onPressAction={() => this.createOrUpdateBusiness()}
-            onPressAction={() => this.fetchBusinessServicesList()}
-          >
-            {this.state.isEditingBusiness ? 'UPDATE BUSINESS' : 'CREATE BUSINESS'}
-          </GradientButton>
-        </View> */}
-
+      </KeyboardAvoidingView>
       </ScrollView>
     )
   }
@@ -1038,42 +1019,40 @@ class BusinessForm extends Component {
 
   render() {
     return (
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : null} style={{ flex: 1 }}>
-        <View style={{flex: 1}}>
-          
-          <View style={{...styles.ImagesSwiperContainer, alignItems: 'flex-end'}}>
-            <ImagesSwiper
-              images={this.state.carousel}
-              autoplay={true}
-              autoplayTimeout={5}
-              showsPagination
-              width={Layout.window.width}
-              height={200}
-            />
-            <TouchableOpacity onPress={() => this._pickImage('carousel')} style={{position: 'absolute'}}>
-              <MaterialIcons name="add-to-photos" size={25} color={"white"} style={{margin: 12}} />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollableTabView
-            initialPage={0}
-            locked={true}
-            tabBarUnderlineStyle={styles.tabBarUnderline}
-            tabBarBackgroundColor={'#FEFDFF'}
-            tabBarActiveTextColor={colors.red}
-            tabBarInactiveTextColor={'grey'}
-            tabBarTextStyle={styles.tabBarText}
-          >
-            <View tabLabel='About'>
-              {this.renderAbout()}
-            </View>
-            <View tabLabel='Services'>
-              {this.renderServices()}
-            </View>
-          </ScrollableTabView>
-
+      <View style={{flex: 1}}>
+        
+        <View style={{...styles.ImagesSwiperContainer, alignItems: 'flex-end'}}>
+          <ImagesSwiper
+            images={this.state.carousel}
+            autoplay={true}
+            autoplayTimeout={5}
+            showsPagination
+            width={Layout.window.width}
+            height={200}
+          />
+          <TouchableOpacity onPress={() => this._pickImage('carousel')} style={{position: 'absolute'}}>
+            <MaterialIcons name="add-to-photos" size={25} color={"white"} style={{margin: 12}} />
+          </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+
+        <ScrollableTabView
+          initialPage={0}
+          locked={true}
+          tabBarUnderlineStyle={styles.tabBarUnderline}
+          tabBarBackgroundColor={'#FEFDFF'}
+          tabBarActiveTextColor={colors.red}
+          tabBarInactiveTextColor={'grey'}
+          tabBarTextStyle={styles.tabBarText}
+        >
+          <View tabLabel='About'>
+            {this.renderAbout()}
+          </View>
+          <View tabLabel='Services'>
+            {this.renderServices()}
+          </View>
+        </ScrollableTabView>
+
+      </View>
     );
   }
 }

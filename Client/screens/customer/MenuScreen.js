@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, StatusBar } from 'react-native';
 import styles from '../../styles/Style_MenuScreen';
 import { ListItem, Divider } from 'react-native-elements'
 import colors from '../../constants/Colors';
@@ -29,11 +29,11 @@ class MenuScreen extends Component {
   }
 
   render() {
-    // console.log(this.props.currentUser)
     return (
       <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content"/>
+        <Text style={styles.headline}>Menu</Text>
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-          <Text style={styles.headline}>Menu</Text>
           <ListItem
             leftAvatar={{ size: 70, source: { uri: 'https://www.lococrossfit.com/wp-content/uploads/2019/02/user-icon-300x300.png' } }}
             title={`${this.props.currentUser.firstname} ${this.props.currentUser.lastname}`}
@@ -98,7 +98,7 @@ class MenuScreen extends Component {
             underlayColor={colors.red}
           />
         </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
     );
   }
 }

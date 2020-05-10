@@ -36,15 +36,15 @@ export default StyleSheet.create({
         position: 'absolute',
         right: 0,
         height: 40,
-        width: 120,
-        marginRight: 20
+        width: 100,
+        marginRight: 20,
       },
       joinButton: {
         backgroundColor: colors.red,
         width: '100%',
         height: '100%',
-        borderWidth: 0.1,
-        borderColor: colors.black
+        borderWidth: 0.2,
+        borderColor: colors.gray03,
       },
       joinButtonTitle: {
         color: 'white',

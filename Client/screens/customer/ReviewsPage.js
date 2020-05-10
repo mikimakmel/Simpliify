@@ -21,8 +21,8 @@ class ReviewsPage extends Component {
         { value: 0, type: 'Excellent' },
         { value: 0, type: 'Good' },
         { value: 0, type: 'Average' },
-        { value: 0, type: 'Below Average' },
-        { value: 0, type: 'Poor' }
+        { value: 0, type: 'Poor' },
+        { value: 0, type: 'Hideous' }
       ],
     };
     this.renderReview = this.renderReview.bind(this);

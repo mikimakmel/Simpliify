@@ -10,6 +10,7 @@ import { Collapse, CollapseHeader, CollapseBody } from 'accordion-collapse-react
 import MapView from 'react-native-maps';
 import { AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import database from '../../database';
+import { clockRunning } from 'react-native-reanimated';
 
 class AboutPage extends Component {
   constructor(props) {
@@ -36,8 +37,47 @@ class AboutPage extends Component {
     )
   }
 
+  prettyAvailability(availability) {
+    var prettyAvailability = ['Closed', 'Closed', 'Closed', 'Closed', 'Closed', 'Closed', 'Closed'];
+
+    availability.map(item => {
+      switch(item.dow) {
+        case 'Sunday':
+          prettyAvailability[0] = `${item.starttime.substring(0, 5)} - ${item.endtime.substring(0, 5)}`;
+          break;
+
+        case "Monday":
+          prettyAvailability[1] = `${item.starttime.substring(0, 5)} - ${item.endtime.substring(0, 5)}`;
+          break;
+
+        case 'Tuesday':
+          prettyAvailability[2] = `${item.starttime.substring(0, 5)} - ${item.endtime.substring(0, 5)}`;
+          break;
+
+        case 'Wednesday':
+          prettyAvailability[3] = `${item.starttime.substring(0, 5)} - ${item.endtime.substring(0, 5)}`;
+          break;
+
+        case 'Thursday':
+          prettyAvailability[4] = `${item.starttime.substring(0, 5)} - ${item.endtime.substring(0, 5)}`;
+          break;
+
+        case 'Friday':
+          prettyAvailability[5] = `${item.starttime.substring(0, 5)} - ${item.endtime.substring(0, 5)}`;
+          break;
+
+        case 'Saturday':
+          prettyAvailability[6] = `${item.starttime.substring(0, 5)} - ${item.endtime.substring(0, 5)}`;
+          break;
+      }
+    });
+
+    return prettyAvailability;
+  }
+
   renderOpeningHours() {
     const businessData = this.props.businessData.businessDetails;
+    const prettyAvailability = this.prettyAvailability(businessData.availability);
 
     return (
       <View>
@@ -61,73 +101,31 @@ class AboutPage extends Component {
           <CollapseBody style={{ marginBottom: 5, marginTop: -8 }}>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Sunday</Text>
-              {businessData.availability[0] ? 
-                <Text style={styles.hoursText}>
-                  {businessData.availability[0].starttime.substring(0, 5)} - {businessData.availability[0].endtime.substring(0, 5)}
-                </Text>
-                :
-                <Text style={styles.hoursText}>Closed</Text>
-              }
+              <Text style={styles.hoursText}>{prettyAvailability[0]}</Text>
             </View>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Monday</Text>
-              {businessData.availability[1] ? 
-                <Text style={styles.hoursText}>
-                  {businessData.availability[1].starttime.substring(0, 5)} - {businessData.availability[1].endtime.substring(0, 5)}
-                </Text>
-                :
-                <Text style={styles.hoursText}>Closed</Text>
-              }
+              <Text style={styles.hoursText}>{prettyAvailability[1]}</Text>
             </View>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Tuesday</Text>
-              {businessData.availability[2] ? 
-                <Text style={styles.hoursText}>
-                  {businessData.availability[2].starttime.substring(0, 5)} - {businessData.availability[2].endtime.substring(0, 5)}
-                </Text>
-                :
-                <Text style={styles.hoursText}>Closed</Text>
-              }
+              <Text style={styles.hoursText}>{prettyAvailability[2]}</Text>
             </View>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Wednesday</Text>
-              {businessData.availability[3] ? 
-                <Text style={styles.hoursText}>
-                  {businessData.availability[3].starttime.substring(0, 5)} - {businessData.availability[3].endtime.substring(0, 5)}
-                </Text>
-                :
-                <Text style={styles.hoursText}>Closed</Text>
-              }
+              <Text style={styles.hoursText}>{prettyAvailability[3]}</Text>
             </View>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Thursday</Text>
-              {businessData.availability[4] ? 
-                <Text style={styles.hoursText}>
-                  {businessData.availability[4].starttime.substring(0, 5)} - {businessData.availability[4].endtime.substring(0, 5)}
-                </Text>
-                :
-                <Text style={styles.hoursText}>Closed</Text>
-              }
+              <Text style={styles.hoursText}>{prettyAvailability[4]}</Text>
             </View>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Friday</Text>
-              {businessData.availability[5] ? 
-                <Text style={styles.hoursText}>
-                  {businessData.availability[5].starttime.substring(0, 5)} - {businessData.availability[5].endtime.substring(0, 5)}
-                </Text>
-                :
-                <Text style={styles.hoursText}>Closed</Text>
-              }
+              <Text style={styles.hoursText}>{prettyAvailability[5]}</Text>
             </View>
             <View style={[styles.rowItems, styles.hoursTextContainer]}>
               <Text style={styles.daysText}>Saturday</Text>
-              {businessData.availability[6] ? 
-                <Text style={styles.hoursText}>
-                  {businessData.availability[6].starttime.substring(0, 5)} - {businessData.availability[6].endtime.substring(0, 5)}
-                </Text>
-                :
-                <Text style={styles.hoursText}>Closed</Text>
-              }
+              <Text style={styles.hoursText}>{prettyAvailability[6]}</Text>
             </View>
           </CollapseBody>
         </Collapse>
