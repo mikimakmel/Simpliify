@@ -10,6 +10,7 @@ import moment from 'moment';
 import database from '../../database';
 import { connect } from "react-redux";
 import * as Actions_Customer from '../../redux/actions/Actions_Customer';
+import route from '../../routeConfig';
 
 const openHours = [
   { time: '08:00' },
@@ -51,7 +52,7 @@ class BookingScreen extends Component {
     await this.setState({isLoading: true});
     const { businessData, serviceData } = this.state;
 
-    const url = 'http://192.168.1.198:3000/order/getAllAvailableBusinessTime';
+    const url = `${route}/order/getAllAvailableBusinessTime`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -139,7 +140,7 @@ class BookingScreen extends Component {
   async createNewOrder(item) {
     const { businessData, serviceData } = this.state;
     
-    const url = 'http://192.168.1.198:3000/order/createNewOrder';
+    const url = `${route}/order/createNewOrder`;
     const options = { 
       method: 'POST', 
       headers: { 

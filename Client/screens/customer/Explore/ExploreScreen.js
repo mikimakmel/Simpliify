@@ -8,6 +8,7 @@ import ResultsList from './ResultsList';
 import { connect } from "react-redux";
 import * as Location from 'expo-location';
 import { Overlay, Slider, Button, Rating } from 'react-native-elements';
+import route from '../../../routeConfig';
 
 class ExploreScreen extends Component {
   constructor(props) {
@@ -98,7 +99,7 @@ class ExploreScreen extends Component {
   async fetchSearch() {
     await this.setState({isLoading: true});
 
-    const url = 'http://192.168.1.198:3000/search/search';
+    const url = `${route}/search/search`;
     const options = { 
       method: 'POST', 
       headers: { 

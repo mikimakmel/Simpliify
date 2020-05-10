@@ -10,6 +10,7 @@ import Colors from '../constants/Colors';
 require('../firebaseConfig');
 import * as firebase from 'firebase';
 import * as Location from 'expo-location';
+import route from '../routeConfig';
 
 class SplashScreen extends Component {
   constructor(props) {
@@ -76,7 +77,7 @@ class SplashScreen extends Component {
 
   async fetchCategoriesList() {
     // console.log('fetchCategoriesList');
-    const url = `http://192.168.1.198:3000/business/getCategoriesList`;
+    const url = `${route}/business/getCategoriesList`;
     const options = { method: 'GET', headers: { 'Content-Type': 'application/json' } }
     const request = new Request(url, options)
 
@@ -88,7 +89,7 @@ class SplashScreen extends Component {
 
   async fetchUserProfile() {
     // console.log('fetchUserProfile');
-    const url = 'http://192.168.1.198:3000/user/getUserByEmail';
+    const url = `${route}/user/getUserByEmail`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -107,7 +108,7 @@ class SplashScreen extends Component {
 
   async fetchBusiness(businessID) {
     // console.log('fetchBusiness');
-    const url = 'http://192.168.1.198:3000/business/getBusinessByID';
+    const url = `${route}/business/getBusinessByID`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -129,7 +130,7 @@ class SplashScreen extends Component {
   async fetchUserFavoritesList() {
     // console.log('fetchUserFavoritesList');
     // console.log(this.props.currentUser.userid)
-    const url = 'http://192.168.1.198:3000/customer/getFavoritesList';
+    const url = `${route}/customer/getFavoritesList`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -167,7 +168,7 @@ class SplashScreen extends Component {
   async fetchManagerBusiness() {
     // console.log('fetchManagerBusiness');
     if(this.props.currentUser.hasbusiness) {
-      const url = 'http://192.168.1.198:3000/business/getBusinessByManagerID';
+      const url = `${route}/business/getBusinessByManagerID`;
       const options = { 
         method: 'POST', 
         headers: { 
@@ -192,7 +193,7 @@ class SplashScreen extends Component {
 
   async fetchCustomerOrdersList() {
     // console.log('fetchCustomerOrdersList');
-    const url = 'http://192.168.1.198:3000/order/getAllCustomerOrders';
+    const url = `${route}/order/getAllCustomerOrders`;
     const options = { 
       method: 'POST', 
       headers: { 

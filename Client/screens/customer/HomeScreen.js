@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import * as Actions_User from '../../redux/actions/Actions_User';
 import * as Actions_Customer from '../../redux/actions/Actions_Customer';
 import database from '../../database';
+import route from '../../routeConfig';
 
 class HomeScreen extends Component {
   constructor(props) {

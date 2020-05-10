@@ -13,6 +13,7 @@ import { connect } from "react-redux";
 import * as Actions_Customer from '../../redux/actions/Actions_Customer';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { MaterialCommunityIcons, MaterialIcons, FontAwesome, FontAwesome5, Ionicons, Octicons, Entypo } from '@expo/vector-icons';
+import route from '../../routeConfig';
 
 class BusinessScreen extends Component {
   constructor(props) {
@@ -126,7 +127,7 @@ class BusinessScreen extends Component {
   }
 
   async fetchAddToFavorites() {
-    const url = 'http://192.168.1.198:3000/customer/addBusinessToFavorites';
+    const url = `${route}/customer/addBusinessToFavorites`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -149,7 +150,7 @@ class BusinessScreen extends Component {
   }
 
   async fetchRemoveFromFavorites() {
-    const url = 'http://192.168.1.198:3000/customer/removeBusinessFromFavorites';
+    const url = `${route}/customer/removeBusinessFromFavorites`;
     const options = { 
       method: 'POST', 
       headers: { 

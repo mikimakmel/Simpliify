@@ -6,6 +6,7 @@ import colors from '../../constants/Colors';
 import GradientButton from 'react-native-gradient-buttons';
 import { connect } from "react-redux";
 import Review from "react-native-customer-review-bars";
+import route from '../../routeConfig';
 
 
 class ReviewsPage extends Component {
@@ -57,7 +58,7 @@ class ReviewsPage extends Component {
   }
 
   async fetchUser(id) {
-    const url = 'http://192.168.1.198:3000/user/getUserByID';
+    const url = `${route}/user/getUserByID`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -77,7 +78,7 @@ class ReviewsPage extends Component {
   }
 
   async fetchUpdatedReviewsList() {
-    const url = 'http://192.168.1.198:3000/review/getBusinessReviews';
+    const url = `${route}/review/getBusinessReviews`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -97,7 +98,7 @@ class ReviewsPage extends Component {
   }
 
   async submitNewReview() {
-    const url = 'http://192.168.1.198:3000/review/createNewReview';
+    const url = `${route}/review/createNewReview`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -122,7 +123,7 @@ class ReviewsPage extends Component {
   }
 
   async fetchReviewsQuantity() {
-    const url = 'http://192.168.1.198:3000/review/getBusinessReviewsByQuantity';
+    const url = `${route}/review/getBusinessReviewsByQuantity`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -219,7 +220,7 @@ class ReviewsPage extends Component {
   }
 
   async checkIfRecivedService() {
-    const url = 'http://192.168.1.198:3000/order/checkIfCustomerReceiveServiceFromBusiness';
+    const url = `${route}/order/checkIfCustomerReceiveServiceFromBusiness`;
     const options = { 
       method: 'POST', 
       headers: { 

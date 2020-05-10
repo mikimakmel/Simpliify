@@ -35,6 +35,7 @@ import * as Actions_Customer from '../redux/actions/Actions_Customer';
 import { connect } from 'react-redux';
 // import firebaseApp from '../firebaseConfig';
 require('../firebaseConfig');
+import route from '../routeConfig';
 
 class LoginScreen extends Component {
   constructor(props) {
@@ -164,7 +165,7 @@ class LoginScreen extends Component {
     
     async fetchUserProfile(email) {
         // console.log(email);
-        const url = 'http://192.168.1.198:3000/user/getUserByEmail';
+        const url = `${route}/user/getUserByEmail`;
         const options = { 
           method: 'POST', 
           headers: { 
@@ -185,7 +186,7 @@ class LoginScreen extends Component {
 
     // async fetchFavoritesList() {
     //     // console.log(this.props.currentUser);
-    //     const url = 'http://192.168.1.198:3000/customer/getFavoritesList';
+    //     const url = `${route}/customer/getFavoritesList`;
     //     const options = { 
     //       method: 'POST', 
     //       headers: { 
@@ -208,7 +209,7 @@ class LoginScreen extends Component {
     // }
     
     // async fetchBusiness(businessID) {
-    //     const url = 'http://192.168.1.198:3000/business/getBusinessByID';
+    //     const url = `${route}/business/getBusinessByID`;
     //     const options = { 
     //         method: 'POST', 
     //         headers: { 
@@ -316,7 +317,7 @@ class LoginScreen extends Component {
 
     async createNewUser(user) {
         if(this.validateUser()) {
-            const url = 'http://192.168.1.198:3000/register';
+            const url = `${route}/register`;
             const options = { 
                 method: 'POST', 
                 headers: { 
@@ -353,7 +354,7 @@ class LoginScreen extends Component {
 
     async loginUser(user) {
         if(this.validateUser()) {
-            const url = 'http://192.168.1.198:3000/login';
+            const url = `${route}/login`;
             const options = { 
                 method: 'POST', 
                 headers: { 

@@ -17,7 +17,8 @@ import * as Permissions from 'expo-permissions';
 import GradientButton from 'react-native-gradient-buttons';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import { connect } from "react-redux";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import route from '../../routeConfig';
 
 const items = [
   { label: 'Football', value: 'football' },
@@ -145,7 +146,7 @@ class BusinessForm extends Component {
   }
 
   async fetchCategories() {
-    const url = `http://192.168.1.198:3000/business/getCategoriesList`;
+    const url = `${route}/business/getCategoriesList`;
     const options = { method: 'GET', headers: { 'Content-Type': 'application/json' } }
     const request = new Request(url, options)
 
@@ -162,7 +163,7 @@ class BusinessForm extends Component {
   }
 
   async fetchBusiness() {
-    const url = `http://192.168.1.198:3000/business/getBusinessByID`;
+    const url = `${route}/business/getBusinessByID`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -197,7 +198,7 @@ class BusinessForm extends Component {
   }
 
   async fetchBusinessServicesList() {
-    const url = `http://192.168.1.198:3000/service/getAllBusinessServices`;
+    const url = `${route}/service/getAllBusinessServices`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -218,7 +219,7 @@ class BusinessForm extends Component {
   }
 
   async deleteService() {
-    const url = `http://192.168.1.198:3000/service/deleteService`;
+    const url = `${route}/service/deleteService`;
     const options = { 
       method: 'POST', 
       headers: { 
@@ -275,7 +276,7 @@ class BusinessForm extends Component {
       formData.append('carousel', image);
     })
   
-    const url = 'http://192.168.1.198:3000/business/createNewBusiness';
+    const url = `${route}/business/createNewBusiness`;
     const options = { method: 'POST', body: formData };
     const request = new Request(url, options);
 
@@ -303,7 +304,7 @@ class BusinessForm extends Component {
 
     let action = this.state.isEditingService ? 'updateServiceDetails' : 'createNewService';
 
-    const url = `http://192.168.1.198:3000/service/${action}`;
+    const url = `${route}/service/${action}`;
     const options = { 
       method: 'POST', 
       headers: { 

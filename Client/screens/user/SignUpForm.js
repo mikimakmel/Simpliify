@@ -7,6 +7,7 @@ import GradientButton from 'react-native-gradient-buttons';
 import Colors from '../../constants/Colors';
 import { Avatar } from 'react-native-elements';
 import { MaterialCommunityIcons, Octicons, MaterialIcons } from '@expo/vector-icons';
+import route from '../../routeConfig';
 
 class SignUpForm extends Component {
   constructor(props) {
@@ -103,7 +104,7 @@ class SignUpForm extends Component {
     }
 
     console.log(this.state.dateOfBirth)
-    const url = 'http://192.168.1.198:3000/user/createNewUser';
+    const url = `${route}/user/createNewUser`;
     const options = { 
         method: 'POST', 
         headers: { 

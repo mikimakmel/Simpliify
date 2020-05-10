@@ -7,6 +7,7 @@ import { Rating } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { connect } from "react-redux";
+import route from '../../../routeConfig';
 
 class ResultCard extends Component {
   constructor(props) {
@@ -18,7 +19,7 @@ class ResultCard extends Component {
   }
 
   async fetchBusiness(businessID) {
-    const url = 'http://192.168.1.198:3000/business/getBusinessByID';
+    const url = `${route}/business/getBusinessByID`;
     const options = { 
       method: 'POST', 
       headers: { 
