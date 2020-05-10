@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, FlatList } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard, Platform, FlatList } from 'react-native';
 import { Avatar, Rating, Divider, Button, Overlay, Input } from 'react-native-elements';
 import colors from '../../constants/Colors';
 import styles from '../../styles/business/Style_BusinessForm';
@@ -15,9 +15,9 @@ import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import GradientButton from 'react-native-gradient-buttons';
-// import MultiSelect from 'react-native-multiple-select';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import { connect } from "react-redux";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const items = [
   { label: 'Football', value: 'football' },
@@ -47,7 +47,7 @@ class BusinessForm extends Component {
        cityIsEditing: false,
        country: 'Country',
        countryIsEditing: false,
-       categoriesList: [],
+       categoriesList: this.props.categoriesList,
        category: 'Category',
        categoryIsEditing: false,
        tagsList: [],
@@ -103,7 +103,9 @@ class BusinessForm extends Component {
        qouta: 1,
        ServicesList: [],
        currentService: {},
-       isEditingService: false
+       isEditingService: false,
+       isCarouselFormVisible: false,
+       carouselUrlText: '',
     };
 
     this.renderViewMore = this.renderViewMore.bind(this);
@@ -673,7 +675,7 @@ class BusinessForm extends Component {
 
     return(
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <KeyboardAvoidingView style={{ flex: 1 }} keyboardVerticalOffset={100} behavior={"position"}>
+        <KeyboardAwareScrollView>
         <View>
           { this.state.nameIsEditing ?
             <TextInput
@@ -848,7 +850,7 @@ class BusinessForm extends Component {
           <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, }}/>
         </View>
 
-        <View style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}>
+        {/* <View style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}>
           <View style={styles.iconsCircle}>
             <FontAwesome name="hashtag" size={20} color={colors.blue} style={{ marginLeft: 1 }} />
           </View>
@@ -878,16 +880,15 @@ class BusinessForm extends Component {
             />
           </View>
           <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, marginRight: 10}}/>
-        </View>
+        </View> */}
 
         {this.renderOpeningHours(businessData)}
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
       </ScrollView>
     )
   }
 
   renderFormOverlay() {
-    // console.log(this.state.currentService)
     return (
       <Overlay 
         isVisible={this.state.isServicFormVisible} 
@@ -950,6 +951,47 @@ class BusinessForm extends Component {
     )
   }
 
+  renderCarouselOverlay() {
+    return (
+      <Overlay 
+        isVisible={this.state.isCarouselFormVisible} 
+        onBackdropPress={() => this.setState({ isCarouselFormVisible: false})}
+        height={'40%'}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={{flex: 1}}>
+          <Text style={{fontSize: 24, fontWeight: '600', marginBottom: 30, marginTop: 20, alignSelf: 'center'}}>Carousel</Text>
+          <Input
+            label='Photo URL'
+            placeholder='http://'
+            containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
+            onChangeText={text => this.setState({carouselUrlText: text})}
+            // value={this.state.carouselUrlText}
+          />
+          <View style={{alignSelf: 'center', alignItems: 'center', width: '100%', position: 'absolute', bottom: 20}}>
+            <Button
+              title="Submit"
+              // titleStyle={{color: }}
+              type="outline"
+              containerStyle={{width: '70%', marginTop: 20}}
+              // buttonStyle={{borderColor: 'blue'}}
+              // onPress={() => this._pickImage('carousel')}
+            />
+            {/* <Button
+              title="Add from gallery"
+              // titleStyle={{color: }}
+              type="outline"
+              containerStyle={{width: '70%', marginTop: 20}}
+              // buttonStyle={{borderColor: 'blue'}}
+              onPress={() => this._pickImage('carousel')}
+            /> */}
+          </View>
+        </View>
+        </TouchableWithoutFeedback>
+      </Overlay>
+    )
+  }
+
   renderServices() {
     return(
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -984,16 +1026,29 @@ class BusinessForm extends Component {
   }
 
   renderPricingCard({ item }) {
+    function convertMinsToHrsMins(mins) {
+      let h = Math.floor(mins / 60);
+      let m = mins % 60;
+      let text = h > 0 ? 'hrs' : 'mins'
+      m = m < 10 ? '0' + m : m;
+      if(h === 0) {
+        return `${m} ${text}`;
+      }
+      else {
+        return `${h}:${m} ${text}`;
+      }
+    }
+
     return (
       <View style={styles.pricingCardContainer}>
         <View>
           <Text style={styles.titleText}>{item.name}</Text>
         </View>
         <View>
-          <Text style={styles.priceText}>{item.price}$</Text>
+          <Text style={styles.priceText}>₪{item.price}</Text>
         </View>
         <View>
-          <Text style={styles.durationText}>Duration: {item.durationminutes}</Text>
+          <Text style={styles.durationText}>{convertMinsToHrsMins(item.durationminutes)}</Text>
         </View>
         <View style={styles.bookButtonContainer}>
           <TouchableOpacity
@@ -1030,8 +1085,14 @@ class BusinessForm extends Component {
             width={Layout.window.width}
             height={200}
           />
-          <TouchableOpacity onPress={() => this._pickImage('carousel')} style={{position: 'absolute'}}>
-            <MaterialIcons name="add-to-photos" size={25} color={"white"} style={{margin: 12}} />
+          <TouchableOpacity 
+            style={{position: 'absolute'}}
+            onPress={() => {
+              this.setState({isCarouselFormVisible: true});
+              // this._pickImage('carousel')
+            }} 
+          >
+            <MaterialIcons name="add-to-photos" size={25} color={"white"} style={{margin: 12}}/>
           </TouchableOpacity>
         </View>
 
@@ -1052,16 +1113,20 @@ class BusinessForm extends Component {
           </View>
         </ScrollableTabView>
 
+        {this.renderCarouselOverlay()}
       </View>
     );
   }
 }
 
-const mapStateToProps = ({  }) => {
+const mapStateToProps = ({ User, Customer, App }) => {
   return {
+    view: User.view,
+    currentUser: User.currentUser,
+    myBusiness: User.myBusiness,
+    favoritesList: Customer.favoritesList,
+    categoriesList: App.categoriesList,
   }
 }
 
-export default connect(mapStateToProps)(BusinessForm)
-
-// export default BusinessForm;
+export default connect(mapStateToProps)(BusinessForm);

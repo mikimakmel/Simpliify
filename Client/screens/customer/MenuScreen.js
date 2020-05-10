@@ -62,20 +62,20 @@ class MenuScreen extends Component {
           <Text style={styles.secondaryHeadline}>Business</Text>
           {this.props.myBusiness ? 
             <ListItem
-              title={'Create your own business'}
-              titleStyle={{ fontWeight: '500', fontSize: 16, color: colors.green01, marginLeft: 5 }}
-              containerStyle={{}}
-              chevron={(<MaterialIcons name="business" size={28} color={colors.green01} style={{marginRight: 5}}/>)}
-              onPress={() => this.props.navigation.navigate('BusinessForm')}
-              underlayColor={colors.green03}
-            />
-            :
-            <ListItem
               title={this.props.view === 'Customer' ? 'Switch to business view' : 'Switch to customer view'}
               titleStyle={{ fontWeight: '500', fontSize: 16, color: colors.green01, marginLeft: 5 }}
               containerStyle={{}}
               chevron={(<MaterialCommunityIcons name="swap-horizontal-variant" size={25} color={colors.green01} style={{marginRight: 5}}/>)}
               onPress={() => this.props.dispatch(Actions_User.changeAppView())}
+              underlayColor={colors.green03}
+            />
+            :
+            <ListItem
+              title={'Create your own business'}
+              titleStyle={{ fontWeight: '500', fontSize: 16, color: colors.green01, marginLeft: 5 }}
+              containerStyle={{}}
+              chevron={(<MaterialIcons name="business" size={28} color={colors.green01} style={{marginRight: 5}}/>)}
+              onPress={() => this.props.navigation.navigate('BusinessForm')}
               underlayColor={colors.green03}
             />
           }
@@ -103,12 +103,13 @@ class MenuScreen extends Component {
   }
 }
 
-const mapStateToProps = ({ User, Customer }) => {
+const mapStateToProps = ({ User, Customer, App }) => {
   return {
-    currentUser: User.currentUser,
-    favoritesList: Customer.favoritesList,
     view: User.view,
-    myBusiness: User.myBusiness
+    currentUser: User.currentUser,
+    myBusiness: User.myBusiness,
+    favoritesList: Customer.favoritesList,
+    categoriesList: App.categoriesList,
   }
 }
 

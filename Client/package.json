@@ -43,6 +43,7 @@
     "react-native-gradient-buttons": "^2.0.1",
     "react-native-image-swiper": "0.0.8",
     "react-native-indicators": "^0.17.0",
+    "react-native-keyboard-aware-scroll-view": "^0.9.1",
     "react-native-map-link": "^2.7.8",
     "react-native-maps": "^0.27.1",
     "react-native-material-menu": "^1.1.3",

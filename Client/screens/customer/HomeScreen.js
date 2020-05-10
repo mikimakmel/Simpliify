@@ -71,7 +71,8 @@ const mapStateToProps = ({ User, Customer }) => {
     hasBusiness: User.hasBusiness,
     currentUser: User.currentUser,
     favoritesList: Customer.favoritesList,
-    view: User.view
+    view: User.view,
+    ordersList: Customer.ordersList
   }
 }
 

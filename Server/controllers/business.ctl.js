@@ -95,7 +95,7 @@ module.exports = {
         const query = 
             `SELECT * 
             FROM Business 
-            WHERE manager=${12}`;  
+            WHERE manager=${managerID}`;  
         
         db.query(query)
             .then(result => {

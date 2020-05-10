@@ -11,7 +11,7 @@ import LoginScreen from './screens/LoginScreen';
 import CameraScreen from './screens/CameraScreen';
 import SignUpForm from './screens/user/SignUpForm';
 import BusinessForm from './screens/business/BusinessForm';
-import StatisticsScreen from './screens/business/StatisticsScreen';
+import Insights from './screens/business/Insights';
 import CreditCardScreen from './screens/CreditCardScreen';
 import SplashScreen from './screens/SplashScreen';
 import Navigator from './navigation/Navigator';
@@ -26,15 +26,12 @@ console.warn = () => {};
 export default class App extends Component {
   render() {
     return (
-      // <SafeAreaView style={{flex: 1}}>
-        <Provider store={Store}>
-          <StatusBar barStyle="dark-content"/>
-          <NavigationContainer>
-            <Navigator />
-          </NavigationContainer>
-        </Provider>
-      // </SafeAreaView>
-    )
+      <Provider store={Store}>
+        <NavigationContainer>
+          <Navigator/>
+        </NavigationContainer>
+      </Provider>
+    );
   }
 }
 

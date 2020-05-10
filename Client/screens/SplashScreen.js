@@ -166,7 +166,7 @@ class SplashScreen extends Component {
 
   async fetchManagerBusiness() {
     // console.log('fetchManagerBusiness');
-    if(!this.props.currentUser.hasBusiness) {
+    if(this.props.currentUser.hasbusiness) {
       const url = 'http://192.168.1.198:3000/business/getBusinessByManagerID';
       const options = { 
         method: 'POST', 

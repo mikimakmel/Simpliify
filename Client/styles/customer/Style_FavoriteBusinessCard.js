@@ -43,7 +43,9 @@ export default StyleSheet.create({
     height: null,
     width: null,
     resizeMode: 'cover',
-    borderRadius: 1
+    borderRadius: 4,
+    borderWidth: 0.2,
+    borderColor: Colors.gray04
   },
   nameContainer: {
     flex: 1,
@@ -60,16 +62,15 @@ export default StyleSheet.create({
   },
   noUpcomingText: {
     fontSize: 10,
-    fontWeight: '200',
-    color: Colors.gray04,
-    opacity: 0.6,
-    marginTop: 6
+    fontWeight: '300',
+    color: Colors.gray03,
+    marginTop: 3
   },
   upcomingText: {
     fontSize: 10,
-    fontWeight: '200',
-    color: Colors.green02,
+    fontWeight: '300',
+    color: Colors.green01,
     opacity: 0.6,
-    marginTop: 3
+    marginTop: 2.5
   }
 })
