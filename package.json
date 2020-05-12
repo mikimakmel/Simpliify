@@ -1,6 +1,26 @@
 {
+    "name": "server",
+    "version": "1.0.0",
+    "description": "Simpliify Server",
+    "main": "index.js",
     "scripts": {
       "heroku-prebuild": "cd ./Server",
+      "test": "echo \"Error: no test specified\" && exit 1",
       "start": "node index.js"
+    },
+    "author": "Miki Makmel",
+    "license": "ISC",
+    "dependencies": {
+      "cors": "^2.8.5",
+      "express": "^4.17.1",
+      "express-fileupload": "^1.1.6",
+      "mathjs": "^6.6.4",
+      "moment": "^2.25.3",
+      "moment-range": "^4.0.2",
+      "pg": "^8.0.3",
+      "radians": "^1.0.0"
+    },
+    "devDependencies": {
+      "nodemon": "^2.0.3"
     }
 }
