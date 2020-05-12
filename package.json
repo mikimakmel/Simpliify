@@ -1,5 +1,5 @@
 {
     "scripts": {
-      "start": "cd ./Server && npm install && npm start"
+      "start": "cd ./Server && npm install && npm audit fix && npm start"
     }
 }
