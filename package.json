@@ -1,5 +1,5 @@
 {
     "scripts": {
-      "heroku-prebuild": "cd ./Server && npm install"
+      "heroku-prebuild": "cd ./Server && npm install && npm node index.js"
     }
 }
