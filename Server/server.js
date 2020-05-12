@@ -119,7 +119,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 /* SELECT Gender, COUNT(Gender) FROM Orders LEFT OUTER JOIN Users ON (Orders.customer = Users.UserID) WHERE Business.BusinessID=${Business} GROUP BY Gender */
 
 /* Return sum of customers by city */
-/* SELECT Address.City, COUNT(Address.City) FROM Orders INNER JOIN Users ON (Orders.Customer = Users.UserID) INNER JOIN Address ON (Users.Address = Address.AddressID) WHERE Orders.Business=${Business} GROUP BY Address.City */
+/* SELECT Address.City, COUNT(Address.City) FROM Orders INNER JOIN Users ON (Orders.Customer = Users.UserID) INNER JOIN Address ON (Users.Address = Address.AddressID) WHERE Orders.Business=${Business} GROUP BY Address.City ORDER BY Count DESC*/
 
 /* Most profitable customers in a business */
 /* SELECT Orders.Customer, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${Business} GROUP BY Orders.Customer ORDER BY Total DESC */

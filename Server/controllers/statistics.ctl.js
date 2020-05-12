@@ -1,5 +1,14 @@
 const db = require('../database');
 
+/**********************************************/
+    // const gendercount = [
+    //     {
+    //       gender: ['Female', 'Male'],
+    //       amount: [10, 15],
+    //     }
+    //   ]
+/**********************************************/
+
 // 1. get all business customers sorted by gender.
 statByGender = (req, res) => {
     // data example:
@@ -45,11 +54,18 @@ statByGender = (req, res) => {
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
-
+/**********************************************/
+    // const serviceincome = [
+    //     {
+    //       name: ['Beauty Sales', 'Baby Legal'],
+    //       amount: [50, 80],
+    //     }
+    //   ]
+/**********************************************/
 // 2. get business income from each service.
 statByService = (req, res) => {
     // data example
-    // const data = [
+    // const serviceincome = [
     //           {
     //            name: Beauty Sales,
     //            total: 50
@@ -83,11 +99,19 @@ statByService = (req, res) => {
 }
 
 
+/**********************************************/
+    // const customersage = [
+    //     {
+    //       gender: ['18-24', '25-34', '44-35', '55-65', '65+'],
+    //       amount: [3840, 1920, 960, 400, 400],
+    //     }
+    //   ]
+/**********************************************/
 // 3. get all business customers sorted by ascending age.
 statByAge = (req, res) => {
 
     // data example:
-    // const data = [
+    // const customersage = [
     //     {
     //         18-24: 3840,
     //         25-34: 1920,
@@ -144,12 +168,19 @@ statByAge = (req, res) => {
 }
 
 
-    
+/**********************************************/
+    // const citycount = [
+    //     {
+    //       gender: ['Herzelia', 'Tel Aviv', 'Rishon Lezion'],
+    //       amount: [5, 2, 1],
+    //     }
+    //   ]
+/**********************************************/
 // 4. get business customers sorted by top *number* addresses (cities)
 statByAddress = (req, res) => {
 
     // data example:
-    // const data = [
+    // const citycount = [
     //     {
     //         Tel Aviv: 2,
     //         Rishon Lezion: 1,
@@ -183,8 +214,7 @@ statByAddress = (req, res) => {
 // 5. get business total income under a period of time
 statTotalIncome = (req, res) => {
     // data example
-    // const data = [50, 10, 40, 95
-    // ]
+    // const businessincome = [50, 10, 40, 95]
 
     console.log("getIncomeByTimePeriod()");
 
@@ -207,7 +237,7 @@ statTotalIncome = (req, res) => {
 // 6. strongest hours 
 statStrongHours = (req, res) => {
     // data example
-    // const data = [50, 10, 40, 95, -4, -24, null, 85, undefined, 0, 35, 53, -53, 24, 50, -20, -80]
+    // const strongesthours = [50, 10, 40, 95, -4, -24, null, 85, undefined, 0, 35, 53, -53, 24, 50, -20, -80]
     // good example: businessID=13
 
     console.log("getTop10Customers()");
@@ -230,6 +260,15 @@ statStrongHours = (req, res) => {
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
+
+/**********************************************/
+    // const bestcustomer = [
+    //     {
+    //       name: [Guy Shriki, Shira Levy, Lev Ari Cohen, Miki Makmel]
+    //       amount: [16, 12, 5, 1]
+    //     }
+    //   ]
+/**********************************************/
 
 // 7. get top 10 customers who orders services the most times from a business.
 // 7. Get all customers and order by most money spent

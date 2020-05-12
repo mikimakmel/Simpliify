@@ -3,4 +3,4 @@ const routeConfig = {
     heroku: 'https://simpliify-miki.herokuapp.com',
 };
 
-export default routeConfig.localhost;
+export default routeConfig.heroku;
