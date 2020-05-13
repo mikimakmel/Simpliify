@@ -78,6 +78,14 @@ function ExploreStack() {
   );
 }
 
+function ScheduleStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: true }}>
+      <Stack.Screen name="Schedule" component={CalendarScreen} options={{title: 'Business Schedule'}}/>
+    </Stack.Navigator>
+  );
+}
+
 function CustomerBottomTabNavigator() {
   return (
       <BottomTab.Navigator 
@@ -170,7 +178,7 @@ function BusinessBottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Schedule"
-        component={CalendarScreen}
+        component={ScheduleStack}
         options={{
           title: 'Schedule',
           tabBarIcon: ({ color }) => (

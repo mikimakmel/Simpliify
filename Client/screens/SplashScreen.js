@@ -167,7 +167,7 @@ class SplashScreen extends Component {
 
   async fetchManagerBusiness() {
     // console.log('fetchManagerBusiness');
-    if(this.props.currentUser.hasbusiness) {
+    if(!this.props.currentUser.hasbusiness) {////////////////////////////////////////////////////////////////////////////////
       const url = `${route}/business/getBusinessByManagerID`;
       const options = { 
         method: 'POST', 
@@ -217,7 +217,7 @@ class SplashScreen extends Component {
     return (
       <View style={{ flex: 1, backgroundColor: 'white', alignContent: 'center', justifyContent: 'center'}}>
         <Image source={require('../assets/images/logo.png')} style={{alignSelf: 'center', bottom: 50}}/>
-        <BarIndicator color={Colors.red} count={5} size={35} style={{position: 'absolute', bottom: 150, alignSelf: 'center'}}/>
+        <BarIndicator color={Colors.red} count={5} size={32} style={{position: 'absolute', bottom: 150, alignSelf: 'center'}}/>
       </View>
     );
   }

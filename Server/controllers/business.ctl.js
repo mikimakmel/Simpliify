@@ -90,7 +90,8 @@ module.exports = {
     async getBusinessByManagerID(req, res) {
         console.log("getBusinessByManagerID()");
 
-        const managerID = req.body.managerID;
+        // const managerID = req.body.managerID;
+        const managerID = 12;
 
         const query = 
             `SELECT * 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView } from 'react-native';
 import AboutPage from '../customer/AboutPage';
 import ServicesPage from '../customer/ServicesPage';
 import styles from '../../styles/customer/Style_BusinessScreen';
@@ -17,7 +17,7 @@ class MyBusiness extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      businessData: this.props.currentBusiness,
+      businessData: this.props.myBusiness,
     }
     this.renderBusinessInfo = this.renderBusinessInfo.bind(this);
   }
@@ -37,7 +37,6 @@ class MyBusiness extends Component {
       >
         <AboutPage
           tabLabel="About"
-          // isInUserFavorites={this.state.isInUserFavorites}
           businessData={businessData}
         />
         <ServicesPage
@@ -51,22 +50,24 @@ class MyBusiness extends Component {
 
   render() {
     return (
-      <View style={styles.flexContainer}>
-        <View style={styles.ImagesSwiperContainer}>
-          <ImagesSwiper
-            images={
-              this.state.businessData.businessDetails.photos.carousel.map((item) => {
-                return item.imagelink;
-            })}
-            autoplay={true}
-            autoplayTimeout={5}
-            showsPagination
-            width={Layout.window.width}
-            height={200}
-          />
+      <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+        <View style={styles.flexContainer}>
+          <View style={styles.ImagesSwiperContainer}>
+            <ImagesSwiper
+              images={
+                this.state.businessData.businessDetails.photos.carousel.map((item) => {
+                  return item.imagelink;
+              })}
+              autoplay={true}
+              autoplayTimeout={5}
+              showsPagination
+              width={Layout.window.width}
+              height={200}
+            />
+          </View>
+          {this.renderBusinessInfo()}
         </View>
-        {this.renderBusinessInfo()}
-      </View>
+      </SafeAreaView>
     )
   }
 }
@@ -78,7 +79,8 @@ const mapStateToProps = ({ App, User, Customer, Business }) => {
     favoritesList: Customer.favoritesList,
     view: User.view,
     categoriesList: App.categoriesList,
-    currentBusiness: Business.currentBusiness
+    currentBusiness: Business.currentBusiness,
+    myBusiness: User.myBusiness
   }
 }
 
