@@ -10,28 +10,28 @@ class GenderDistribution extends Component {
     super(props);
     this.state =
     {
-        genderPie: [],
+        data: [],
         genderSum: 0,
     };
-    this.MakePie = this.MakePie.bind(this);
+    this.MakeGraph = this.MakeGraph.bind(this);
   }
 
 
   componentDidMount() {
-    this.MakePie();
+    this.MakeGraph();
   }
   
-  MakePie()
+  MakeGraph()
   {
-    let temp = this.state.genderPie;
+    let temp = this.state.data;
     for (var i = 0; i < this.props.gendercount[0].gender.length; i++)
     {
       temp.push({key: this.props.gendercount[0].gender[i],
                  value: this.props.gendercount[0].amount[i],
-                 svg: { fill: this.props.colors[i] },},)
+                 svg: { fill: this.props.colors[i % 5] },},)
     }
 
-    this.setState({genderPie: temp})
+    this.setState({data: temp})
     this.setState({genderSum: this.props.gendercount[0].amount.reduce((a, b) => a + b, 0)})
   }
 
@@ -44,13 +44,13 @@ class GenderDistribution extends Component {
 
   RenderPie()
   {
-    if(this.state.genderPie.length > 0)
+    if(this.state.data.length > 0)
     {
       {  
         return (
           <FlatList
             keyExtractor={(item, index) => { index.toString()}}
-            data={this.state.genderPie}
+            data={this.state.data}
             renderItem={this.renderItem}
           />
         )
@@ -96,7 +96,7 @@ class GenderDistribution extends Component {
                valueAccessor={({ item }) => item.value}
                outerRadius={'70%'}
                innerRadius={2}
-               data={this.state.genderPie}
+               data={this.state.data}
              >
              <Labels/>
              </PieChart>
