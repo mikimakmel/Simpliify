@@ -39,7 +39,7 @@ def detection(img):
 
     return img, outs
 
-
+@profile
 def detect_card_details(card_img, image_path=".jpg", prepro=False):
     # Preprocess image
     if prepro:

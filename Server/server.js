@@ -11,7 +11,7 @@ const fileupload = require('express-fileupload');
 const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 app.set('port', port);
 app.use(cors());
@@ -66,9 +66,9 @@ app.post('/statistics/statByGender', statisticsCtl.statByGender);               
 app.post('/statistics/statByService', statisticsCtl.statByService);                        // READY
 app.post('/statistics/statByAge', statisticsCtl.statByAge);                                // READY
 app.post('/statistics/statByAddress', statisticsCtl.statByAddress);                        // READY
-app.post('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);                    // In progress
+app.post('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);                    // READY
 app.post('/statistics/statStrongHours', statisticsCtl.statStrongHours);                    // READY
-app.post('/statistics/statTop10Customers', statisticsCtl.statTop10Customers);              // In progress
+app.post('/statistics/statTop10Customers', statisticsCtl.statTop10Customers);              // READY
 app.post('/statistics/statRating', statisticsCtl.statRating);                              // READY
 
 /*** Review routes ***/

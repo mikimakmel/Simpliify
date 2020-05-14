@@ -1,34 +1,15 @@
 const db = require('../database');
 
-/**********************************************/
+
+// 1. get all business customers sorted by gender.
+statByGender = (req, res) => {
+    // data example:
     // const gendercount = [
     //     {
     //       gender: ['Female', 'Male'],
     //       amount: [10, 15],
     //     }
     //   ]
-/**********************************************/
-
-// 1. get all business customers sorted by gender.
-statByGender = (req, res) => {
-    // data example:
-    // const data = [
-    //     {
-    //       name: "Female",
-    //       population: 10,
-    //       color: "rgba(255, 204, 204, 1)",
-    //       legendFontColor: "#7F7F7F",
-    //       legendFontSize: 15
-    //     },
-    //     {
-    //       name: "Mail",
-    //       population: 15,
-    //       color: "rgba(153, 204, 255, 1)",
-    //       legendFontColor: "#7F7F7F",
-    //       legendFontSize: 15
-    //     }
-    //   ]
-
 
     console.log("getCustomersSortedByGender()");
 
@@ -40,86 +21,68 @@ statByGender = (req, res) => {
     
     db.query(query)
     .then(result => {
-        var results = (result.rows).map((row) => {
-            return  {
-                      name: row.gender,
-                      population: row.count,
-                      color: "rgba(255, 204, 204, 1)",
-                      legendFontColor: "#7F7F7F",
-                      legendFontSize: 15
-                    }
+        var gendercount = 
+            {
+                gender: [],
+                amount: [],
+            }
+        var rows = result.rows
+        rows.map((row) => {
+            gendercount.gender.push(row.gender)
+            gendercount.amount.push(row.count)
+
         })
-        res.json(results)
+        res.json([gendercount])
     })
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
-/**********************************************/
+// 2. get business income from each service.
+statByService = (req, res) => {
+    // data example
     // const serviceincome = [
     //     {
     //       name: ['Beauty Sales', 'Baby Legal'],
     //       amount: [50, 80],
     //     }
     //   ]
-/**********************************************/
-// 2. get business income from each service.
-statByService = (req, res) => {
-    // data example
-    // const serviceincome = [
-    //           {
-    //            name: Beauty Sales,
-    //            total: 50
-    //           },
-        //       {
-    //            name: Baby Legal,
-    //            total: 80
-    //           }
-    // ]
-
     console.log("getIncomeByService()");
 
     const businessID = req.body.businessID;
 
-    const query = `SELECT Orders.Business, Orders.Service, Service.Name, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID)
+    const query = `SELECT Orders.Business, Orders.Service, Service.Name, SUM(Service.Price) as Total FROM Orders
+                    LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID)
                     WHERE
                     Orders.Business=${businessID} GROUP BY Orders.Service, Orders.Business, Service.Name`;
     
     db.query(query)
         .then(result => {
-            
-            var results = (result.rows).map((row) => {
-                return  {
-                          name: row.name,
-                          total: row.total
-                        }
+            const serviceincome =
+                {
+                    name: [],
+                    amount: [],
+                }
+            const rows = result.rows
+            rows.map((row) => {
+                serviceincome.name.push(row.name)
+                serviceincome.amount.push(row.total)    
             })
-            res.json(results)
+            res.json([serviceincome])
         })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
 
-/**********************************************/
-    // const customersage = [
-    //     {
-    //       gender: ['18-24', '25-34', '44-35', '55-65', '65+'],
-    //       amount: [3840, 1920, 960, 400, 400],
-    //     }
-    //   ]
-/**********************************************/
 // 3. get all business customers sorted by ascending age.
 statByAge = (req, res) => {
 
     // data example:
     // const customersage = [
     //     {
-    //         18-24: 3840,
-    //         25-34: 1920,
-    //         44-35: 960,
-    //         55-65: 400,
-    //         65+: 400
-    //     },
-    // ]
+    //       age: ['13-17', 18-24', '25-34', '44-35', '55-65', '65+'],
+    //       amount: [3840, 1920, 960, 400, 400],
+    //     }
+    //   ]
 
     console.log("getCustomersSortedByAge()");
 
@@ -161,60 +124,63 @@ statByAge = (req, res) => {
                     data["65+"] += 1
                 }
             })
+            var customersage = {
+                age: [],
+                amount: []
+            }
 
-            res.json(data)
+            Object.keys(data).forEach((key) => {
+                customersage.age.push(key)
+                customersage.amount.push(data[key])
+            });
+
+            res.json([customersage])
         })
         .catch(err => res.status(404).send(`${err.stack}`))
 }
 
-
-/**********************************************/
-    // const citycount = [
-    //     {
-    //       gender: ['Herzelia', 'Tel Aviv', 'Rishon Lezion'],
-    //       amount: [5, 2, 1],
-    //     }
-    //   ]
-/**********************************************/
 // 4. get business customers sorted by top *number* addresses (cities)
 statByAddress = (req, res) => {
 
     // data example:
     // const citycount = [
     //     {
-    //         Tel Aviv: 2,
-    //         Rishon Lezion: 1,
-    //         Herzelia: 5
-    //     },
-    // ]
+    //       city: ['Herzelia', 'Tel Aviv', 'Rishon Lezion'],
+    //       amount: [5, 2, 1],
+    //     }
+    //   ]
 
     console.log("getCustomersSortedByCities()");
 
     const businessID = req.body.businessID;
 
-    const query = `SELECT Address.City, COUNT(Address.City) FROM Orders
-                    INNER JOIN Users ON (Orders.Customer = Users.UserID)
-                    INNER JOIN Address ON (Users.Address = Address.AddressID)
-                    WHERE
-                    Orders.Business=${businessID} GROUP BY Address.City`;
+    const querynew = `SELECT Address.City, COUNT(Address.City) FROM Orders
+                        INNER JOIN Users ON (Orders.Customer = Users.UserID)
+                        INNER JOIN Address ON (Users.Address = Address.AddressID)
+                        WHERE
+                        Orders.Business=${businessID} GROUP BY Address.City ORDER BY Count DESC`
     
-    db.query(query)
+    db.query(querynew)
         .then(result => {
-            var data = {}
-            var rows = result.rows
+            var citycount = {
+                city: [],
+                amount: []
+            }
+            var rows = result.rows            
             rows.map((row) => {
-                data[row.city] = row.count
+                citycount.city.push(row.city)
+                citycount.amount.push(row.count)
             })
-            res.json(data)
+            res.json([citycount])
         })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
-
 // 5. get business total income under a period of time
 statTotalIncome = (req, res) => {
     // data example
-    // const businessincome = [50, 10, 40, 95]
+    // array size is 12, present 12 month
+    // const businessincome = [50, 10, 40, 95, 50, 10, 40, 95, 50, 10, 40, 95]
 
     console.log("getIncomeByTimePeriod()");
 
@@ -224,20 +190,32 @@ statTotalIncome = (req, res) => {
                     LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID)
                     WHERE Orders.Business=${businessID}
                     AND Status='Confirmed'
-                    AND Orders.Starttime::date BETWEEN (NOW() - INTERVAL '1 MONTH')
+                    AND Orders.Starttime::date BETWEEN (NOW() - INTERVAL '1 YEAR')
                     AND NOW()
                     GROUP BY Orders.Starttime::date, Orders.Business ORDER BY Starttime`;
     
     db.query(query)
-        .then(result => res.json(result.rows))
+        .then(result => {
+            var businessincome = new Array(12).fill(0)
+            
+            var rows = result.rows
+            console.log(rows)
+            rows.map((row) => {
+                var d = new Date(row.starttime)
+                businessincome[d.getUTCMonth()] += parseInt(row.total, 10)
+            })
+            res.json(businessincome)
+        })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
-
 
 // 6. strongest hours 
 statStrongHours = (req, res) => {
     // data example
-    // const strongesthours = [50, 10, 40, 95, -4, -24, null, 85, undefined, 0, 35, 53, -53, 24, 50, -20, -80]
+    // const stronghours = [{ 
+    //    hours: [1,2,3,4,5,6,14,16],
+    //    amount: [2,4,6,1,2,6,1,3]
+    // }]
     // good example: businessID=13
 
     console.log("getTop10Customers()");
@@ -250,48 +228,32 @@ statStrongHours = (req, res) => {
     
     db.query(query)
         .then(result => {
-            var data = {}
+            var stronghours = {
+                hours: [],
+                amount: []
+            }
             var rows = result.rows
+            console.log(rows)
             rows.map((row) => {
-                data[row.hour] = row.popularity
+                stronghours.hours.push(row.hour)
+                stronghours.amount.push(row.popularity)
             })
-            res.json(data)
+            res.json([stronghours])
         })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
+// 7. get top 10 customers who orders services the most times from a business.
+// 7. Get all customers and order by most money spent
+statTop10Customers = (req, res) => {
 
-/**********************************************/
+    // data example
     // const bestcustomer = [
     //     {
     //       name: [Guy Shriki, Shira Levy, Lev Ari Cohen, Miki Makmel]
     //       amount: [16, 12, 5, 1]
     //     }
     //   ]
-/**********************************************/
-
-// 7. get top 10 customers who orders services the most times from a business.
-// 7. Get all customers and order by most money spent
-statTop10Customers = (req, res) => {
-    // 
-    // const data = [
-    //      {
-    //          costumerID: name     
-    //      }
-    //      {
-    //          12: 'Shira Levy',
-    //      },
-    //      { 
-    //          16: 'Guy Shriki',
-    //      },
-    //      { 
-    //          5: 'Lev Ari Cohen',
-    //      },
-    //      { 
-    //          1: 'Miki Makmel',
-    //      }
-
-    // ]
     console.log("getTop10Customers()");
 
     const businessID = req.body.businessID;
@@ -302,15 +264,20 @@ statTop10Customers = (req, res) => {
                         LEFT OUTER JOIN Users ON (Orders.Customer= Users.UserID)
                         WHERE
                         Orders.Business=${businessID} GROUP BY Customer, Users.Firstname, Users.Lastname ORDER BY Total DESC`;
+
     db.query(query)
         .then(result => {
-            var data = {}
+            var bestcustomer = {
+                name: [],
+                amount: []
+            }
             var rows = result.rows
             rows.map((row) => {
-                data[row.customer] = row.name
+                bestcustomer.name.push(row.name)
+                bestcustomer.amount.push(row.total)
             })
 
-            res.json(data)
+            res.json([bestcustomer])
         })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
@@ -331,26 +298,31 @@ statDailyCounter = (req, res) =>{
 // 9. get rating data
 statRating = (req, res) =>{
     console.log("getDailyCounter()");
-
+    // const ratingcount = [{ 
+    //      rating: [5,4,3,2,1],
+    //      amount: [5,7,2,5,4]
+    // }],
     const businessID = req.body.businessID;
 
-    const query = `SELECT Rating, COUNT(Rating) FROM Review WHERE Business=${businessID} GROUP BY Rating`;
+    const query = `SELECT Rating, COUNT(Rating) FROM Review WHERE Business=${businessID} GROUP BY Rating ORDER BY Rating DESC`;
     
     db.query(query)
         .then(result => {
-            var data = {}
+            var ratingcount = {
+                rating: [],
+                amount: []
+            }
             var rows = result.rows
             rows.map((row) => {
-                data[row.rating] = row.count
+                ratingcount.rating.push(row.rating)
+                ratingcount.amount.push(row.count)
             })
-            res.json(data)
+            res.json([ratingcount])
         })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
     
-
-
 module.exports = {
     statByGender: statByGender,
     statByService: statByService,

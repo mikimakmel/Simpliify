@@ -3,6 +3,7 @@ import sys
 import argparse
 import cv2
 from detection import detect_card_details
+import cProfile
 
 # standalone app
 # The image must include credit card with no background
