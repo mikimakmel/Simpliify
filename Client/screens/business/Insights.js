@@ -19,17 +19,14 @@ class Insights extends Component {
     return(
       <SafeAreaView>
          <ScrollView>
-<View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-<Text style={{fontSize: 32}}> Insights </Text>
-</View>
-            {/* <ServiceIncome
+            <ServiceIncome
               serviceincome = {this.state.serviceincome}
               colors = {this.state.colors}
             />
             <GenderDistribution
               gendercount = {this.state.gendercount}
               colors = {this.state.colors}
-            /> */}
+            />
         </ScrollView>
       </SafeAreaView>
     )
