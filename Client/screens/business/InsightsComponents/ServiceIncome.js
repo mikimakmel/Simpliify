@@ -9,27 +9,27 @@ class ServiceIncome extends Component {
     super(props);
     this.state =
     {
-        servicePie: [],
+        data: [],
     };
-    this.MakePie = this.MakePie.bind(this);
+    this.MakeGraph = this.MakeGraph.bind(this);
   }
 
   componentDidMount() {
-    this.MakePie();
+    this.MakeGraph();
   }
 
-  MakePie()
+  MakeGraph()
   {
-    let temp = this.state.servicePie;
+    let temp = this.state.data;
     for (var i = 0; i < this.props.serviceincome[0].name.length; i++)
     {
       temp.push({key: this.props.serviceincome[0].name[i],
                  value: this.props.serviceincome[0].amount[i],
-                 svg: { fill: this.props.colors[i] },
+                 svg: { fill: this.props.colors[i % 5] },
                  arc: { outerRadius:100 + this.props.serviceincome[0].amount[i] / 3}},)
     }
 
-    this.setState({servicePie: temp})
+    this.setState({data: temp})
   }
 
   renderItem = ({ item }) => (
@@ -41,13 +41,13 @@ class ServiceIncome extends Component {
 
   RenderPie()
   {
-    if(this.state.servicePie.length > 0)
+    if(this.state.data.length > 0)
     {
       {  
         return (
           <FlatList
             keyExtractor={(item, index) => { index.toString()}}
-            data={this.state.servicePie}
+            data={this.state.data}
             renderItem={this.renderItem}
           />
         )
@@ -66,7 +66,7 @@ class ServiceIncome extends Component {
             style={{ height: 300, marginTop: -20 }}
             outerRadius={'70%'}
             innerRadius={60}
-            data={this.state.servicePie}
+            data={this.state.data}
             />
 
         </View>
