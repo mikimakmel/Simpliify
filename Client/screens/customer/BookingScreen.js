@@ -4,22 +4,14 @@ import { CalendarList } from 'react-native-calendars';
 import { ListItem, Button, Overlay } from 'react-native-elements';
 import colors from '../../constants/Colors';
 import styles from '../../styles/customer/Style_BookingScreen';
-// import * as Calendar from 'expo-calendar';
-// import * as Permissions from 'expo-permissions';
+import * as Calendar from 'expo-calendar';
+import * as Permissions from 'expo-permissions';
 import moment from 'moment';
 import database from '../../database';
 import { connect } from "react-redux";
 import * as Actions_Customer from '../../redux/actions/Actions_Customer';
 import route from '../../routeConfig';
-
-const openHours = [
-  { time: '08:00' },
-  { time: '09:00' },
-  { time: '10:00' },
-  { time: '11:00' },
-  { time: '12:00' },
-  { time: '13:00' },
-];
+import { MaterialCommunityIcons, Entypo, Fontisto } from '@expo/vector-icons';
 
 class BookingScreen extends Component {
   constructor(props) {
@@ -42,10 +34,42 @@ class BookingScreen extends Component {
     this.initDate = this.initDate.bind(this);
     this.getTime = this.getTime.bind(this);
     this.fetchAvailableHours = this.fetchAvailableHours.bind(this);
+    this.saveToDeviceCalendar = this.saveToDeviceCalendar.bind(this);
+    this._getCalendarPermissionAsync = this._getCalendarPermissionAsync.bind(this);
   }
 
   componentDidMount() {
     this.initDate();
+    this._getCalendarPermissionAsync();
+  }
+
+  async _getCalendarPermissionAsync() {
+    const { status } = await Permissions.askAsync(Permissions.CALENDAR);
+    if (status !== 'granted') {
+      alert('Sorry, we need location permissions to make this work!');
+    }
+  }
+
+  async saveToDeviceCalendar() {
+    const {currentOrder} = this.state; 
+
+    let endTime = new Date(currentOrder.starttime);
+    endTime.setMinutes(new Date(currentOrder.starttime).getMinutes() + currentOrder.durationminutes);
+
+    const eventDetails = {
+      startDate: currentOrder.starttime,
+      endDate: endTime,
+      location: `${currentOrder.street}, ${currentOrder.city}.`,
+      timeZone: 'GMT+3',
+      title: `${currentOrder.servicename} at ${currentOrder.businessname}`
+    }
+
+    const calendars = await Calendar.getCalendarsAsync();
+    try {
+      await Calendar.createEventAsync(calendars.filter((item) => item.allowsModifications === true)[0].id, eventDetails);
+    } catch (error) {
+      console.log('Error', error);
+    }
   }
 
   async fetchAvailableHours(day) {
@@ -70,8 +94,6 @@ class BookingScreen extends Component {
     await fetch(request)
       .then(response => response.json())
       .then(data => {
-        console.log(data)
-        console.log('======================================================================')
         this.setState({availableHours: data});
       })
       .catch(error => console.log(error))
@@ -195,34 +217,62 @@ class BookingScreen extends Component {
           <View style={styles.overlayContainer}>
             <Image style={styles.overlaySucess} source={require('../../assets/images/success.png')} />
             <Text style={styles.overlayHeadingText}>You are all booked!</Text>
-            {/* <Text style={styles.overlayText}>{this.state.currentOrder.businessname}</Text> */}
-            <Text style={styles.overlayText}>{this.state.currentOrder.servicename}</Text>
-            <Text style={styles.overlayText}>{this.state.prettyDate}</Text>
-            <Text style={styles.overlayText}>
-              {this.state.prettyDate} at {this.getTime(this.state.currentOrder.starttime)}
-            </Text>
-            {/* <Text style={styles.overlayText}>{this.state.currentOrder.street}, {this.state.currentOrder.city}.</Text> */}
-            <TouchableOpacity
-              onPress={() => {
-                console.log('SAVE')
-                // this.setState({ overlayVisible: false })
-                // this.props.navigation.goBack()
-                // this.props.navigation.navigate('Schedule')
-                // this.saveToDeviceCalendar()
-              }}
-            >
-              <Text style={styles.overlaySaveButton}>Save to My Device Calandar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                console.log('DONT SAVE')
-                // this.setState({ overlayVisible: false })
-                this.props.navigation.goBack()
-                // this.props.navigation.navigate('Schedule')
-              }}
-            >
-              <Text style={styles.overlayDontSaveButton}>Don't Save</Text>
-            </TouchableOpacity>
+            <View style={{alignItems: 'flex-start', justifyContent: 'center'}}>
+
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 20}}>
+                <Fontisto
+                  name="shopping-bag-1"
+                  size={25}
+                  color={colors.red}
+                  style={{marginRight: 15}}
+                />
+                <Text style={styles.overlayText}>{this.state.currentOrder.servicename}</Text>
+              </View>
+
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 20}}>
+                <Entypo
+                  name="location-pin"
+                  size={25}
+                  color={colors.red}
+                  style={{marginRight: 15}}
+                />
+                <Text style={styles.overlayText}>{this.state.currentOrder.street}, {this.state.currentOrder.city}.</Text>
+              </View>
+
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 20}}>
+                <MaterialCommunityIcons
+                  name="calendar-clock"
+                  size={25}
+                  color={colors.red}
+                  style={{marginRight: 15}}
+                />
+                <Text style={styles.overlayText}>
+                  {this.state.prettyDate} at {this.getTime(this.state.currentOrder.starttime)}
+                </Text>
+              </View>
+
+            </View>
+            <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: 100}}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({ overlayVisible: false });
+                  this.props.navigation.goBack();
+                  this.props.navigation.navigate('Schedule');
+                  this.saveToDeviceCalendar();
+                }}
+              >
+                <Text style={styles.overlaySaveButton}>Save to My Device Calandar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({ overlayVisible: false });
+                  this.props.navigation.goBack();
+                  this.props.navigation.navigate('Schedule');
+                }}
+              >
+                <Text style={styles.overlayDontSaveButton}>Don't Save</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </Overlay>
       )

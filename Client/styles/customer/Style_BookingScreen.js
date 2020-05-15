@@ -57,20 +57,18 @@ export default StyleSheet.create({
     height: 100, 
     width: 100,
     position: 'absolute',
-    top: 120
+    top: 140
   },
   overlayHeadingText: {
     fontSize: 24,
     fontWeight: '500',
     color: colors.red,
-    marginTop: 40,
-    marginBottom: 20
+    marginBottom: 60
   },
   overlayText: {
     fontSize: 18,
     fontWeight: '400',
     color: colors.gray03,
-    marginTop: 15,
     textAlign: 'center'
   },
   overlaySaveButton: {
@@ -84,7 +82,7 @@ export default StyleSheet.create({
     fontSize: 12,
     fontWeight: '300',
     color: colors.red,
-    marginTop: 20,
+    marginTop: 30,
     textDecorationLine: 'underline'
   }
 })
