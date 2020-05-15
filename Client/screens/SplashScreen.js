@@ -17,6 +17,7 @@ class SplashScreen extends Component {
     super(props);
     this.state = {
       email: this.props.route.params.email,
+      profilePic: this.props.route.params.profilePic,
       shouldUpdate: false
     };
     this.initApp = this.initApp.bind(this);
@@ -102,7 +103,11 @@ class SplashScreen extends Component {
 
     await fetch(request)
       .then(response => response.json())
-      .then(data => this.props.dispatch(Actions_User.updateCurrentUser(data.user)))
+      .then(data => {
+        let user = data.user;
+        user.profilepic = this.props.route.params.profilePic;
+        this.props.dispatch(Actions_User.updateCurrentUser(user))
+      })
       .catch(error => console.log(error))
   }
 

@@ -441,15 +441,37 @@ class LoginScreen extends Component {
             const FBcredential = firebase.auth.FacebookAuthProvider.credential(token);
             firebase.auth().signInWithCredential(FBcredential)
             .then(async (result) => {
-                await this.fetchUserProfile(result.user.email);
-
+                // await this.fetchUserProfile(result.user.email, result.user.photoURL);
+                // result.additionalUserInfo
+                // mg {
+                //     "isNewUser": false,
+                //     "profile": Object {
+                //       "birthday": "11/29/1992",
+                //       "email": "makmel.miki@gmail.com",
+                //       "first_name": "Miki",
+                //       "gender": "male",
+                //       "id": "10221659860226854",
+                //       "last_name": "Makmel",
+                //       "name": "Miki Makmel",
+                //       "picture": Object {
+                //         "data": Object {
+                //           "height": 100,
+                //           "is_silhouette": false,
+                //           "url": "https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=10221659860226854&height=100&width=100&ext=1592054652&hash=AeSKzSG-bOMykG4Q",
+                //           "width": 100,
+                //         },
+                //       },
+                //     },
+                //     "providerId": "facebook.com",
+                //   }
+                this.props.navigation.navigate('SplashScreen', {email: result.user.email, profilePic: `${result.user.photoURL}?height=500`});
                 // console.log(!this.props.currentUser)
-                if(this.props.currentUser) {
-                    this.props.navigation.navigate('SplashScreen', {email: result.user.email, profilePic: result.user.photoURL});
-                }
-                else {
-                    this.props.navigation.navigate('SignUpForm', {email: result.user.email, profilePic: result.user.photoURL});
-                }
+                // if(this.props.currentUser) {
+                //     this.props.navigation.navigate('SplashScreen', {email: result.user.email, profilePic: result.user.photoURL});
+                // }
+                // else {
+                //     this.props.navigation.navigate('SignUpForm', {email: result.user.email, profilePic: result.user.photoURL});
+                // }
 
                 console.log("Facebook Login Success");
             })
@@ -552,7 +574,7 @@ class LoginScreen extends Component {
                             <Circle r={layout.window.height + 50} cx={layout.window.width / 2} />
                         </ClipPath>
                         <Image 
-                        href={require('../assets/images/loginBG.jpg')} 
+                        href={require('../assets/images/loginGradient.png')} 
                         height={layout.window.height + 50} 
                         width={layout.window.width} 
                         preserveAspectRatio={'xMidYMid slice'}
@@ -566,44 +588,40 @@ class LoginScreen extends Component {
                     <Animated.Image style={{}} source={require('../assets/images/logo.png')} />
                 </Animatable.View>
                 {/* </Animated.View> */}
-                <View style={{height: layout.window.height/3, justifyContent: 'center' }} >
+                <View style={{height: layout.window.height/3 + 40, justifyContent: 'center' }} >
                     <Animatable.View animation="fadeIn">
                         <TouchableOpacity onPress={() => this.setState({screenStatus: 'sign-in'})}>
                             <TapGestureHandler onHandlerStateChange={this.onStateChange}>
                                 <Animated.View style={{...styles.button, opacity: this.buttonOpacity, 
                                     transform: [{ translateY: this.buttonY }]
                                 }}>
-                                    <Text style={{fontSize: 18, fontWeight: '700', color: '#41BCA0', opacity: 0.9}} >SIGN IN</Text>
+                                    <Text style={{fontSize: 16, fontWeight: '600', color: colors.green03, opacity: 0.9}}>SIGN IN</Text>
                                 </Animated.View>
                             </TapGestureHandler>
                         </TouchableOpacity>
                     </Animatable.View>
 
-                    <TouchableOpacity onPress={() => this.setState({screenStatus: 'sign-up'})}>
+                    
                         <TapGestureHandler onHandlerStateChange={this.onStateChange}>
-                            <Animated.View style={{ padding: 20, justifyContent: 'center', alignItems: 'center', transform: [{ translateY: this.buttonY }] }}>
+                            <Animated.View style={{padding: 10, justifyContent: 'center', alignItems: 'center', transform: [{ translateY: this.buttonY }] }}>
+                                <TouchableOpacity onPress={() => this.setState({screenStatus: 'sign-up'})}>
                                     <Text>
                                         <Text style={{...styles.textForgotPassword, color: colors.white}} >Don't have an account?</Text>
-                                        <Text style={{...styles.textForgotPassword, color: colors.white, fontWeight: 'bold'}} > Sign Up Now</Text>
+                                        <Text style={{...styles.textForgotPassword, color: colors.white, fontWeight: '700'}}> Sign Up Now</Text>
                                     </Text>
+                                </TouchableOpacity>  
+                                <Text style={{...styles.textForgotPassword, color: colors.white, fontWeight: '200', marginTop: 30}}>- OR -</Text>
                             </Animated.View>
                         </TapGestureHandler>  
-                    </TouchableOpacity>  
 
-                    <Animated.View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', transform: [{ translateY: this.buttonY }] }}>
-                        <TouchableOpacity style={{ padding: 20}} onPress={this.logInViaFacebook}>
-                            <Animated.Image style={{ width: 50, height: 50, transform: [{ translateY: this.buttonY }] }} source={require('../assets/images/facebook-logo.png')} />
+                    <Animated.View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 70, transform: [{ translateY: this.buttonY }] }}>
+                        <TouchableOpacity style={styles.socialIcon} onPress={this.logInViaFacebook}>
+                            <Animated.Image style={{ width: 55, height: 55, transform: [{ translateY: this.buttonY }] }} source={require('../assets/images/facebook-logo.png')} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={{ padding: 20}} onPress={this.logInViaGoogle}>
-                            <Animated.Image style={{ width: 50, height: 50, transform: [{ translateY: this.buttonY }] }} source={require('../assets/images/google-logo.png')} />
+                        <TouchableOpacity style={styles.socialIcon} onPress={this.logInViaGoogle}>
+                            <Animated.Image style={{ width: 55, height: 55, transform: [{ translateY: this.buttonY }] }} source={require('../assets/images/google-logo.png')} />
                         </TouchableOpacity>
                     </Animated.View>
-
-                    {/* <Animated.View style={{...styles.button, backgroundColor: '#2E71DC', opacity: this.buttonOpacity, 
-                            transform: [{ translateY: this.buttonY }]
-                    }}>
-                        <Text style={{fontSize: 16, fontWeight: '700', color: 'white' }} >SIGN IN WITH FACEBOOK</Text>
-                    </Animated.View> */}
 
                     <Animated.View style={{ 
                         height: layout.window.height/3, 

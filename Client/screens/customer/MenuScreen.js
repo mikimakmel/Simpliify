@@ -29,13 +29,16 @@ class MenuScreen extends Component {
   }
 
   render() {
+    let profilepic = this.props.currentUser.profilepic;
+
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content"/>
         <Text style={styles.headline}>Menu</Text>
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
           <ListItem
-            leftAvatar={{ size: 70, source: { uri: 'https://www.lococrossfit.com/wp-content/uploads/2019/02/user-icon-300x300.png' } }}
+            // leftAvatar={{ size: 70, source: { uri: 'https://www.lococrossfit.com/wp-content/uploads/2019/02/user-icon-300x300.png' } }}
+            leftAvatar={{ size: 70, source: { uri: profilepic ?  profilepic : 'https://www.lococrossfit.com/wp-content/uploads/2019/02/user-icon-300x300.png'} }}
             title={`${this.props.currentUser.firstname} ${this.props.currentUser.lastname}`}
             titleStyle={{ fontWeight: '600', fontSize: 20, color: colors.lightBlack}}
             subtitleStyle={{ fontWeight: '400', fontSize: 12, marginTop: 5, color: colors.gray02 }}

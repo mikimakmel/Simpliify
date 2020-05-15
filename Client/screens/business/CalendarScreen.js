@@ -55,9 +55,9 @@ class CalendarScreen extends Component {
         <ListItem
           title={item.service}
           titleStyle={{fontSize: 16, fontWeight: '500', color: colors.lightBlack, marginBottom: 5}}
-          subtitle={item.name}
+          subtitle={item.time}
           subtitleStyle={{fontSize: 14, fontWeight: '400', color: colors.gray02}}
-          rightElement={<Text style={{fontSize: 14, fontWeight: '400', color: colors.gray02}}>{item.time}</Text>}
+          rightElement={<Text style={{fontSize: 12, fontWeight: '300', color: colors.gray02}}>{item.name}</Text>}
         />
       </TouchableOpacity>
     );
