@@ -11,7 +11,7 @@ const fileupload = require('express-fileupload');
 const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
 app.set('port', port);
 app.use(cors());
@@ -25,7 +25,9 @@ app.get('/user/getAllUsers', userCtl.getAllUsers);
 app.post('/user/getUserByEmail', userCtl.getUserByEmail);
 app.post('/user/getUserByID', userCtl.getUserByID);
 app.put('/user/updateUserDetails', userCtl.updateUserDetails);
-app.post('/user/createNewUser', userCtl.createNewUser);         // wrong birthday when sending from frontend, need to add profile picture
+app.put('/user/updateUserPushToken', userCtl.updateUserPushToken);
+app.post('/user/getUserPushToken', userCtl.getUserPushToken);
+app.post('/user/createNewUser', userCtl.createNewUser);
 
 /*** Customer routes ***/
 app.post('/customer/addBusinessToFavorites', customerCtl.addBusinessToFavorites);
@@ -35,7 +37,7 @@ app.post('/customer/getFavoritesList', customerCtl.getFavoritesList);
 /*** Order routes ***/
 app.post('/order/createNewOrder', orderCtl.createNewOrder);
 app.put('/order/updateOrderStatus', orderCtl.updateOrderStatus);
-app.post('/order/getAllCustomerOrders', orderCtl.getAllCustomerOrders);         // READY - Dosen't show all the orders?
+app.post('/order/getAllCustomerOrders', orderCtl.getAllCustomerOrders);
 app.post('/order/getAllBusinessOrders', orderCtl.getAllBusinessOrders);          
 app.post('/order/getAllAvailableBusinessTime', orderCtl.getAllAvailableBusinessTime);                      
 app.post('/order/checkIfCustomerReceiveServiceFromBusiness', orderCtl.checkIfCustomerReceiveServiceFromBusiness);
@@ -48,9 +50,9 @@ app.get('/business/getAllCustomers', businessCtl.getAllCustomers);
 app.get('/business/getBusinessAvailability', businessCtl.getBusinessAvailability);
 app.get('/business/getCategoriesList', businessCtl.getCategoriesList);
 app.get('/business/getAllBusinessesByCategory', businessCtl.getAllBusinessesByCategory);
-app.post('/business/createNewBusiness', businessCtl.createNewBusiness);                     // READY, needs check what about images
+app.post('/business/createNewBusiness', businessCtl.createNewBusiness); 
 app.post('/business/deleteYourBusiness', businessCtl.deleteYourBusiness);
-app.put('/business/updateBusinessDetails', businessCtl.updateBusinessDetails);              // READY, needs check what about images
+app.put('/business/updateBusinessDetails', businessCtl.updateBusinessDetails);
 
 /*** Service routes ***/
 app.get('/service/getAllServices', serviceCtl.getAllServices);
@@ -61,15 +63,15 @@ app.post('/service/updateServiceDetails', serviceCtl.updateServiceDetails);
 app.post('/service/deleteService', serviceCtl.deleteService);
 
 /*** Statistics routes ***/
-app.post('/statistics/statDailyCounter', statisticsCtl.statDailyCounter);                  // READY
-app.post('/statistics/statByGender', statisticsCtl.statByGender);                          // READY
-app.post('/statistics/statByService', statisticsCtl.statByService);                        // READY
-app.post('/statistics/statByAge', statisticsCtl.statByAge);                                // READY
-app.post('/statistics/statByAddress', statisticsCtl.statByAddress);                        // READY
-app.post('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);                    // READY
-app.post('/statistics/statStrongHours', statisticsCtl.statStrongHours);                    // READY
-app.post('/statistics/statTop10Customers', statisticsCtl.statTop10Customers);              // READY
-app.post('/statistics/statRating', statisticsCtl.statRating);                              // READY
+app.post('/statistics/statDailyCounter', statisticsCtl.statDailyCounter);     
+app.post('/statistics/statByGender', statisticsCtl.statByGender);             
+app.post('/statistics/statByService', statisticsCtl.statByService);           
+app.post('/statistics/statByAge', statisticsCtl.statByAge);                   
+app.post('/statistics/statByAddress', statisticsCtl.statByAddress);           
+app.post('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);       
+app.post('/statistics/statStrongHours', statisticsCtl.statStrongHours);       
+app.post('/statistics/statTop10Customers', statisticsCtl.statTop10Customers); 
+app.post('/statistics/statRating', statisticsCtl.statRating);                 
 
 /*** Review routes ***/
 app.post('/review/createNewReview', reviewCtl.createNewReview);

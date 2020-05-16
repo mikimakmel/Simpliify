@@ -45,14 +45,12 @@ module.exports = {
 
         const query = 
             `UPDATE Orders
-            SET 
-            status='${status}'
-            WHERE 
-            orderid=${orderID}
+            SET status='${status}'
+            WHERE orderid=${orderID}
             RETURNING *`;
         
         db.query(query)
-            .then(result => res.json(result.rows))
+            .then(result => res.json(result.rows[0]))
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 

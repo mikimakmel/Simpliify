@@ -143,4 +143,37 @@ module.exports = {
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
+    // update user token for push notification
+    async updateUserPushToken(req, res) {
+        console.log("updateUserPushToken()");
+
+        const userID = req.body.userID;
+        const push_token = req.body.push_token;
+
+        const query = 
+            `UPDATE Users
+            SET push_token='${push_token}'
+            WHERE userid=${userID}
+            RETURNING *`;
+
+        db.query(query)
+        .then(result => res.json(result.rows[0]))
+        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    },
+
+    // update user token for push notification
+    async getUserPushToken(req, res) {
+        console.log("getUserPushToken()");
+
+        const userID = req.body.userID;
+
+        const query = 
+            `SELECT push_token FROM Users 
+            WHERE userid='${userID}'`;
+
+        db.query(query)
+        .then(result => res.json(result.rows[0]))
+        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    },
+
 }

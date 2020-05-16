@@ -90,8 +90,7 @@ module.exports = {
     async getBusinessByManagerID(req, res) {
         console.log("getBusinessByManagerID()");
 
-        // const managerID = req.body.managerID;
-        const managerID = 12;
+        const managerID = req.body.managerID;
 
         const query = 
             `SELECT * 
@@ -100,7 +99,6 @@ module.exports = {
         
         db.query(query)
             .then(result => {
-                console.log(result.rows)
                 res.json(result.rows[0])
             })
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))

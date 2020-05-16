@@ -8,13 +8,8 @@ class FavoriteBusinessCard extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      eventsCount: 0
     }
     this.countUpcomingEvents = this.countUpcomingEvents.bind(this);
-  }
-
-  componentDidMount() {
-    this.countUpcomingEvents();
   }
 
   countUpcomingEvents() {
@@ -23,15 +18,18 @@ class FavoriteBusinessCard extends Component {
 
     this.props.ordersList.map(item => {
       if(businessData.businessDetails.business.businessid === item.businessid) {
-        count = count + 1;
+        if(item.status !== 'Cancelled') {
+          count = count + 1;
+        }
       }
     });
 
-    this.setState({ eventsCount: count });
+    return count;
   }
 
   render() {
     const { businessData } = this.props;
+    let eventsCount = this.countUpcomingEvents();
 
     return (
       <TouchableOpacity onPress={() => this.props.navigation.navigate('Business', { businessData: businessData, isInFavorites: true })}>
@@ -42,10 +40,10 @@ class FavoriteBusinessCard extends Component {
           <View style={styles.nameContainer}>
             <Text style={styles.name}>{businessData.businessDetails.business.name}</Text>
             {
-              this.state.eventsCount === 0 ?
+              eventsCount === 0 ?
               <Text style={styles.noUpcomingText}>{' \u2022 NO UPCOMING EVENTS'}</Text>
               :
-              <Text style={styles.upcomingText}>{' \u2022 ' + this.state.eventsCount + ' UPCOMING EVENTS'}</Text>
+              <Text style={styles.upcomingText}>{' \u2022 ' + eventsCount.toString() + ' UPCOMING EVENTS'}</Text>
             }
           </View>
           <View style={styles.dividerContainer}>

@@ -427,6 +427,7 @@ class LoginScreen extends Component {
             } else {
                 // this.setState({shouldRender: true});
                 console.log('checkIfLoggedIn: no');
+                this.props.navigation.navigate('LogIn');
             }
             // this.setState({ isReady: true });
         })
@@ -583,11 +584,11 @@ class LoginScreen extends Component {
                         <View style={styles.overlay} />
                     </Svg>
                 </Animated.View>
-                {/* <Animated.View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', transform: [{ translateY: this.buttonY }] }}> */}
+
                 <Animatable.View style={{ position: 'absolute', top: layout.window.height/4, alignSelf: 'center'}} >
                     <Animated.Image style={{}} source={require('../assets/images/logo.png')} />
                 </Animatable.View>
-                {/* </Animated.View> */}
+                
                 <View style={{height: layout.window.height/3 + 40, justifyContent: 'center' }} >
                     <Animatable.View animation="fadeIn">
                         <TouchableOpacity onPress={() => this.setState({screenStatus: 'sign-in'})}>

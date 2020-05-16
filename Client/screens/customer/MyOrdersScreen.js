@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image, SafeAreaView, ScrollView, TouchableOpacity, FlatList, StatusBar } from 'react-native';
+import { StyleSheet, View, Text, Image, SafeAreaView, ScrollView, TouchableOpacity, FlatList, StatusBar, Alert } from 'react-native';
 import { Divider, Avatar } from 'react-native-elements';
 import styles from '../../styles/customer/Style_MyOrdersScreen';
 import database from '../../database';
@@ -10,6 +10,7 @@ import { connect } from "react-redux";
 import * as Actions_Customer from '../../redux/actions/Actions_Customer';
 import { Popup } from 'react-native-map-link';
 import moment from 'moment';
+import route from '../../routeConfig';
 
 const weekdayArr = new Array(7);
 weekdayArr[0] = "Sunday";
@@ -29,6 +30,8 @@ class MyOrdersScreen extends Component {
     }
     this.renderEmptySchedule = this.renderEmptySchedule.bind(this);
     this.renderRow = this.renderRow.bind(this);
+    this.cancelOrder = this.cancelOrder.bind(this);
+    this.handleCancelling = this.handleCancelling.bind(this);
   }
 
   // componentDidMount() {
@@ -51,16 +54,6 @@ class MyOrdersScreen extends Component {
   }
 
   renderRow({ item }) {
-    // const swipeoutBtns = [
-    //   {
-    //     text: 'Delete',
-    //     type: 'delete',
-    //     backgroundColor: 'red',
-    //     underlayColor: colors.lightBlack,
-    //     // onPress: () => this.handleDeletePress(item)
-    //   }
-    // ]
-
     if(item.status === 'Cancelled') {
       return;
     }
@@ -75,9 +68,7 @@ class MyOrdersScreen extends Component {
     endTime = endTime.toUTCString().split(' ')[4].substring(0, 5);
 
     return (
-      // <Swipeout right={swipeoutBtns} autoClose sensitivity={1000}>
-        <View style={styles.eventContainer}>
-          <StatusBar barStyle="dark-content"/>
+      <TouchableOpacity style={styles.eventContainer} onLongPress={() => this.handleCancelling(item)}>
           <View style={styles.shadowBox}>
             <View style={styles.infoBoxContainer}>
               <Avatar
@@ -123,8 +114,7 @@ class MyOrdersScreen extends Component {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
-      // </Swipeout>
+      </TouchableOpacity>
     )
   }
 
@@ -134,9 +124,49 @@ class MyOrdersScreen extends Component {
     )
   }
 
+  handleCancelling(order) {
+    const startTime = order.starttime.split('-')[2].split('T')[1].substring(0, 5); 
+    Alert.alert(
+      'Would you like to cancel this order?',
+      `${order.servicename} at ${startTime}`,
+      [
+        {
+          text: 'Yes',
+          onPress: () => {
+            this.cancelOrder(order);
+          }
+        },
+        { 
+          text: 'Cancel',
+        }
+      ]
+    )
+  }
+
+  async cancelOrder(order) {
+    const url = `${route}/order/updateOrderStatus`;
+    const options = { 
+      method: 'PUT', 
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({orderID: order.orderid, status: 'Cancelled'})
+    };
+    const request = new Request(url, options);
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(data => {
+        this.props.dispatch(Actions_Customer.removeFromOrdersList(data));
+      })
+      .catch(error => console.log(error))
+  }
+
   render() {
     return (
       <SafeAreaView style={styles.flexContainer}>
+        <StatusBar barStyle="dark-content"/>
         <View style={styles.flexContainer}>
             <Text style={styles.heading}>My Orders</Text>
             {this.props.ordersList.length === 0 ? this.renderEmptySchedule() : this.renderOrdersList()}

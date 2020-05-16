@@ -36,6 +36,7 @@ class BookingScreen extends Component {
     this.fetchAvailableHours = this.fetchAvailableHours.bind(this);
     this.saveToDeviceCalendar = this.saveToDeviceCalendar.bind(this);
     this._getCalendarPermissionAsync = this._getCalendarPermissionAsync.bind(this);
+    this.sendPushNotification = this.sendPushNotification.bind(this);
   }
 
   componentDidMount() {
@@ -183,6 +184,7 @@ class BookingScreen extends Component {
       .then(data => {
         let order = {
           businessid: businessData.business.businessid,
+          manager: businessData.business.manager,
           businessname: businessData.business.name,
           avatar: businessData.business.avatar,
           street: businessData.business.street,
@@ -202,9 +204,55 @@ class BookingScreen extends Component {
 
         this.setState({currentOrder: order});
         this.props.dispatch(Actions_Customer.addToOrdersList(order));
+        this.sendPushNotification(order);
       })
       .catch(error => console.log(error))
   }
+
+  async sendPushNotification(order) {
+    var manager_push_token = '';
+    const url = `${route}/user/getUserPushToken`;
+    const options = { 
+      method: 'POST', 
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({userID: order.manager})
+    };
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(data => {
+        manager_push_token = data.push_token;
+      })
+      .catch(error => console.log(error))
+
+    const year = order.starttime.split('-')[0];
+    const month = order.starttime.split('-')[1];
+    const day = order.starttime.split('-')[2].split('T')[0];
+    const startTime = order.starttime.split('-')[2].split('T')[1].substring(0, 5); 
+    
+    const message = {
+      to: manager_push_token,
+      sound: 'default',
+      title: 'You have a new order!',
+      body: `For ${order.servicename} at ${day}/${month}/${year} ${startTime}`,
+      data: { data: 'goes here' },
+      _displayInForeground: true,
+    };
+
+    const response = await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+  };
 
   getTime(dateAndTime) {
     return dateAndTime.toString().substring(11, 16);

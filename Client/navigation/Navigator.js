@@ -25,8 +25,8 @@ import { connect } from "react-redux";
 
 const BottomTab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-const INITIAL_ROUTE_NAME = 'Home';
-
+const CUSTOMER_INITIAL_ROUTE_NAME = 'Home';
+const BUSINESS_INITIAL_ROUTE_NAME = 'Schedule';
 
 function HomeStack() {
   return (
@@ -89,7 +89,7 @@ function ScheduleStack() {
 function CustomerBottomTabNavigator() {
   return (
       <BottomTab.Navigator 
-        initialRouteName={INITIAL_ROUTE_NAME}
+        initialRouteName={CUSTOMER_INITIAL_ROUTE_NAME}
         tabBarOptions={{
           activeTintColor: Colors.red,
           showLabel: false,
@@ -104,7 +104,7 @@ function CustomerBottomTabNavigator() {
         options={{
           title: 'Explore',
           tabBarIcon: ({ color }) => (
-            <EvilIcons name="search" size={40} color={color} style={{ paddingTop: 5 }} />
+            <EvilIcons name="search" size={42} color={color} style={{}}/>
           )
         }}
       />
@@ -114,7 +114,7 @@ function CustomerBottomTabNavigator() {
         options={{
           title: 'Schedule',
           tabBarIcon: ({ color }) => (
-            <EvilIcons name="calendar" size={44} color={color} style={{ paddingTop: 7 }} />
+            <EvilIcons name="calendar" size={42} color={color} style={{paddingTop: 1}}/>
           )
         }}
       />
@@ -125,8 +125,7 @@ function CustomerBottomTabNavigator() {
           title: 'Home',
           // tabBarVisible: false,
           tabBarIcon: ({ color }) => (
-            <AntDesign name="home" size={31} color={color} style={{ paddingTop: 2 }} />
-            // <MaterialIcons name="favorite-border" size={31} color={color} style={{ paddingTop: 2 }} />
+            <EvilIcons name="heart" size={42} color={color} style={{}}/>
           )
         }}
       />
@@ -146,7 +145,7 @@ function CustomerBottomTabNavigator() {
         options={{
           title: 'Menu',
           tabBarIcon: ({ color }) => (
-            <Feather name="menu" size={34} color={color} style={{}} />
+            <Ionicons name="ios-menu" size={42} color={color} style={{}}/>
           )
         }}
       />
@@ -157,7 +156,7 @@ function CustomerBottomTabNavigator() {
 function BusinessBottomTabNavigator() {
   return (
       <BottomTab.Navigator 
-        initialRouteName={INITIAL_ROUTE_NAME}
+        initialRouteName={BUSINESS_INITIAL_ROUTE_NAME}
         tabBarOptions={{
           activeTintColor: Colors.red,
           showLabel: false,
@@ -172,7 +171,7 @@ function BusinessBottomTabNavigator() {
         options={{
           title: 'Insight',
           tabBarIcon: ({ color }) => (
-            <SimpleLineIcons name="chart" size={28} color={color} style={{ paddingTop: 2 }} />
+            <SimpleLineIcons name="chart" size={27} color={color} style={{paddingBottom: 4}}/>
           )
         }}
       />
@@ -182,7 +181,7 @@ function BusinessBottomTabNavigator() {
         options={{
           title: 'Schedule',
           tabBarIcon: ({ color }) => (
-            <EvilIcons name="calendar" size={44} color={color} style={{ paddingTop: 7 }} />
+            <EvilIcons name="calendar" size={42} color={color} style={{}}/>
           )
         }}
       />
@@ -192,7 +191,7 @@ function BusinessBottomTabNavigator() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => (
-            <Ionicons name="ios-business" size={31} color={color} style={{ paddingTop: 2 }} />
+            <AntDesign name="home" size={30} color={color} style={{paddingBottom: 4}}/>
           )
         }}
       />
@@ -212,7 +211,7 @@ function BusinessBottomTabNavigator() {
         options={{
           title: 'Menu',
           tabBarIcon: ({ color }) => (
-            <Feather name="menu" size={34} color={color} style={{}} />
+            <Ionicons name="ios-menu" size={42} color={color} style={{}}/>
           )
         }}
       />

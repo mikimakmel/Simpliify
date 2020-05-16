@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ActivityIndicator, Image } from 'react-native';
+import { View, Text, ActivityIndicator, Image, Button, Vibration, Platform } from 'react-native';
 import * as Actions_App from '../redux/actions/Actions_App';
 import * as Actions_User from '../redux/actions/Actions_User';
 import * as Actions_Customer from '../redux/actions/Actions_Customer';
@@ -11,6 +11,9 @@ require('../firebaseConfig');
 import * as firebase from 'firebase';
 import * as Location from 'expo-location';
 import route from '../routeConfig';
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
 
 class SplashScreen extends Component {
   constructor(props) {
@@ -18,7 +21,8 @@ class SplashScreen extends Component {
     this.state = {
       email: this.props.route.params.email,
       profilePic: this.props.route.params.profilePic,
-      shouldUpdate: false
+      shouldUpdate: false,
+      expoPushToken: '',
     };
     this.initApp = this.initApp.bind(this);
     this.fetchCategoriesList = this.fetchCategoriesList.bind(this);
@@ -30,12 +34,11 @@ class SplashScreen extends Component {
     this.fetchCustomerOrdersList = this.fetchCustomerOrdersList.bind(this);
     // this.checkIfLoggedIn = this.checkIfLoggedIn.bind(this);
     this.getPermissionAsync = this.getPermissionAsync.bind(this);
+    this.registerForPushNotificationsAsync = this.registerForPushNotificationsAsync.bind(this);
   }
 
   componentDidMount() {
-    // this.checkIfLoggedIn();
     this.initApp();
-    // console.log(this.props.route.params)
   }
   
   async initApp() {
@@ -46,8 +49,61 @@ class SplashScreen extends Component {
     await this.fetchUserFavoritesList();
     await this.fetchManagerBusiness();
     await this.fetchCustomerOrdersList();
-    this.props.navigation.navigate('Profile');
+    await this.props.navigation.navigate('Profile');
+    await this.registerForPushNotificationsAsync();
   }
+
+  async registerForPushNotificationsAsync() { 
+    if (Constants.isDevice) {
+      const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      token = await Notifications.getExpoPushTokenAsync();
+      // console.log(token);
+      await this.setState({ expoPushToken: token });
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+
+    if (Platform.OS === 'android') {
+      Notifications.createChannelAndroidAsync('default', {
+        name: 'default',
+        sound: true,
+        priority: 'max',
+        vibrate: [0, 250, 250, 250],
+      });
+    }
+
+    // add token to database
+    const url = `${route}/user/updateUserPushToken`;
+    const options = { 
+      method: 'PUT', 
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({ 
+        userID: this.props.currentUser.userid,
+        push_token: this.state.expoPushToken 
+      })
+    };
+    const request = new Request(url, options);
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(data => {
+        // console.log(data);
+        this.props.dispatch(Actions_User.updateCurrentUser(data));
+      })
+      .catch(error => console.log(error))
+  };
 
   // async checkIfLoggedIn() {
   //   console.log('checkIfLoggedIn');
@@ -104,6 +160,7 @@ class SplashScreen extends Component {
     await fetch(request)
       .then(response => response.json())
       .then(data => {
+        // console.log(data)
         let user = data.user;
         user.profilepic = this.props.route.params.profilePic;
         this.props.dispatch(Actions_User.updateCurrentUser(user))
@@ -213,7 +270,13 @@ class SplashScreen extends Component {
       .then(response => response.json())
       .then(data => {
         // console.log(data)
-        this.props.dispatch(Actions_Customer.updateOrdersList(data));
+        let noCancelledOrders = data.filter(item => {
+          if(item.status !== 'Cancelled') {
+            return item;
+          }
+        })
+
+        this.props.dispatch(Actions_Customer.updateOrdersList(noCancelledOrders));
       })
       .catch(error => console.log(error))
   }

@@ -33,6 +33,17 @@ const CustomerReducer = (state = initialState, action) => {
             }
         }
 
+        case actionsTypes.REMOVE_FROM_ORDERS_LIST: {
+            return {
+                ...state,
+                ordersList: state.ordersList.filter(item => {
+                    if(action.data.orderid !== item.orderid) {
+                        return item;
+                    }
+                })
+            }
+        }
+
         case actionsTypes.UPDATE_ORDERS_LIST: {
             return {
                 ...state,
