@@ -1,4 +1,5 @@
 const express = require('express');
+const intervals = require('./intervals')
 const userCtl = require('./controllers/user.ctl');
 const customerCtl = require('./controllers/customer.ctl');
 const businessCtl = require('./controllers/business.ctl');
@@ -19,6 +20,9 @@ app.use(fileupload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+// app.get('/intervals', intervals.intervalFunc);
+setInterval(intervals.intervalFunc, 5000);
 
 /*** User routes ***/
 app.get('/user/getAllUsers', userCtl.getAllUsers);
