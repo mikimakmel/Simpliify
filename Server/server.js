@@ -111,17 +111,8 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 /* Popularity of a bussiness's service by a certain hour */
 /* SELECT Service, EXTRACT(HOUR FROM Starttime) as Hour, COUNT(EXTRACT(HOUR FROM Starttime)) AS Popularity FROM Orders WHERE Business=${Business} GROUP BY Service, Hour ORDER BY Popularity DESC */
 
-/* Popularity of a business by hours */
-/* SELECT Business, EXTRACT(HOUR FROM Starttime) as Hour, COUNT(EXTRACT(HOUR FROM Starttime)) AS Popularity FROM Orders WHERE Business=${Business} GROUP BY Business, Hour ORDER BY Popularity DESC */
-
 /* Return a business with his services' names */
 /* SELECT Business.BusinessID, Service.Name as Service FROM Business LEFT OUTER JOIN Service ON (Business.BusinessID = Service.BusinessID) WHERE Business.BusinessID=${Business} */
-
-/* Return sum of customers by gender */
-/* SELECT Gender, COUNT(Gender) FROM Orders LEFT OUTER JOIN Users ON (Orders.customer = Users.UserID) WHERE Business.BusinessID=${Business} GROUP BY Gender */
-
-/* Return sum of customers by city */
-/* SELECT Address.City, COUNT(Address.City) FROM Orders INNER JOIN Users ON (Orders.Customer = Users.UserID) INNER JOIN Address ON (Users.Address = Address.AddressID) WHERE Orders.Business=${Business} GROUP BY Address.City ORDER BY Count DESC*/
 
 /* Most profitable customers in a business */
 /* SELECT Orders.Customer, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${Business} GROUP BY Orders.Customer ORDER BY Total DESC */
@@ -134,9 +125,6 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 
 /* Business's revenew for the last X time*/
 /* SELECT Orders.Business, Orders.Starttime::date, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${Business} AND Status='Confirmed' AND Orders.Starttime::date BETWEEN (NOW() - INTERVAL '1 WEEK') AND NOW() GROUP BY Orders.Starttime::date, Orders.Business ORDER BY Starttime */
-
-/* Count Rating by each rating score */
-/* SELECT Rating, COUNT(Rating) FROM Review WHERE Business=${Business} GROUP BY Rating */
 
 // const fileupload = require('express-fileupload');
 
