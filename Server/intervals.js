@@ -1,33 +1,41 @@
 const db = require('./database')
 
-// send notification to client
-// notify = (row) => {
-
-// }
-
-// // update status to success and write to database
-// update = (row) => {
-//     const query = ``
-//     db.query(query)
-//     .then(result => {
-//         res.json(result.rows)
-//     })
-//     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-// }
 
 intervalFunc = (req, res) => {
-    console.log('Cant stop me now!');
-
-    const query = `SELECT * FROM Orders WHERE status = 'Confirmed'`
+    // add where bool_notify = 'False' and bla bla..
+    const query = `UPDATE Orders SET bool_notify = 'True'
+                    WHERE
+                    Status = 'Confirmed'
+                    AND ((Starttime AT TIME ZONE 'UTC') BETWEEN now() AND (now() + '1 day'::interval))
+                    RETURNING Orderid`
 
     db.query(query)
         .then(result => {
-            // console.log(result.rows)
-            // check if date passed
-            // if yes - update status
+            var Orderids = result.rows;
 
-            // check if date is tommorow
-            // if yes send notification
+            ordersIdsStr = `(` + Orderids[0].orderid
+            Orderids.shift()
+            
+            Orderids.map((row) => {
+                ordersIdsStr = ordersIdsStr.concat(',', row.orderid)
+            })
+            ordersIdsStr = ordersIdsStr + `)`
+            
+            var userQuery = 
+                `SELECT Orderid, Status, Starttime AT TIME ZONE 'UTC' AS Starttime, Business.Name AS BusinessName, Bool_notify, Push_token FROM Orders
+                    INNER JOIN Business ON (Orders.Business = Business.BusinessID)
+                    INNER JOIN Users ON (Orders.Customer = Users.UserID)
+                    WHERE
+                    Orderid IN`
+            userQuery = userQuery.concat(' ',ordersIdsStr)
+            userQuery = userQuery.concat(' ',`ORDER BY Starttime`)
+
+            db.query(userQuery)
+            .then(result => {
+                var rows = result.rows
+                console.log("Notify to clients!!")
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
         })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
