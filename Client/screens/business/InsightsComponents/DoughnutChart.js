@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import { View, FlatList} from 'react-native';
+import { View, FlatList, Text} from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { PieChart } from 'react-native-svg-charts'
-import { Path, Text as Txt } from 'react-native-svg';
 import styles from './Style_Statistics'
 
 class DoughnutChart extends Component {
@@ -11,16 +10,14 @@ class DoughnutChart extends Component {
     this.state =
     {
         data: [],
-        genderSum: 0,
     };
     this.MakeGraph = this.MakeGraph.bind(this);
   }
 
-
   componentDidMount() {
     this.MakeGraph();
   }
-  
+
   MakeGraph()
   {
     let temp = this.state.data;
@@ -28,11 +25,11 @@ class DoughnutChart extends Component {
     {
       temp.push({key: this.props.data[0].category[i] + ' (' + this.props.data[0].amount[i] + ')',
                  value: this.props.data[0].amount[i],
-                 svg: { fill: this.props.colors[i % 5] },},)
+                 svg: { fill: this.props.colors[i % 5] },
+                 arc: { outerRadius:100 + this.props.data[0].amount[i] / 3}},)
     }
 
     this.setState({data: temp})
-    this.setState({genderSum: this.props.data[0].amount.reduce((a, b) => a + b, 0)})
   }
 
   renderItem = ({ item }) => (
@@ -59,48 +56,25 @@ class DoughnutChart extends Component {
   }
 
   render() {
-    function round(value, precision) {
-      var multiplier = Math.pow(10, precision || 0);
-      return Math.round(value * multiplier) / multiplier;
-    }
-
-    const Labels = ({ slices }) => {
-      return slices.map((slice, index) => {
-        const { labelCentroid, pieCentroid, data } = slice;
-        return (
-            <Txt
-                key={index}
-                x={pieCentroid[ 0 ]}
-                y={pieCentroid[ 1 ]}
-                fill={'white'}
-                textAnchor={'middle'}
-                alignmentBaseline={'middle'}
-                fontSize={24}
-                stroke={'black'}
-                strokeWidth={0.2}
-            >
-              {String(round((data.value / this.state.genderSum), 2) * 100 + '%')}
-            </Txt>
-        )
-      })
-    }
-
     return(
         <View>
+            <View>
+              <Text style={styles.headline}>{this.props.name}</Text>
+            </View>
+
             <View>
             {this.RenderPie()}
             </View>
 
             <PieChart
-               style={{ height: 300, marginTop: -20 }}
-               valueAccessor={({ item }) => item.value}
-               outerRadius={'70%'}
-               innerRadius={2}
-               data={this.state.data}
-             >
-             <Labels/>
-             </PieChart>
-        </View>
+            style={{ height: 300, marginTop: -20 }}
+            outerRadius={'70%'}
+            innerRadius={60}
+            data={this.state.data}
+            />
+
+        <View style = {styles.horizontalLine}/>
+      </View>
     )
   }
 }

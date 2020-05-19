@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, FlatList} from 'react-native';
+import { View, FlatList, Text} from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { BarChart, Grid, YAxis } from 'react-native-svg-charts'
 import styles from './Style_Statistics'
@@ -58,6 +58,10 @@ class HorizontalBar extends Component {
     return(
         <View>
             <View>
+              <Text style={styles.headline}>{this.props.name}</Text>
+            </View>
+
+            <View>
             {this.RenderPie()}
             </View>
 
@@ -74,6 +78,8 @@ class HorizontalBar extends Component {
                     <Grid direction={Grid.Direction.VERTICAL}/>
                 </BarChart>
             </View>
+
+            <View style = {styles.horizontalLine}/>
         </View>
     )
   }
