@@ -57,6 +57,7 @@ app.get('/business/getAllBusinessesByCategory', businessCtl.getAllBusinessesByCa
 app.post('/business/createNewBusiness', businessCtl.createNewBusiness); 
 app.post('/business/deleteYourBusiness', businessCtl.deleteYourBusiness);
 app.put('/business/updateBusinessDetails', businessCtl.updateBusinessDetails);
+app.put('/business/incrementBusinessDailyCounter', businessCtl.incrementBusinessDailyCounter);
 
 /*** Service routes ***/
 app.get('/service/getAllServices', serviceCtl.getAllServices);

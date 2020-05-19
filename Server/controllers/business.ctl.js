@@ -267,4 +267,15 @@ module.exports = {
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
+    async incrementBusinessDailyCounter(req, res) {
+        console.log("incrementBusinessDailyCounter()");
+
+        const businessID = req.body.businessID;
+
+        const query = `UPDATE Business SET Dailycounter = Dailycounter + 1 WHERE BusinessID=${businessID}`;
+        
+        db.query(query)
+            .then(result => res.json(result.rows))
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    },
 }
