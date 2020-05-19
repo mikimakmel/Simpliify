@@ -23,12 +23,12 @@ statByGender = (req, res) => {
     .then(result => {
         var gendercount = 
             {
-                gender: [],
+                category: [],
                 amount: [],
             }
         var rows = result.rows
         rows.map((row) => {
-            gendercount.gender.push(row.gender)
+            gendercount.category.push(row.category)
             gendercount.amount.push(row.count)
 
         })
@@ -59,12 +59,12 @@ statByService = (req, res) => {
         .then(result => {
             const serviceincome =
                 {
-                    name: [],
+                    category: [],
                     amount: [],
                 }
             const rows = result.rows
             rows.map((row) => {
-                serviceincome.name.push(row.name)
+                serviceincome.category.push(row.category)
                 serviceincome.amount.push(row.total)    
             })
             res.json([serviceincome])
@@ -108,29 +108,29 @@ statByAge = (req, res) => {
             }
             var rows = result.rows
             rows.map((row) => {
-                if (row.age >= 13 && row.age <=17){
+                if (row.category >= 13 && row.category <=17){
                     data["13-17"] += 1
-                } else if (row.age >= 18 && row.age <=24){
+                } else if (row.category >= 18 && row.category <=24){
                     data["18-24"] += 1
-                } else if (row.age >= 25 && row.age <=34){
+                } else if (row.category >= 25 && row.category <=34){
                     data["25-34"] += 1
-                } else if (row.age >= 35 && row.age <=44){
+                } else if (row.category >= 35 && row.category <=44){
                     data["35-44"] += 1
-                } else if (row.age >= 45 && row.age <=54){
+                } else if (row.category >= 45 && row.category <=54){
                     data["45-54"] += 1
-                } else if (row.age >= 55 && row.age <=65){
+                } else if (row.category >= 55 && row.category <=65){
                     data["55-65"] += 1
-                } else if (row.age >= 65){
+                } else if (row.category >= 65){
                     data["65+"] += 1
                 }
             })
             var customersage = {
-                age: [],
+                category: [],
                 amount: []
             }
 
             Object.keys(data).forEach((key) => {
-                customersage.age.push(key)
+                customersage.category.push(key)
                 customersage.amount.push(data[key])
             });
 
@@ -163,12 +163,12 @@ statByAddress = (req, res) => {
     db.query(querynew)
         .then(result => {
             var citycount = {
-                city: [],
+                category: [],
                 amount: []
             }
             var rows = result.rows            
             rows.map((row) => {
-                citycount.city.push(row.city)
+                citycount.category.push(row.category)
                 citycount.amount.push(row.count)
             })
             res.json([citycount])
@@ -229,13 +229,13 @@ statStrongHours = (req, res) => {
     db.query(query)
         .then(result => {
             var stronghours = {
-                hours: [],
+                category: [],
                 amount: []
             }
             var rows = result.rows
             console.log(rows)
             rows.map((row) => {
-                stronghours.hours.push(row.hour)
+                stronghours.category.push(row.category)
                 stronghours.amount.push(row.popularity)
             })
             res.json([stronghours])
@@ -268,12 +268,12 @@ statTop10Customers = (req, res) => {
     db.query(query)
         .then(result => {
             var bestcustomer = {
-                name: [],
+                category: [],
                 amount: []
             }
             var rows = result.rows
             rows.map((row) => {
-                bestcustomer.name.push(row.name)
+                bestcustomer.category.push(row.category)
                 bestcustomer.amount.push(row.total)
             })
 
@@ -309,12 +309,12 @@ statRating = (req, res) =>{
     db.query(query)
         .then(result => {
             var ratingcount = {
-                rating: [],
+                category: [],
                 amount: []
             }
             var rows = result.rows
             rows.map((row) => {
-                ratingcount.rating.push(row.rating)
+                ratingcount.category.push(row.category)
                 ratingcount.amount.push(row.count)
             })
             res.json([ratingcount])
