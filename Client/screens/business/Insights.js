@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, SafeAreaView, ScrollView } from 'react-native';
-import ServiceIncome from './InsightsComponents/ServiceIncome';
-import GenderDistribution from './InsightsComponents/GenderDistribution';
-import AgeDistribution from './InsightsComponents/AgeDistribution';
+import { SafeAreaView, ScrollView } from 'react-native';
+import PercentPie from './InsightsComponents/PercentPie';
+import DoughnutChart from './InsightsComponents/DoughnutChart';
+import HorizontalBar from './InsightsComponents/HorizontalBar';
 
 class Insights extends Component {
   constructor(props) {
@@ -10,27 +10,31 @@ class Insights extends Component {
     this.state =
     {
       colors: ['#600080', '#9900cc', '#c61aff', '#d966ff', '#ecb3ff'],
-      serviceincome: [{ name: ['Beauty Sales', 'Baby Legal'], amount: [50, 80], }],
-      gendercount: [{ gender: ['Female', 'Male'], amount: [100, 50] }],
-      customersage: [{age: ['18-24', '25-34', '44-35', '55-65', '65+'], amount: [3840, 1920, 960, 400, 400],}]
+      serviceincome: [{ category: ['Beauty Sales', 'Baby Legal'], amount: [50, 80], }],
+      gendercount: [{ category: ['Female', 'Male'], amount: [100, 50] }],
+      customersage: [{ category: ['18-24', '25-34', '44-35', '55-65', '65+'], amount: [3840, 1920, 960, 400, 400] }],
+      citycount: [{ category: ['Herzelia', 'Tel Aviv', 'Rishon Lezion'], amount: [5, 2, 1] }]
     };
   }
-
 
   render() {
     return(
       <SafeAreaView>
          <ScrollView>
-            <ServiceIncome
-              serviceincome = {this.state.serviceincome}
+            <PercentPie
+              data = {this.state.serviceincome}
               colors = {this.state.colors}
             />
-            <GenderDistribution
-              gendercount = {this.state.gendercount}
+            <DoughnutChart
+              data = {this.state.gendercount}
               colors = {this.state.colors}
             />
-            <AgeDistribution
-              customersage = {this.state.customersage}
+            <HorizontalBar
+              data = {this.state.customersage}
+              colors = {this.state.colors}
+            />
+            <HorizontalBar
+              data = {this.state.citycount}
               colors = {this.state.colors}
             />
         </ScrollView>

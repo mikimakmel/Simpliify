@@ -2,10 +2,9 @@ import React, { Component } from 'react'
 import { View, FlatList} from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { BarChart, Grid, YAxis } from 'react-native-svg-charts'
-import * as scale from 'd3-scale'
 import styles from './Style_Statistics'
 
-class AgeDistribution extends Component {
+class HorizontalBar extends Component {
   constructor(props) {
     super(props);
     this.state =
@@ -22,10 +21,10 @@ class AgeDistribution extends Component {
   MakeGraph()
   {
     let temp = this.state.data;
-    for (var i = 0; i < this.props.customersage[0].age.length; i++)
+    for (var i = 0; i < this.props.data[0].category.length; i++)
     {
-      temp.push({key: this.props.customersage[0].age[i],
-                 value: this.props.customersage[0].amount[i],
+      temp.push({key: this.props.data[0].category[i] + ' (' + this.props.data[0].amount[i] + ')',
+                 value: this.props.data[0].amount[i],
                  svg: { fill: this.props.colors[i % 5] },},)
     }
 
@@ -63,16 +62,8 @@ class AgeDistribution extends Component {
             </View>
 
             <View style={{ flexDirection: 'row', height: 300, paddingVertical: 16 }}>
-                <YAxis
-                    data={this.state.data}
-                    yAccessor={({ index }) => index}
-                    scale={scale.scaleBand}
-                    contentInset={{ top: 10, bottom: 10 }}
-                    spacing={0.2}
-                    formatLabel={(_, index) => this.state.data[ index ].key}
-                />
                 <BarChart
-                    style={{ flex: 1, marginLeft: 8 }}
+                    style={{ flex: 1, marginLeft: 8, marginRight: 8 }}
                     data={this.state.data}
                     horizontal={true}
                     yAccessor={({ item }) => item.value}
@@ -87,4 +78,4 @@ class AgeDistribution extends Component {
     )
   }
 }
-export default AgeDistribution;
+export default HorizontalBar;
