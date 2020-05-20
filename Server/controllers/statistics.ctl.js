@@ -228,16 +228,36 @@ statStrongHours = (req, res) => {
     
     db.query(query)
         .then(result => {
-            var stronghours = {
-                category: [],
-                amount: []
+            var data = {
+                "0-9": 0,
+                "9-12": 0,
+                "12-15": 0,
+                "15-18": 0,
+                "18-24": 0,
             }
             var rows = result.rows
             console.log(rows)
             rows.map((row) => {
-                stronghours.category.push(row.category)
-                stronghours.amount.push(row.popularity)
+                if (row.hour > 0 && row.hour <=9){
+                    data["0-9"] += parseInt(row.popularity, 10)
+                } else if (row.hour > 9 && row.hour <=12){
+                    data["9-12"] += parseInt(row.popularity, 10)
+                } else if (row.hour > 12 && row.hour <=15){
+                    data["12-15"] += parseInt(row.popularity, 10)
+                } else if (row.hour > 15 && row.hour <=18){
+                    data["15-18"] += parseInt(row.popularity, 10)
+                } else if (row.hour > 18 && row.hour <=24){
+                    data["18-24"] += parseInt(row.popularity, 10)
+                }
             })
+            stronghours = {
+                category: [],
+                amount: []
+            }
+            Object.keys(data).forEach((key) => {
+                stronghours.category.push(key)
+                stronghours.amount.push(data[key])
+            });
             res.json([stronghours])
         })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))

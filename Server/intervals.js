@@ -33,7 +33,7 @@ intervalFunc = (req, res) => {
             db.query(userQuery)
             .then(result => {
                 var rows = result.rows
-                console.log("Notify to clients!!")
+                // console.log("Notify to clients!!")
             })
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
         })
