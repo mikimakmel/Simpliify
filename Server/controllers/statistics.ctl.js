@@ -28,7 +28,7 @@ statByGender = (req, res) => {
             }
         var rows = result.rows
         rows.map((row) => {
-            gendercount.category.push(row.category)
+            gendercount.category.push(row.gender)
             gendercount.amount.push(row.count)
 
         })
@@ -64,7 +64,7 @@ statByService = (req, res) => {
                 }
             const rows = result.rows
             rows.map((row) => {
-                serviceincome.category.push(row.category)
+                serviceincome.category.push(row.name)
                 serviceincome.amount.push(row.total)    
             })
             res.json([serviceincome])

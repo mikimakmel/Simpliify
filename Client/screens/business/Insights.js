@@ -4,6 +4,7 @@ import PercentPie from './InsightsComponents/PercentPie';
 import DoughnutChart from './InsightsComponents/DoughnutChart';
 import HorizontalBar from './InsightsComponents/HorizontalBar';
 import LineDistribution from './InsightsComponents/LineDistribution';
+import VerticalBar from './InsightsComponents/VerticalBar';
 
 class Insights extends Component {
   constructor(props) {
@@ -11,11 +12,13 @@ class Insights extends Component {
     this.state =
     {
       colors: ['#600080', '#9900cc', '#c61aff', '#d966ff', '#ecb3ff'],
-      serviceincome: [{ category: ['Beauty Sales', 'Baby Legal'], amount: [80, 50], }],
-      gendercount: [{ category: ['Female', 'Male'], amount: [100, 50] }],
+      dailycounter: 9781,
+      serviceincome: [{ category: ["Kids Marketing", "Computers Sales", "Movies Marketing", "Computers Legal", "Baby Legal"], amount: ["175", "25", "25", "100", "100"], }],
+      gendercount: [{ category: ['Female', 'Male'], amount: [3, 2] }],
       customersage: [{ category: ['18-24', '25-34', '44-35', '55-65', '65+'], amount: [3840, 1920, 960, 400, 400] }],
       citycount: [{ category: ['Herzelia', 'Tel Aviv', 'Rishon Lezion'], amount: [5, 2, 1] }],
-      businessincome: [50, 10, 40, 95, 50, 10, 40, 195, 50, 10, 40, 95]
+      businessincome: [50, 10, 40, 95, 50, 10, 40, 195, 50, 10, 40, 95],
+      stronghours: [{ category: ['0-9', '9-12', '12-15', '15-18', '18-24'], amount: [3840, 1920, 960, 400, 400] }]
     };
   }
 
@@ -24,28 +27,33 @@ class Insights extends Component {
       <SafeAreaView>
          <ScrollView>
            <DoughnutChart
-             name = "Gender Distribution"
-             data = {this.state.gendercount}
+             name = "Income Per Service"
+             data = {this.state.serviceincome}
              colors = {this.state.colors}
-           />
+             />
             <PercentPie
-              name = "Income Per Service"
-              data = {this.state.serviceincome}
+              name = "Gender Distribution"
+              data = {this.state.gendercount}
               colors = {this.state.colors}
             />
             <HorizontalBar
-              name = "Users' Age Distribution"
+              name = "Customers' Age Distribution"
               data = {this.state.customersage}
               colors = {this.state.colors}
             />
             <HorizontalBar
-              name = "Users' City Distribution"
+              name = "Customers' City Distribution"
               data = {this.state.citycount}
               colors = {this.state.colors}
             />
             <LineDistribution
-              name = "Business's Yearly Income"
+              name = "Business's Monthly Income"
               data = {this.state.businessincome}
+            />
+            <VerticalBar
+              name = "Strongest Hours"
+              data = {this.state.stronghours}
+              colors = {this.state.colors}
             />
         </ScrollView>
       </SafeAreaView>
