@@ -148,8 +148,7 @@ class SplashScreen extends Component {
 
   async updateUserProfilePic() {
     // console.log('updateUserProfilePic');
-    console.log(this.state.email, this.state.profilePic);
-    // if(this.props.route.params.socialLogin) {
+    if(this.props.route.params.socialLogin) {
       const url = `${route}/user/updateUserProfilePic`;
       const options = { 
         method: 'PUT', 
@@ -157,21 +156,20 @@ class SplashScreen extends Component {
           'Accept': 'application/json',
           'Content-Type': 'application/json' 
         },
-        body: JSON.stringify({ email: this.props.route.params.email, profilePic: this.props.route.params.profilePic})
+        body: JSON.stringify({ email: this.state.email, profilePic: this.state.profilePic})
       };
       const request = new Request(url, options);
 
       await fetch(request)
         .then(response => response.json())
         .then(data => {
-          console.log('HERE 4')
           console.log(data)
           // let user = data.user;
           // user.profilepic = this.props.route.params.profilePic;
           // this.props.dispatch(Actions_User.updateCurrentUser(user))
         })
         .catch(error => console.log(error))
-    // }
+    }
   }
 
   async fetchUserProfile() {
@@ -193,9 +191,9 @@ class SplashScreen extends Component {
         // console.log('======================')
         // console.log(data)
         // console.log('======================')
-        let user = data.user;
-        user.profilepic = this.props.route.params.profilePic;
-        this.props.dispatch(Actions_User.updateCurrentUser(user))
+        // let user = data.user;
+        // user.profilepic = this.props.route.params.profilePic;
+        this.props.dispatch(Actions_User.updateCurrentUser(data.user))
       })
       .catch(error => console.log(error))
   }

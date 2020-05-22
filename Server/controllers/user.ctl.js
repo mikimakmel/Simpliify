@@ -170,14 +170,11 @@ module.exports = {
         const query = 
             `UPDATE Users
             SET profilepic='${profilePic}'
-            WHERE email=${email}
-            RETURNING profilepic`;
+            WHERE email='${email}'
+            RETURNING *`;
 
         db.query(query)
-        .then(result => {
-            console.log(result)
-            res.json(result.rows[0])
-        })
+        .then(result => res.json(result.rows[0]))
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
