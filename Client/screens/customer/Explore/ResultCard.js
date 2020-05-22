@@ -16,6 +16,7 @@ class ResultCard extends Component {
       businessPressed: {}
     };
     this.fetchBusiness = this.fetchBusiness.bind(this);
+    this.incrementBusinessDailyCounter = this.incrementBusinessDailyCounter.bind(this);
   }
 
   async fetchBusiness(businessID) {
@@ -34,8 +35,27 @@ class ResultCard extends Component {
       .then(response => response.json())
       .then(data => {
         // console.log(data)
-        // return data;
         this.setState({businessPressed: data})
+      })
+      .catch(error => console.log(error))
+  }
+
+  async incrementBusinessDailyCounter(businessID) {
+    const url = `${route}/business/incrementBusinessDailyCounter`;
+    const options = { 
+      method: 'PUT', 
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({businessID})
+    };
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
       })
       .catch(error => console.log(error))
   }
@@ -89,7 +109,8 @@ class ResultCard extends Component {
           this.props.navigation.navigate('Business', {
             businessData: this.state.businessPressed, 
             isInFavorites: this.isInFavorites()
-          })
+          });
+          this.incrementBusinessDailyCounter(businessData.businessID);
         }}
       >
         <View style={{ flex: 1 }}>

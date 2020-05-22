@@ -272,7 +272,11 @@ module.exports = {
 
         const businessID = req.body.businessID;
 
-        const query = `UPDATE Business SET Dailycounter = Dailycounter + 1 WHERE BusinessID=${businessID}`;
+        const query = 
+            `UPDATE Business 
+            SET Dailycounter=Dailycounter + 1 
+            WHERE BusinessID=${businessID}
+            RETURNING Name, Dailycounter`;
         
         db.query(query)
             .then(result => res.json(result.rows))
