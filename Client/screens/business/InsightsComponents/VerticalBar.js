@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { View, FlatList, Text} from 'react-native';
+import { View, FlatList, Text } from 'react-native';
 import { ListItem } from 'react-native-elements';
-import { PieChart } from 'react-native-svg-charts'
+import { BarChart, XAxis, Grid } from 'react-native-svg-charts'
+import * as scale from 'd3-scale'
 import styles from './Style_Statistics'
 
-class DoughnutChart extends Component {
+class VerticalBar extends Component {
   constructor(props) {
     super(props);
     this.state =
@@ -25,13 +26,12 @@ class DoughnutChart extends Component {
     {
       temp.push({key: this.props.data[0].category[i] + ' (' + this.props.data[0].amount[i] + ')',
                  value: this.props.data[0].amount[i],
-                 svg: { fill: this.props.colors[i % 5] },
-                 arc: { outerRadius:90 + this.props.data[0].amount[i] / 3}},)
+                 svg: { fill: this.props.colors[i % 5] },},)
     }
 
     this.setState({data: temp})
   }
-
+  
   renderItem = ({ item }) => (
     <ListItem
       title = {item.key}
@@ -63,19 +63,29 @@ class DoughnutChart extends Component {
             </View>
 
             <View>
-            {this.RenderPie()}
+                {this.RenderPie()}
             </View>
 
-            <PieChart
-            style={{ height: 300, marginTop: -10 }}
-            outerRadius={'70%'}
-            innerRadius={60}
-            data={this.state.data}
-            />
-
-        <View style = {styles.horizontalLine}/>
-      </View>
+            <View style={{ height: 300, paddingVertical: 16 }}>
+                <BarChart
+                    style={{ flex: 1 }}
+                    data={ this.state.data }
+                    yAccessor={({ item }) => item.value}
+                    gridMin={0}
+                >
+                    <Grid direction={Grid.Direction.HORIZONTAL}/>
+                </BarChart>
+                <XAxis
+                    style={{ marginTop: 10 }}
+                    data={ this.state.data }
+                    scale={scale.scaleBand}
+                    xAccessor={({ item }) => item.key}
+                    labelStyle={ { color: 'black' } }
+                />
+            </View>
+            <View style = {styles.horizontalLine}/>
+        </View>
     )
   }
 }
-export default DoughnutChart;
+export default VerticalBar;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { View, FlatList, Text} from 'react-native';
 import { ListItem } from 'react-native-elements';
-import { BarChart, Grid, YAxis } from 'react-native-svg-charts'
+import { BarChart, Grid } from 'react-native-svg-charts'
 import styles from './Style_Statistics'
 
 class HorizontalBar extends Component {
