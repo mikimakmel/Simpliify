@@ -153,10 +153,31 @@ module.exports = {
             `UPDATE Users
             SET push_token='${push_token}'
             WHERE userid=${userID}
-            RETURNING push_token`;
+            RETURNING *`;
 
         db.query(query)
         .then(result => res.json(result.rows[0]))
+        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    },
+
+    // update user profile picture
+    async updateUserProfilePic(req, res) {
+        console.log("updateUserProfilePic()");
+
+        const email = req.body.email;
+        const profilePic = req.body.profilePic;
+
+        const query = 
+            `UPDATE Users
+            SET profilepic='${profilePic}'
+            WHERE email=${email}
+            RETURNING profilepic`;
+
+        db.query(query)
+        .then(result => {
+            console.log(result)
+            res.json(result.rows[0])
+        })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 

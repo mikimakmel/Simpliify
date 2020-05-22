@@ -32,6 +32,7 @@ app.put('/user/updateUserDetails', userCtl.updateUserDetails);
 app.put('/user/updateUserPushToken', userCtl.updateUserPushToken);
 app.post('/user/getUserPushToken', userCtl.getUserPushToken);
 app.post('/user/createNewUser', userCtl.createNewUser);
+app.put('/user/updateUserProfilePic', userCtl.updateUserProfilePic);
 
 /*** Customer routes ***/
 app.post('/customer/addBusinessToFavorites', customerCtl.addBusinessToFavorites);

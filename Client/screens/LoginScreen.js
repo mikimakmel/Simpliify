@@ -465,7 +465,7 @@ class LoginScreen extends Component {
                 //     },
                 //     "providerId": "facebook.com",
                 //   }
-                this.props.navigation.navigate('SplashScreen', {email: result.user.email, profilePic: `${result.user.photoURL}?height=500`});
+                this.props.navigation.navigate('SplashScreen', {socialLogin: true, email: result.user.email, profilePic: `${result.user.photoURL}?height=500`});
                 // console.log(!this.props.currentUser)
                 // if(this.props.currentUser) {
                 //     this.props.navigation.navigate('SplashScreen', {email: result.user.email, profilePic: result.user.photoURL});
