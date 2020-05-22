@@ -99,8 +99,9 @@ class SplashScreen extends Component {
     await fetch(request)
       .then(response => response.json())
       .then(data => {
-        // console.log(data);
-        this.props.dispatch(Actions_User.updateCurrentUser(data));
+        let user = this.props.currentUser;
+        user.push_token = token;
+        this.props.dispatch(Actions_User.updateCurrentUser(user));
       })
       .catch(error => console.log(error))
   };
@@ -160,7 +161,9 @@ class SplashScreen extends Component {
     await fetch(request)
       .then(response => response.json())
       .then(data => {
-        // console.log(data)
+        console.log('======================')
+        console.log(data)
+        console.log('======================')
         let user = data.user;
         user.profilepic = this.props.route.params.profilePic;
         this.props.dispatch(Actions_User.updateCurrentUser(user))

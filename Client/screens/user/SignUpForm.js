@@ -1,34 +1,40 @@
 import React, { Component } from 'react';
-import { View, Text, Picker, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, SafeAreaView } from 'react-native';
+import { View, Text, Picker, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 import { Input, CheckBox } from 'react-native-elements';
 // import { Container, Content, DatePicker, Button } from 'native-base';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import GradientButton from 'react-native-gradient-buttons';
+// import GradientButton from 'react-native-gradient-buttons';
 import Colors from '../../constants/Colors';
 import { Avatar } from 'react-native-elements';
 import { MaterialCommunityIcons, Octicons, MaterialIcons } from '@expo/vector-icons';
 import route from '../../routeConfig';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Months from '../../constants/Months';
+import moment from 'moment';
 
 class SignUpForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        email: 'email',
-        firstName: '',
-        lastName: '',
-        phone: '',
-        gender: '',
-        dateOfBirth: new Date(),
-        street: '',
-        city: '',
-        country: '',
-        maleChecked: false,
-        femaleChecked: false,
+        email: this.props.route.params.hasProfile ? this.props.route.params.currentUser.email : '',
+        firstName: this.props.route.params.hasProfile ? this.props.route.params.currentUser.firstname : '',
+        lastName: this.props.route.params.hasProfile ? this.props.route.params.currentUser.lastname : '',
+        phone: this.props.route.params.hasProfile ? this.props.route.params.currentUser.phone : '',
+        profilepic: this.props.route.params.hasProfile ? this.props.route.params.currentUser.profilepic : 'https://www.lococrossfit.com/wp-content/uploads/2019/02/user-icon-300x300.png',
+        gender: this.props.route.params.hasProfile ? this.props.route.params.currentUser.gender : '',
+        dateOfBirth: this.props.route.params.hasProfile ? this.props.route.params.currentUser.birthday : new Date(),
+        street: this.props.route.params.hasProfile ? this.props.route.params.currentUser.street : '',
+        city: this.props.route.params.hasProfile ? this.props.route.params.currentUser.city : '',
+        country: this.props.route.params.hasProfile ? this.props.route.params.currentUser.country : '',
+        maleChecked: this.props.route.params.currentUser.gender === 'Male' ? true : false,
+        femaleChecked: this.props.route.params.currentUser.gender === 'Female' ? true : false,
+        showDatePicker: false,
+        prettyDate: ''
     };
     this.setDateOfBirth = this.setDateOfBirth.bind(this);
     this.handleMalePress = this.handleMalePress.bind(this);
     this.handleFemalePress = this.handleFemalePress.bind(this);
-    this.fetchProfile = this.fetchProfile.bind(this);
+    this.createOrUpdateProfile = this.createOrUpdateProfile.bind(this);
   }
 
   componentDidMount() {
@@ -40,7 +46,7 @@ class SignUpForm extends Component {
           size={35} 
           color={Colors.green03} 
           style={{marginRight: 10}} 
-          // onPress={(this.addedAlert)}
+          onPress={this.createOrUpdateProfile}
         />
       ),
       headerLeft: () => (
@@ -52,11 +58,31 @@ class SignUpForm extends Component {
         />
       ),
     });
+    this.initDate();
   }
 
-  setDateOfBirth(newDate) {
-    console.log(newDate)
-    this.setState({ dateOfBirth: newDate });
+  initDate() {
+    console.log(this.state.dateOfBirth)
+    // const day = this.state.dateOfBirth.split('-')[2].substring(0,2);
+    // const month = Months[new Date(this.state.dateOfBirth).getMonth()];
+    // const year = this.state.dateOfBirth.split('-')[0];
+    const day = moment(this.state.dateOfBirth).format('D');
+    const month = Months[moment.utc(this.state.dateOfBirth).format('M') - 1];
+    const year = moment.utc(this.state.dateOfBirth).format('Y');
+    console.log(`${day} ${month} ${year}`)
+    this.setState({prettyDate: `${day} ${month} ${year}`});
+  }
+
+  setDateOfBirth(event, date) {
+    console.log(date)
+    const day = moment.utc(date).format('D');
+    const month = Months[moment.utc(date).format('M') - 1];
+    const year = moment.utc(date).format('Y');
+    
+    this.setState({
+      dateOfBirth: date,
+      prettyDate: `${day} ${month} ${year}`
+    });
   }
 
   handleMalePress() {
@@ -75,23 +101,10 @@ class SignUpForm extends Component {
     });
   }
 
-  // printProfile() {
-  //   console.log(
-  //     '//////////////////////////////////////////////' + '\n' +
-  //     'firstName: ' + this.state.firstName + '\n' +
-  //     'lastName: ' + this.state.lastName + '\n' +
-  //     'phone: ' + this.state.phone + '\n' +
-  //     'street: ' + this.state.street + '\n' +
-  //     'city: ' + this.state.city + '\n' +
-  //     'country: ' + this.state.country + '\n' +
-  //     'gender: ' + this.state.gender + '\n' +
-  //     'dateOfBirth: ' + this.state.dateOfBirth + '\n' +
-  //     '//////////////////////////////////////////////'
-  //   )
-  // }
-
-  async fetchProfile() {
+  async createOrUpdateProfile() {
     const user = {
+      userID: this.props.route.params.currentUser.userid,
+      addressID: this.props.route.params.currentUser.addressid,
       street: this.state.street,
       city: this.state.city,
       country: this.state.country,
@@ -103,25 +116,24 @@ class SignUpForm extends Component {
       gender: this.state.gender,
     }
 
-    console.log(this.state.dateOfBirth)
-    const url = `${route}/user/createNewUser`;
+    let url = this.props.route.params.hasProfile ? `${route}/user/updateUserDetails` : `${route}/user/createNewUser`;
     const options = { 
-        method: 'POST', 
-        headers: { 
-            'Accept': 'application/json',
-            'Content-Type': 'application/json' 
-        },
-        body: JSON.stringify(user)
+      method: this.props.route.params.hasProfile ? 'PUT' : 'POST', 
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify(user)
     };
     const request = new Request(url, options);
 
     await fetch(request)
       .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Something went wrong ...');
-            }
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Something went wrong ...');
+          }
         })
       .then(data => console.log(data))
       .catch(error => console.log(error))
@@ -130,72 +142,75 @@ class SignUpForm extends Component {
   render() {
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : null} style={{ flex: 1 }}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <View style={{padding: 24, flex: 1, justifyContent: 'space-evenly'}}>
-              <Avatar
-                source={{uri: 'https://www.lococrossfit.com/wp-content/uploads/2019/02/user-icon-300x300.png'}}
-                showEditButton
-                rounded 
-                size={120}
-                containerStyle={{alignSelf: 'center', marginBottom: 10}}
-              />
-              <View style={{flexDirection: 'row', alignSelf: 'center'}}>
-                <Input
-                  label='First Name'
-                  placeholder='Enter Name'
-                  errorStyle={{ color: 'red' }}
-                  containerStyle={{marginTop: 20, width: '45%',}}
-                  // errorMessage='ENTER A VALID ERROR HERE'
-                  onChangeText={text => this.setState({firstName: text})}
-                />
-                <Input
-                  label='Last Name'
-                  placeholder='Enter Name'
-                  errorStyle={{ color: 'red' }}
-                  containerStyle={{marginTop: 20, width: '45%',}}
-                  // errorMessage='ENTER A VALID ERROR HERE'
-                  onChangeText={text => this.setState({lastName: text})}
-                />
-              </View>
-              <Input
-                label='Mobile Phone'
-                placeholder='Enter Phone Number'
-                errorStyle={{ color: 'red' }}
-                containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
-                // errorMessage='ENTER A VALID ERROR HERE'
-                onChangeText={text => this.setState({phone: text})}
-                keyboardType='numeric'
-              />
-              <Input
-                label='Address'
-                placeholder='Enter Home Address'
-                errorStyle={{ color: 'red' }}
-                containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
-                // errorMessage='ENTER A VALID ERROR HERE'
-                onChangeText={text => this.setState({street: text})}
-              />
-              <View style={{flexDirection: 'row', alignSelf: 'center'}}>
-                <Input
-                  label='City'
-                  placeholder='Enter City'
-                  errorStyle={{ color: 'red' }}
-                  containerStyle={{marginTop: 20, width: '45%',}}
-                  // errorMessage='ENTER A VALID ERROR HERE'
-                  onChangeText={text => this.setState({city: text})}
-                />
-                <Input
-                  label='Country'
-                  placeholder='Enter Country'
-                  errorStyle={{ color: 'red' }}
-                  containerStyle={{marginTop: 20, width: '45%',}}
-                  // errorMessage='ENTER A VALID ERROR HERE'
-                  onChangeText={text => this.setState({country: text})}
-                />
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+      <ScrollView style={{}} showsVerticalScrollIndicator={false}>
+      <KeyboardAwareScrollView>
+        <Avatar
+          source={{uri: this.state.profilepic}}
+          showEditButton
+          rounded 
+          size={100}
+          containerStyle={{alignSelf: 'center', marginBottom: 20, marginTop: 20}}
+        />
+        <View style={{flexDirection: 'row', alignSelf: 'center'}}>
+          <Input
+            label='First Name'
+            placeholder='Enter Name'
+            errorStyle={{ color: 'red' }}
+            containerStyle={{marginTop: 10, width: '45%',}}
+            // errorMessage='ENTER A VALID ERROR HERE'
+            onChangeText={text => this.setState({firstName: text})}
+            value={this.state.firstName}
+          />
+          <Input
+            label='Last Name'
+            placeholder='Enter Name'
+            errorStyle={{ color: 'red' }}
+            containerStyle={{marginTop: 10, width: '45%',}}
+            // errorMessage='ENTER A VALID ERROR HERE'
+            onChangeText={text => this.setState({lastName: text})}
+            value={this.state.lastName}
+          />
+        </View>
+        <Input
+          label='Mobile Phone'
+          placeholder='Enter Phone Number'
+          errorStyle={{ color: 'red' }}
+          containerStyle={{marginTop: 10, width: '90%', alignSelf: 'center'}}
+          // errorMessage='ENTER A VALID ERROR HERE'
+          onChangeText={text => this.setState({phone: text})}
+          keyboardType='numeric'
+          value={this.state.phone}
+        />
+        <Input
+          label='Address'
+          placeholder='Enter Home Address'
+          errorStyle={{ color: 'red' }}
+          containerStyle={{marginTop: 10, width: '90%', alignSelf: 'center'}}
+          // errorMessage='ENTER A VALID ERROR HERE'
+          onChangeText={text => this.setState({street: text})}
+          value={this.state.street}
+        />
+        <View style={{flexDirection: 'row', alignSelf: 'center'}}>
+          <Input
+            label='City'
+            placeholder='Enter City'
+            errorStyle={{ color: 'red' }}
+            containerStyle={{marginTop: 10, width: '45%',}}
+            // errorMessage='ENTER A VALID ERROR HERE'
+            onChangeText={text => this.setState({city: text})}
+            value={this.state.city}
+          />
+          <Input
+            label='Country'
+            placeholder='Enter Country'
+            errorStyle={{ color: 'red' }}
+            containerStyle={{marginTop: 10, width: '45%',}}
+            // errorMessage='ENTER A VALID ERROR HERE'
+            onChangeText={text => this.setState({country: text})}
+            value={this.state.country}
+          />
+        </View>
+
         <View style={{justifyContent: 'space-evenly'}}>
           <View style={{flexDirection: 'row', alignSelf: 'center', alignItems: 'center',}}>
             <Text style={{backgroundColor: Colors.white, fontWeight: '600', color: Colors.gray02, marginLeft: 10}}>Gender:</Text>
@@ -221,50 +236,32 @@ class SignUpForm extends Component {
             />
           </View>
           <View style={{alignSelf: 'center', alignItems: 'center', width: '100%', marginTop: 5}}>
-            {/* <DatePicker
-              defaultDate={new Date()}
-              minimumDate={new Date(1920, 1, 1)}
-              maximumDate={new Date()}
-              locale={"en"}
-              timeZoneOffsetInMinutes={undefined}
-              modalTransparent={false}
-              animationType={"fade"}
-              androidMode={"default"}
-              placeHolderText="Date Of Birth"
-              textStyle={{ color: "green" }}
-              placeHolderTextStyle={{ color: "#d3d3d3", fontSize: 18, fontWeight: '500' }}
-              onDateChange={this.setDateOfBirth}
-              disabled={false}
-            /> */}
-            <DateTimePicker
-              testID="dateTimePicker"
-              timeZoneOffsetInMinutes={0}
-              value={new Date()}
-              minimumDate={new Date(1920, 0, 1)}
-              mode={'date'}
-              // is24Hour={true}
-              display="default"
-              onChange={this.setDateOfBirth}
-            />
+            <View>
+              <Text>Date of Birth</Text>
+              <TouchableOpacity style={{borderWidth: 0.5, borderColor: Colors.gray03, marginBottom: this.state.showDatePicker ? null : 20}} onPress={() => {
+                this.setState({showDatePicker: !this.state.showDatePicker})
+              }}>
+                <Text style={{padding: 10}}>{this.state.prettyDate}</Text>
+              </TouchableOpacity>
+            </View>
+            {
+              !this.state.showDatePicker ? null :
+              <DateTimePicker
+                testID="dateTimePicker"
+                timeZoneOffsetInMinutes={0}
+                value={this.state.dateOfBirth}
+                minimumDate={new Date(1920, 0, 1)}
+                mode={'date'}
+                // is24Hour={true}
+                display="default"
+                onChange={this.setDateOfBirth}
+                style={{width: '100%'}}
+              />
+            }
           </View>
-          {/* <View style={{width: '100%', paddingTop: 20, paddingBottom: 10}}>
-            <GradientButton
-              gradientBegin="#7F81D6"
-              gradientEnd="#90E4E4"
-              gradientDirection="diagonal" 
-              style={{ marginVertical: 8, alignSelf: 'center',}}
-              textStyle={{ fontSize: 20, fontWeight: '600' }}
-              height={45}
-              width={'90%'}
-              radius={10}
-              impact={true}
-              impactStyle={'Medium'}
-              onPressAction={this.fetchProfile}
-            >
-              CONFIRM
-            </GradientButton>
-          </View> */}
         </View>
+      </KeyboardAwareScrollView>
+      </ScrollView>
       </SafeAreaView>
     );
   }

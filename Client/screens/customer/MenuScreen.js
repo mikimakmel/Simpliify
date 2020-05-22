@@ -69,7 +69,7 @@ class MenuScreen extends Component {
               titleStyle={{ fontWeight: '500', fontSize: 16, marginLeft: 5 }}
               containerStyle={{}}
               chevron={(<FontAwesome name="user-o" size={25} style={{marginRight: 5}}/>)}
-              onPress={() => this.props.navigation.navigate('SignUpForm')}
+              onPress={() => this.props.navigation.navigate('SignUpForm', {currentUser: this.props.currentUser, hasProfile: true})}
               underlayColor={colors.red}
             />
             <ListItem

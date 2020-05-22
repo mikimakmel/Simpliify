@@ -18,7 +18,6 @@ module.exports = {
         console.log("getUserByEmail()");
 
         const email = req.body.email;
-        // const email = 'tsellen1@loc.gov';
 
         const query = 
             `SELECT * FROM Users 
@@ -154,7 +153,7 @@ module.exports = {
             `UPDATE Users
             SET push_token='${push_token}'
             WHERE userid=${userID}
-            RETURNING *`;
+            RETURNING push_token`;
 
         db.query(query)
         .then(result => res.json(result.rows[0]))
