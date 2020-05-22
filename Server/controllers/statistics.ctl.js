@@ -168,7 +168,7 @@ statByAddress = (req, res) => {
             }
             var rows = result.rows            
             rows.map((row) => {
-                citycount.category.push(row.category)
+                citycount.category.push(row.city)
                 citycount.amount.push(row.count)
             })
             res.json([citycount])
@@ -283,7 +283,7 @@ statTop10Customers = (req, res) => {
                         LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID)
                         LEFT OUTER JOIN Users ON (Orders.Customer= Users.UserID)
                         WHERE
-                        Orders.Business=${businessID} GROUP BY Customer, Users.Firstname, Users.Lastname ORDER BY Total DESC`;
+                        Orders.Business=${businessID} AND Status NOT IN ('Cancelled') GROUP BY Customer, Users.Firstname, Users.Lastname ORDER BY Total DESC`;
 
     db.query(query)
         .then(result => {
@@ -293,7 +293,7 @@ statTop10Customers = (req, res) => {
             }
             var rows = result.rows
             rows.map((row) => {
-                bestcustomer.category.push(row.category)
+                bestcustomer.category.push(row.name)
                 bestcustomer.amount.push(row.total)
             })
 
@@ -317,7 +317,7 @@ statDailyCounter = (req, res) =>{
 
 // 9. get rating data
 statRating = (req, res) =>{
-    console.log("getDailyCounter()");
+    console.log("getRatingData()");
     // const ratingcount = [{ 
     //      rating: [5,4,3,2,1],
     //      amount: [5,7,2,5,4]
@@ -334,7 +334,7 @@ statRating = (req, res) =>{
             }
             var rows = result.rows
             rows.map((row) => {
-                ratingcount.category.push(row.category)
+                ratingcount.category.push(row.rating)
                 ratingcount.amount.push(row.count)
             })
             res.json([ratingcount])
