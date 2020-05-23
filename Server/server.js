@@ -69,15 +69,16 @@ app.post('/service/updateServiceDetails', serviceCtl.updateServiceDetails);
 app.post('/service/deleteService', serviceCtl.deleteService);
 
 /*** Statistics routes ***/
-app.post('/statistics/statDailyCounter', statisticsCtl.statDailyCounter);     
-app.post('/statistics/statByGender', statisticsCtl.statByGender);             
-app.post('/statistics/statByService', statisticsCtl.statByService);           
-app.post('/statistics/statByAge', statisticsCtl.statByAge);                   
-app.post('/statistics/statByAddress', statisticsCtl.statByAddress);           
-app.post('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);       
-app.post('/statistics/statStrongHours', statisticsCtl.statStrongHours);       
-app.post('/statistics/statTop10Customers', statisticsCtl.statTop10Customers); 
-app.post('/statistics/statRating', statisticsCtl.statRating);                 
+app.post('/statistics/statDailyCounter', statisticsCtl.statDailyCounter);
+app.post('/statistics/statByGender', statisticsCtl.statByGender);
+app.post('/statistics/statByService', statisticsCtl.statByService);
+app.post('/statistics/statByAge', statisticsCtl.statByAge);
+app.post('/statistics/statByAddress', statisticsCtl.statByAddress);
+app.post('/statistics/statTotalIncome', statisticsCtl.statTotalIncome);
+app.post('/statistics/statStrongHours', statisticsCtl.statStrongHours);
+app.post('/statistics/statTop10Customers', statisticsCtl.statTop10Customers);
+app.post('/statistics/statRating', statisticsCtl.statRating);
+app.post('/statistics/getAllStatisticsByBusinessID', statisticsCtl.getAllStatisticsByBusinessID);
 
 /*** Review routes ***/
 app.post('/review/createNewReview', reviewCtl.createNewReview);
