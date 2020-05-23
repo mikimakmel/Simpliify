@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { SafeAreaView, ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import PercentPie from './InsightsComponents/PercentPie';
 import DoughnutChart from './InsightsComponents/DoughnutChart';
 import HorizontalBar from './InsightsComponents/HorizontalBar';
 import LineDistribution from './InsightsComponents/LineDistribution';
 import VerticalBar from './InsightsComponents/VerticalBar';
-import styles from './InsightsComponents/Style_Statistics'
+import styles from './InsightsComponents/Style_Statistics';
+import route from '../../routeConfig';
+import colors from '../../constants/Colors';
 
 class Insights extends Component {
   constructor(props) {
@@ -15,7 +17,8 @@ class Insights extends Component {
       BusinessID: 13,
       purplecolors: ['#600080', '#9900cc', '#c61aff', '#d966ff', '#ecb3ff'],
       browncolors: ['#603101', '#7a3f02', '#924b03', '#c76b0f', '#f6d193', '#fae8c9'],
-      statistics: {},
+      statistics: null,
+      isLoading: true
 
       // dailycounter: 0,
       // gendercount: [],
@@ -54,64 +57,75 @@ class Insights extends Component {
         'Accept': 'application/json',
         'Content-Type': 'application/json' 
       },
-      body: JSON.stringify({
-        businessID: BusinessID
-      })
+      body: JSON.stringify({businessID: BusinessID})
     };
     const request = new Request(url, options)
 
     await fetch(request)
       .then(response => response.json())
       .then(data => {
-        this.setState({statistics: data});
+        this.setState({statistics: data.statistics});
       })
-      console.log(this.state.statistics)
       .catch(error => console.log(error))
+
+    this.setState({isLoading: false});
   }
 
   render() {
-    return(
-      <SafeAreaView>
-         <ScrollView>
-           <Text style={styles.headline}> Page Visitors Today - {this.state.statistics.dailycounter}</Text>
-           <View style = {styles.horizontalLine}/>
-           {/* <PercentPie
-             name = "Gender Distribution"
-             data = {this.state.gendercount}
-             colors = {this.state.purplecolors}
-           />
-            <DoughnutChart
-             name = "Income Per Service"
-             data = {this.state.serviceincome}
-             colors = {this.state.purplecolors}
-            />
-            <HorizontalBar
-              name = "Customers' Age Distribution"
-              data = {this.state.customersage}
-              colors = {this.state.purplecolors}
-            />
-            <HorizontalBar
-              name = "Customers' City Distribution"
-              data = {this.state.citycount}
-              colors = {this.state.purplecolors}
-            />
-            <LineDistribution
-              name = "Business's Monthly Income"
-              data = {this.state.businessincome}
-            />
-            <VerticalBar
-              name = "Strongest Hours"
-              data = {this.state.stronghours}
-              colors = {this.state.purplecolors}
-            />
-            <HorizontalBar
-             name = "Top 10 Customers"
-             data = {this.state.bestcustomer}
-             colors = {this.state.browncolors}
-            /> */}
-        </ScrollView>
-      </SafeAreaView>
-    )
+    const { statistics, isLoading } = this.state;
+
+    if(isLoading) {
+      return(
+        <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', backgroundColor: colors.white }}>
+          <ActivityIndicator size="large" color={colors.red}/>
+        </View>
+      )
+    }
+    else {
+      // console.log(statistics.gendercount)
+      return(
+        <SafeAreaView>
+           <ScrollView>
+             <Text style={styles.headline}> Page Visitors Today - {statistics.dailycounter}</Text>
+             <View style = {styles.horizontalLine}/>
+             <PercentPie
+               name = "Gender Distribution"
+               data = {statistics.gendercount}
+               colors = {this.state.purplecolors}
+             />
+              {/* <DoughnutChart
+               name = "Income Per Service"
+               data = {statistics.serviceincome}
+               colors = {this.state.purplecolors}
+              />
+              <HorizontalBar
+                name = "Customers' Age Distribution"
+                data = {statistics.customersage}
+                colors = {this.state.purplecolors}
+              />
+              <HorizontalBar
+                name = "Customers' City Distribution"
+                data = {statistics.citycount}
+                colors = {this.state.purplecolors}
+              />
+              <LineDistribution
+                name = "Business's Monthly Income"
+                data = {statistics.businessincome}
+              />
+              <VerticalBar
+                name = "Strongest Hours"
+                data = {statistics.stronghours}
+                colors = {this.state.purplecolors}
+              />
+              <HorizontalBar
+               name = "Top 10 Customers"
+               data = {statistics.bestcustomer}
+               colors = {this.state.browncolors}
+              /> */}
+          </ScrollView>
+        </SafeAreaView>
+      )
+    }
   }  
 }
 

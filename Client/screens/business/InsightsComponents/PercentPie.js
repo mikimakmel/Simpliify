@@ -24,15 +24,15 @@ class PercentPie extends Component {
   MakeGraph()
   {
     let temp = this.state.data;
-    for (var i = 0; i < this.props.data[0].category.length; i++)
+    for (var i = 0; i < this.props.data.category.length; i++)
     {
-      temp.push({key: this.props.data[0].category[i] + ' (' + this.props.data[0].amount[i] + ')',
-                 value: this.props.data[0].amount[i],
-                 svg: { fill: this.props.colors[i % 5] },},)
+      temp.push({key: this.props.data.category[i] + ' (' + this.props.data.amount[i] + ')',
+      value: this.props.data.amount[i],
+      svg: { fill: this.props.colors[i % 5] },},)
     }
-
-    this.setState({data: temp})
-    this.setState({genderSum: this.props.data[0].amount.reduce((a, b) => a + b, 0)})
+    
+    // this.setState({data: temp})
+    // this.setState({genderSum: this.props.data[0].amount.reduce((a, b) => a + b, 0)})
   }
 
   renderItem = ({ item }) => (
