@@ -11,6 +11,8 @@ import route from '../../routeConfig';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Months from '../../constants/Months';
 import moment from 'moment';
+import * as Actions_User from '../../redux/actions/Actions_User';
+import { connect } from 'react-redux';
 
 class SignUpForm extends Component {
   constructor(props) {
@@ -46,7 +48,10 @@ class SignUpForm extends Component {
           size={35} 
           color={Colors.green03} 
           style={{marginRight: 10}} 
-          onPress={this.createOrUpdateProfile}
+          onPress={() => {
+            this.createOrUpdateProfile();
+            this.props.navigation.navigate('Menu');
+          }}
         />
       ),
       headerLeft: () => (
@@ -125,7 +130,10 @@ class SignUpForm extends Component {
             throw new Error('Something went wrong ...');
           }
         })
-      .then(data => console.log(data))
+      .then(data => {
+        console.log(data);
+        // this.props.dispatch(Actions_User.updateCurrentUser(data))
+      })
       .catch(error => console.log(error))
   }
 
@@ -264,4 +272,15 @@ class SignUpForm extends Component {
   }
 }
 
-export default SignUpForm;
+const mapStateToProps = ({ App, User, Customer, Business}) => {
+  return {
+    hasBusiness: User.hasBusiness,
+    currentUser: User.currentUser,
+    favoritesList: Customer.favoritesList,
+    categoriesList: App.categoriesList,
+    myBusiness: User.myBusiness,
+    ordersList: Customer.ordersList,
+  }
+}
+
+export default connect(mapStateToProps)(SignUpForm);
