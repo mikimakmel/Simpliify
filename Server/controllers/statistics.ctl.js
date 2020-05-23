@@ -96,7 +96,7 @@ statByAge = (req, res) => {
 
     db.query(query)
         .then(result => {
-            // console.log(result.rows)
+            console.log(result.rows)
             var data = {
                 "13-17": 0,
                 "18-24": 0,
@@ -108,19 +108,19 @@ statByAge = (req, res) => {
             }
             var rows = result.rows
             rows.map((row) => {
-                if (row.category >= 13 && row.category <=17){
+                if (row.age >= 13 && row.age <=17){
                     data["13-17"] += 1
-                } else if (row.category >= 18 && row.category <=24){
+                } else if (row.age >= 18 && row.age <=24){
                     data["18-24"] += 1
-                } else if (row.category >= 25 && row.category <=34){
+                } else if (row.age >= 25 && row.age <=34){
                     data["25-34"] += 1
-                } else if (row.category >= 35 && row.category <=44){
+                } else if (row.age >= 35 && row.age <=44){
                     data["35-44"] += 1
-                } else if (row.category >= 45 && row.category <=54){
+                } else if (row.age >= 45 && row.age <=54){
                     data["45-54"] += 1
-                } else if (row.category >= 55 && row.category <=65){
+                } else if (row.age >= 55 && row.age <=65){
                     data["55-65"] += 1
-                } else if (row.category >= 65){
+                } else if (row.age >= 65){
                     data["65+"] += 1
                 }
             })
@@ -342,7 +342,157 @@ statRating = (req, res) =>{
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
 
+getAllStatisticsByBusinessID = (req, res) =>{
+    console.log("getAllStatisticsByBusinessID()");
+
+    const businessID = req.body.businessID;
+
+    const counterQuery =
+    `SELECT DailyCounter FROM Business WHERE BusinessID=${businessID}`;
+    const genderQuery = 
+    `SELECT Gender, COUNT(Gender) FROM Orders LEFT OUTER JOIN Users ON (Orders.customer = Users.UserID) WHERE Business=${businessID} GROUP BY Gender`;
+    const serviceQuery =
+    `SELECT Orders.Business, Orders.Service, Service.Name, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${businessID} GROUP BY Orders.Service, Orders.Business, Service.Name`;
+    const ageQuery =
+    `SELECT orders.business, orders.customer, users.birthday, EXTRACT(YEAR FROM AGE(users.birthday)) as age FROM orders LEFT OUTER JOIN users ON (orders.customer = users.userid) WHERE business=${businessID} ORDER BY age`;
+    const cityQuery =
+    `SELECT Address.City, COUNT(Address.City) FROM Orders INNER JOIN Users ON (Orders.Customer = Users.UserID) INNER JOIN Address ON (Users.Address = Address.AddressID) WHERE Orders.Business=${businessID} GROUP BY Address.City ORDER BY Count DESC`
+    const incomeQuery =
+    `SELECT Orders.Business, Orders.Starttime::date, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${businessID} AND Status='Confirmed' AND Orders.Starttime::date BETWEEN (NOW() - INTERVAL '1 YEAR') AND NOW() GROUP BY Orders.Starttime::date, Orders.Business ORDER BY Starttime`;
+    const hoursQuery =
+    `SELECT Business, EXTRACT(HOUR FROM Starttime) as Hour, COUNT(EXTRACT(HOUR FROM Starttime)) AS Popularity FROM Orders WHERE Business=${businessID} GROUP BY Business, Hour ORDER BY Popularity DESC`;
+    const customersQuery = 
+    `SELECT Orders.Customer, CONCAT(Users.Firstname, ' ',Users.Lastname) AS Name, SUM(Service.Price) AS Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) LEFT OUTER JOIN Users ON (Orders.Customer= Users.UserID) WHERE Orders.Business=${businessID} AND Status NOT IN ('Cancelled') GROUP BY Customer, Users.Firstname, Users.Lastname ORDER BY Total DESC`;
+    const ratingQuery =
+    `SELECT Rating, COUNT(Rating) FROM Review WHERE Business=${businessID} GROUP BY Rating ORDER BY Rating DESC`;
+
+    var finalResult = {
+        statistics: {
+            dailycounter: 0,
+            gendercount: [],
+            serviceincome: [],
+            customersage: [],
+            citycount: [],
+            businessincome: [],
+            stronghours: [],
+            bestcustomer: [],
+            ratingcount: [],
+        },
+    };
+
+    db.query(counterQuery)
+    .then(result => finalResult.statistics.dailycounter = result.rows[0].dailycounter)
+    .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+    db.query(genderQuery).then(result => {
+            var gendercount = { category: [], amount: [] }
+            var rows = result.rows
+            rows.map((row) => {
+                gendercount.category.push(row.gender)
+                gendercount.amount.push(row.count)
+            })
+            finalResult.statistics.gendercount = gendercount;
+        })
+        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+    db.query(serviceQuery).then(result => {
+            const serviceincome = { category: [], amount: [],}
+            const rows = result.rows
+            rows.map((row) => {
+                serviceincome.category.push(row.name)
+                serviceincome.amount.push(row.total)    
+            })
+            finalResult.statistics.serviceincome = serviceincome;
+    })
+    .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+    db.query(ageQuery).then(result => {
+        var data = { "13-17": 0, "18-24": 0, "25-34": 0, "35-44": 0, "45-54": 0, "55-65": 0, "65+": 0 }
+        var rows = result.rows
+        rows.map((row) => {
+            if (row.age >= 13 && row.age <= 17) { data["13-17"] += 1 }
+            else if (row.age >= 18 && row.age <= 24) { data["18-24"] += 1 }
+            else if (row.age >= 25 && row.age <= 34) { data["25-34"] += 1 }
+            else if (row.age >= 35 && row.age <= 44) { data["35-44"] += 1 }
+            else if (row.age >= 45 && row.age <= 54) { data["45-54"] += 1 }
+            else if (row.age >= 55 && row.age <= 65) { data["55-65"] += 1 }
+            else if (row.age >= 65){ data["65+"] += 1 }
+        })
+        var customersage = { category: [], amount: [] }
+
+        Object.keys(data).forEach((key) => {
+            customersage.category.push(key)
+            customersage.amount.push(data[key])
+        });
+        finalResult.statistics.customersage = customersage;
+    })
+    .catch(err => res.status(404).send(`${err.stack}`))
     
+    db.query(cityQuery).then(result => {
+        var citycount = { category: [], amount: [] }
+        var rows = result.rows            
+        rows.map((row) => {
+            citycount.category.push(row.city)
+            citycount.amount.push(row.count)
+        })
+        finalResult.statistics.citycount = citycount;
+    })
+    .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    
+    db.query(incomeQuery).then(result => {
+        var businessincome = new Array(12).fill(0)
+        var rows = result.rows
+        rows.map((row) => {
+            var d = new Date(row.starttime)
+            businessincome[d.getUTCMonth()] += parseInt(row.total, 10)
+        })
+        finalResult.statistics.businessincome = businessincome;
+    })
+    .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+    db.query(hoursQuery).then(result => {
+        var data = { "0-9": 0, "9-12": 0, "12-15": 0, "15-18": 0, "18-24": 0, }
+        var rows = result.rows
+        rows.map((row) => {
+            if (row.hour > 0 && row.hour <= 9) { data["0-9"] += parseInt(row.popularity, 10) }
+            else if (row.hour > 9 && row.hour <= 12) { data["9-12"] += parseInt(row.popularity, 10) }
+            else if (row.hour > 12 && row.hour <= 15) { data["12-15"] += parseInt(row.popularity, 10) }
+            else if (row.hour > 15 && row.hour <= 18) { data["15-18"] += parseInt(row.popularity, 10) }
+            else if (row.hour > 18 && row.hour <= 24) { data["18-24"] += parseInt(row.popularity, 10) }
+        })
+        stronghours = { category: [], amount: [] }
+        Object.keys(data).forEach((key) => {
+            stronghours.category.push(key)
+            stronghours.amount.push(data[key])
+        });
+        finalResult.statistics.stronghours = stronghours;
+    })
+    .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+    db.query(customersQuery).then(result => {
+        var bestcustomer = { category: [], amount: [] }
+        var rows = result.rows
+        rows.map((row) => {
+            bestcustomer.category.push(row.name)
+            bestcustomer.amount.push(row.total)
+        })
+        finalResult.statistics.bestcustomer = bestcustomer;
+    })
+    .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+    db.query(ratingQuery).then(result => {
+        var ratingcount = { category: [], amount: [] }
+        var rows = result.rows
+        rows.map((row) => {
+            ratingcount.category.push(row.rating)
+            ratingcount.amount.push(row.count)
+        })
+        finalResult.statistics.ratingcount = ratingcount;
+        res.json(finalResult)
+    })
+    .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+}
+
 module.exports = {
     statByGender: statByGender,
     statByService: statByService,
@@ -352,5 +502,6 @@ module.exports = {
     statStrongHours: statStrongHours,
     statTop10Customers: statTop10Customers,
     statDailyCounter: statDailyCounter,
-    statRating: statRating
+    statRating: statRating,
+    getAllStatisticsByBusinessID: getAllStatisticsByBusinessID
 }
