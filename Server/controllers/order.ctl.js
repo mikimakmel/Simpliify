@@ -33,7 +33,22 @@ module.exports = {
         
         db.query(query)
             .then(result => res.json(result.rows[0]))
-            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+            .catch(err => {
+                        if(err.code == '23505')
+                            {
+                                const updateStatus = 
+                                `UPDATE Orders SET Status = 'Confirmed' WHERE
+                                Customer = '${userID}' AND
+                                Business = '${businessID}' AND
+                                Service = '${serviceID}' AND
+                                Starttime = '${startTime}'
+                                RETURNING Orderid, Customer, Business, Service, status, starttime AT TIME ZONE 'UTC' as starttime, orderedat AT TIME ZONE 'UTC' as orderedat
+                                `
+                                db.query(updateStatus)
+                                .then(result => res.json(result.rows[0]))
+                                .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                            }
+                    })
     },
 
     // user cancel's an exsiting order for a service.
