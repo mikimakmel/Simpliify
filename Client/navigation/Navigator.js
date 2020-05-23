@@ -8,6 +8,7 @@ import MenuScreen from '../screens/customer/MenuScreen';
 import BusinessScreen from '../screens/customer/BusinessScreen';
 import BookingScreen from '../screens/customer/BookingScreen';
 import LoginScreen from '../screens/LoginScreen';
+import CheckLoginStatus from '../screens/CheckLoginStatus';
 import CameraScreen from '../screens/CameraScreen';
 import CreditCardScreen from '../screens/CreditCardScreen';
 import SignUpForm from '../screens/user/SignUpForm';
@@ -41,8 +42,9 @@ function HomeStack() {
 function LogInStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="LogIn" component={LoginScreen}/>
-      <Stack.Screen name="SplashScreen" component={SplashScreen}/>
+      <Stack.Screen name="CheckLoginStatus" component={CheckLoginStatus} options={{animationEnabled: false}}/>
+      <Stack.Screen name="LogIn" component={LoginScreen} options={{animationEnabled: false}}/>
+      <Stack.Screen name="SplashScreen" component={SplashScreen} options={{animationEnabled: false}}/>
       <Stack.Screen name="SignUpForm" component={SignUpForm}/>
     </Stack.Navigator>
   );

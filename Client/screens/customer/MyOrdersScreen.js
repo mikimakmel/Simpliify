@@ -26,25 +26,53 @@ class MyOrdersScreen extends Component {
     super(props)
     this.state = {
       isPopupVisble: false,
+      upcomingList: [],
+      historyList: [],
+      view: 'UPCOMING',
       itemPressed: {}
     }
     this.renderEmptySchedule = this.renderEmptySchedule.bind(this);
+    this.renderUpcomingList = this.renderUpcomingList.bind(this);
+    this.renderHistoryList = this.renderHistoryList.bind(this);
     this.renderRow = this.renderRow.bind(this);
     this.cancelOrder = this.cancelOrder.bind(this);
     this.handleCancelling = this.handleCancelling.bind(this);
+    this.devideUpcomingAndHistory = this.devideUpcomingAndHistory.bind(this);
   }
 
-  // componentDidMount() {
+  componentDidMount() {
+    this.devideUpcomingAndHistory();
+  }
 
-  // }
+  async devideUpcomingAndHistory() {
+    let newUpcomingList = [];
+    let newHistoryList = [];
+
+    await Promise.all(this.props.ordersList.map(item => {
+      if(moment(item.starttime).isAfter(new Date())) {
+        newUpcomingList.push(item);
+      } 
+      else {
+        newHistoryList.push(item);
+      }
+    }));
+
+    this.setState({
+      upcomingList: newUpcomingList,
+      historyList: newHistoryList
+    })
+  }
 
   renderEmptySchedule() {
     return (
-      <View style={styles.emptyListContainer}>
-        <Image
-          source={require('../../assets/images/emptyScheduleLogo.png')}
-          style={styles.emptyListIcon}
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <MaterialCommunityIcons
+          name="sleep"
+          size={25}
+          color={'#B5B5F1'}
+          style={{marginLeft: 90}}
         />
+        <Image source={require('../../assets/images/emptyScheduleLogo.png')} style={styles.emptyListIcon}/>
         <View style={styles.emptyListTextContainer}>
           <Text style={styles.emptyListHeadingText}>Your Schedule is Empty</Text>
           <Text style={styles.emptyListText}>Book your favorite services now!</Text>
@@ -68,7 +96,7 @@ class MyOrdersScreen extends Component {
     endTime = endTime.toUTCString().split(' ')[4].substring(0, 5);
 
     return (
-      <TouchableOpacity style={styles.eventContainer} onLongPress={() => this.handleCancelling(item)}>
+      <TouchableOpacity style={styles.eventContainer} onLongPress={() => this.state.view === 'UPCOMING' ? this.handleCancelling(item) : null}>
           <View style={styles.shadowBox}>
             <View style={styles.infoBoxContainer}>
               <Avatar
@@ -118,10 +146,30 @@ class MyOrdersScreen extends Component {
     )
   }
 
-  renderOrdersList() {
-    return (
-      <FlatList data={this.props.ordersList} renderItem={this.renderRow} keyExtractor={(item, index) => index.toString()}/>
-    )
+  renderUpcomingList() {
+    if(this.state.upcomingList.length === 0) {
+      return (
+        this.renderEmptySchedule()
+      )
+    } 
+    else {
+      return (
+        <FlatList data={this.state.upcomingList} renderItem={this.renderRow} keyExtractor={(item, index) => index.toString()}/> 
+      )
+    }
+  }
+
+  renderHistoryList() {
+    if(this.state.historyList.length === 0) {
+      return (
+        this.renderEmptySchedule()
+      )
+    } 
+    else {
+      return (
+        <FlatList data={this.state.historyList} renderItem={this.renderRow} keyExtractor={(item, index) => index.toString()}/> 
+      )
+    }
   }
 
   handleCancelling(order) {
@@ -163,13 +211,35 @@ class MyOrdersScreen extends Component {
       .catch(error => console.log(error))
   }
 
+  renderToggle() {
+    const { view } = this.state;
+    return(
+      <View style={styles.toggleContainer}>
+        <TouchableOpacity 
+          style={view === 'UPCOMING' ? styles.chosenTab : styles.unChosenTab}
+          onPress={() => this.setState({view: 'UPCOMING'})}
+        >
+          <Text style={view === 'UPCOMING' ? styles.chosenText : styles.unChosenText}>UPCOMING</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={view === 'HISTORY' ? styles.chosenTab : styles.unChosenTab}
+          onPress={() => this.setState({view: 'HISTORY'})}
+        >
+          <Text style={view === 'HISTORY' ? styles.chosenText : styles.unChosenText}>HISTORY</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   render() {
     return (
       <SafeAreaView style={styles.flexContainer}>
         <StatusBar barStyle="dark-content"/>
         <View style={styles.flexContainer}>
             <Text style={styles.heading}>My Orders</Text>
-            {this.props.ordersList.length === 0 ? this.renderEmptySchedule() : this.renderOrdersList()}
+            {this.renderToggle()}
+            {/* {this.props.ordersList.length === 0 ? this.renderEmptySchedule() : this.renderOrdersList()} */}
+            {this.state.view === 'UPCOMING' ? this.renderUpcomingList() : this.renderHistoryList()}
             <Popup
               isVisible={this.state.isPopupVisble}
               onCancelPressed={() => this.setState({ isPopupVisble: false })}

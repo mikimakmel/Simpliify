@@ -107,28 +107,73 @@ export default StyleSheet.create({
   emptyListContainer: {
     backgroundColor: Colors.white,
     width: '100%',
-    alignItems: 'center'
+    alignItems: 'center',
+    borderWidth: 1
   },
   emptyListIcon: {
-    width: 100,
-    height: 100,
-    marginTop: 50
+    width: 120,
+    height: 120,
   },
   emptyListTextContainer: {
-    marginTop: 50,
+    marginTop: 30,
+    marginBottom: 150,
+    justifyContent: 'center', 
     alignItems: 'center'
   },
   emptyListHeadingText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '500',
     color: Colors.gray04,
     opacity: 0.8
   },
   emptyListText: {
-    fontSize: 12,
-    fontWeight: '300',
+    fontSize: 14,
+    fontWeight: '400',
     color: Colors.gray03,
     marginTop: 20,
     textAlign: 'center'
-  }
+  },
+  toggleContainer: {
+    width: '100%', 
+    flexDirection: 'row',
+    justifyContent: 'space-evenly', 
+    backgroundColor: 'white', 
+    alignContent: 'center', 
+    marginBottom: 30,
+    backgroundColor: 'rgba(249, 249, 249, 0.7)',
+    opacity: 0.9,
+    borderRadius: 5,
+    alignSelf: 'center',
+    shadowOffset: { width: 4, height: 4 },
+    shadowRadius: 3,
+    shadowColor: 'grey',
+    shadowOpacity: 0.20,
+    elevation: 5
+  },
+  chosenTab: {
+    width: '40%', 
+    borderBottomWidth: 2, 
+    borderBottomColor: Colors.red,
+    paddingVertical: 8
+  },
+  chosenText: {
+    fontSize: 16, 
+    fontWeight: '500', 
+    color: Colors.red, 
+    borderBottomWidth: 2, 
+    borderBottomColor: 'blue', 
+    alignSelf: 'center', 
+  },
+  unChosenTab: {
+    width: '40%',
+    paddingVertical: 8
+  },
+  unChosenText: {
+    fontSize: 16, 
+    fontWeight: '300', 
+    color: Colors.gray02, 
+    borderBottomWidth: 2, 
+    borderBottomColor: 'blue', 
+    alignSelf: 'center', 
+  },
 })

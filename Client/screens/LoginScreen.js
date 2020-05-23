@@ -117,36 +117,23 @@ class LoginScreen extends Component {
     this.logInViaGoogle = this.logInViaGoogle.bind(this);
     this.isUserEqual = this.isUserEqual.bind(this);
     this.onSignIn = this.onSignIn.bind(this);
-    this.fetchUserProfile = this.fetchUserProfile.bind(this);
-    // this.initBeforeLogin = this.initBeforeLogin.bind(this);
-    // this.fetchFavoritesList = this.fetchFavoritesList.bind(this);
-    // this.fetchBusiness = this.fetchBusiness.bind(this);
-    // this.isBusinessInFavorites = this.isBusinessInFavorites.bind(this);
   }
 
     componentDidMount() {
-        // firebase.auth().signOut()
-        // .then(() => {
-        //   console.log('Sign-out successful');
-        // //   this.props.navigation.navigate('LogIn');
-        // })
-        // .catch((error) => {
-        //   console.log('An error happened: ' + error);
-        // });
-        this.checkIfLoggedIn();
+
     }
 
-    componentWillMount () {
+    componentWillMount() {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow.bind(this));
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide.bind(this));
     }
 
-    componentWillUnmount () {
+    componentWillUnmount() {
         this.keyboardDidShowListener.remove();
         this.keyboardDidHideListener.remove();
     }
 
-    keyboardDidShow (e) {
+    keyboardDidShow(e) {
         let newSize = layout.window.height - e.endCoordinates.height
         this.setState({
             isKeyboardOpen: true,
@@ -155,91 +142,13 @@ class LoginScreen extends Component {
         })
     }
       
-    keyboardDidHide (e) {
+    keyboardDidHide(e) {
         this.setState({
             isKeyboardOpen: false,
             visibleHeight: layout.window.height,
             logoSize: {width: Dimensions.get('window').width}
         })
     } 
-    
-    async fetchUserProfile(email) {
-        // console.log(email);
-        const url = `${route}/user/getUserByEmail`;
-        const options = { 
-          method: 'POST', 
-          headers: { 
-              'Accept': 'application/json',
-              'Content-Type': 'application/json' 
-          },
-          body: JSON.stringify({email})
-        };
-        const request = new Request(url, options)
-    
-        await fetch(request)
-          .then(response => response.json())
-          .then(data => {
-            this.props.dispatch(Actions_User.updateCurrentUser(data.user));
-          })
-          .catch(error => console.log(error))
-    }
-
-    // async fetchFavoritesList() {
-    //     // console.log(this.props.currentUser);
-    //     const url = `${route}/customer/getFavoritesList`;
-    //     const options = { 
-    //       method: 'POST', 
-    //       headers: { 
-    //           'Accept': 'application/json',
-    //           'Content-Type': 'application/json' 
-    //       },
-    //       body: JSON.stringify({userID: this.props.currentUser.userid})
-    //     };
-    //     const request = new Request(url, options)
-    
-    //     await fetch(request)
-    //       .then(response => response.json())
-    //       .then(async data => {
-    //         // console.log(data)
-    //         data.map((item) => {
-    //           this.fetchBusiness(item.business);
-    //         })
-    //       })
-    //       .catch(error => console.log(error))
-    // }
-    
-    // async fetchBusiness(businessID) {
-    //     const url = `${route}/business/getBusinessByID`;
-    //     const options = { 
-    //         method: 'POST', 
-    //         headers: { 
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json' 
-    //         },
-    //         body: JSON.stringify({businessID})
-    //     };
-    //     const request = new Request(url, options)
-
-    //     await fetch(request)
-    //         .then(response => response.json())
-    //         .then(async data => {
-    //             // console.log(data)
-    //             if (!this.isBusinessInFavorites(data.businessid)) {
-    //                 this.props.dispatch(Actions_Customer.addToFavoritesList(data))
-    //             }
-    //         })
-    //         .catch(error => console.log(error))
-    // }
-
-    // isBusinessInFavorites(businessID) {
-    //     this.props.favoritesList.map((item) => {
-    //       if(item.businessid === businessID) {
-    //         return true;
-    //       }
-    //     });
-    
-    //     return false;
-    // }
 
     validateEmail(email) {
         const expression = /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([\t]*\r\n)?[\t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([\t]*\r\n)?[\t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
@@ -268,10 +177,11 @@ class LoginScreen extends Component {
             return(
                 <Animatable.View animation="flipInX">
                     <TouchableOpacity onPress={() => this.handleHidePassword()}>
-                        {this.state.hidePassword === true ?
-                        <Feather name="eye-off" color={colors.gray02} size={20} style={styles.inputIconRight} />
-                        :
-                        <Feather name="eye" color={colors.gray02} size={20} style={styles.inputIconRight} />
+                        {
+                            this.state.hidePassword === true ?
+                            <Feather name="eye-off" color={colors.gray02} size={20} style={styles.inputIconRight}/>
+                            :
+                            <Feather name="eye" color={colors.gray02} size={20} style={styles.inputIconRight}/>
                         }
                     </TouchableOpacity>
                 </Animatable.View>
@@ -284,13 +194,13 @@ class LoginScreen extends Component {
 
         return(
             <View>
-                <TouchableOpacity style={styles.forgotPasswordContainer} >
-                    <Text style={styles.textForgotPassword} >Forgot Password?</Text>
+                <TouchableOpacity style={styles.forgotPasswordContainer}>
+                    <Text style={styles.textForgotPassword}>Forgot Password?</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => this.logInViaEmail(email, password)}>
                     <Animated.View style={{...styles.button}}>
-                        <Text style={{fontSize: 20, fontWeight: 'bold'}} >SIGN IN</Text>
+                        <Text style={{fontSize: 20, fontWeight: 'bold'}}>SIGN IN</Text>
                     </Animated.View>
                 </TouchableOpacity>
             </View>
@@ -418,21 +328,6 @@ class LoginScreen extends Component {
         }
     }
 
-    checkIfLoggedIn = () => {
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                // this.setState({shouldRender: false});
-                this.props.navigation.navigate('SplashScreen', {email: user.email});
-                console.log('checkIfLoggedIn: yes');
-            } else {
-                // this.setState({shouldRender: true});
-                console.log('checkIfLoggedIn: no');
-                this.props.navigation.navigate('LogIn');
-            }
-            // this.setState({ isReady: true });
-        })
-    }
-
     async logInViaFacebook() {
         try {
           await Facebook.initializeAsync('786955858495098');
@@ -442,7 +337,6 @@ class LoginScreen extends Component {
             const FBcredential = firebase.auth.FacebookAuthProvider.credential(token);
             firebase.auth().signInWithCredential(FBcredential)
             .then(async (result) => {
-                // await this.fetchUserProfile(result.user.email, result.user.photoURL);
                 // result.additionalUserInfo
                 // mg {
                 //     "isNewUser": false,
@@ -466,14 +360,6 @@ class LoginScreen extends Component {
                 //     "providerId": "facebook.com",
                 //   }
                 this.props.navigation.navigate('SplashScreen', {socialLogin: true, email: result.user.email, profilePic: `${result.user.photoURL}?height=500`});
-                // console.log(!this.props.currentUser)
-                // if(this.props.currentUser) {
-                //     this.props.navigation.navigate('SplashScreen', {email: result.user.email, profilePic: result.user.photoURL});
-                // }
-                // else {
-                //     this.props.navigation.navigate('SignUpForm', {email: result.user.email, profilePic: result.user.photoURL});
-                // }
-
                 console.log("Facebook Login Success");
             })
             .catch((error) => { console.log(`Facebook Login Error: ${error}`) });
@@ -553,19 +439,9 @@ class LoginScreen extends Component {
       }
 
   render() {
-    // if (!this.state.shouldRender) {
-    //     return (
-    //         <View style={{ flex: 1, backgroundColor: 'white', alignContent: 'center', justifyContent: 'center'}}>
-    //             {/* <ActivityIndicator size="large"/> */}
-    //         </View>
-    //     ); 
-    // } else {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <KeyboardAvoidingView 
-        style={{ flex: 1, justifyContent: 'flex-end'}} 
-        behavior="padding" 
-        >
+        <KeyboardAvoidingView style={{ flex: 1, justifyContent: 'flex-end'}} behavior="padding">
             <View style={{ width: layout.window.width, height: layout.window.height}}>
             <StatusBar barStyle="light-content" />
             <View style={{flex: 1, backgroundColor: 'white', justifyContent: 'flex-end', height: this.state.visibleHeight}}>
@@ -688,7 +564,6 @@ class LoginScreen extends Component {
         </TouchableWithoutFeedback>
     );
   }
-// }
 }
 
 const mapStateToProps = ({ User, Customer }) => {
