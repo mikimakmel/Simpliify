@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image, SafeAreaView, ScrollView, TouchableOpacity, FlatList, StatusBar, Alert } from 'react-native';
+import { StyleSheet, View, Text, Image, SafeAreaView, ActivityIndicator, TouchableOpacity, FlatList, StatusBar, Alert } from 'react-native';
 import { Divider, Avatar } from 'react-native-elements';
 import styles from '../../styles/customer/Style_MyOrdersScreen';
 import database from '../../database';
@@ -29,7 +29,8 @@ class MyOrdersScreen extends Component {
       upcomingList: [],
       historyList: [],
       view: 'UPCOMING',
-      itemPressed: {}
+      itemPressed: {},
+      isLoading: true
     }
     this.renderEmptySchedule = this.renderEmptySchedule.bind(this);
     this.renderUpcomingList = this.renderUpcomingList.bind(this);
@@ -38,10 +39,47 @@ class MyOrdersScreen extends Component {
     this.cancelOrder = this.cancelOrder.bind(this);
     this.handleCancelling = this.handleCancelling.bind(this);
     this.devideUpcomingAndHistory = this.devideUpcomingAndHistory.bind(this);
+    this.fetchCustomerOrdersList = this.fetchCustomerOrdersList.bind(this);
   }
 
   componentDidMount() {
-    this.devideUpcomingAndHistory();
+    this.fetchCustomerOrdersList();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.ordersList.length !== prevProps.ordersList.length) {
+      this.fetchCustomerOrdersList();
+    }
+  }
+
+  async fetchCustomerOrdersList() {
+    this.setState({isLoading: true});
+
+    const url = `${route}/order/getAllCustomerOrders`;
+    const options = { 
+      method: 'POST', 
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({ userID: this.props.currentUser.userid })
+    };
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(data => {
+        let noCancelledOrders = data.filter(item => {
+          if(item.status !== 'Cancelled') {
+            return item;
+          }
+        })
+        this.props.dispatch(Actions_Customer.updateOrdersList(noCancelledOrders));
+      })
+      .catch(error => console.log(error))
+
+    await this.devideUpcomingAndHistory();
+    this.setState({isLoading: false});
   }
 
   async devideUpcomingAndHistory() {
@@ -147,7 +185,14 @@ class MyOrdersScreen extends Component {
   }
 
   renderUpcomingList() {
-    if(this.state.upcomingList.length === 0) {
+    if(this.state.isLoading) {
+      return(
+        <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', backgroundColor: colors.white }}>
+          <ActivityIndicator size="large" color={colors.red}/>
+        </View>
+      )
+    }
+    else if(this.state.upcomingList.length === 0) {
       return (
         this.renderEmptySchedule()
       )
@@ -160,7 +205,14 @@ class MyOrdersScreen extends Component {
   }
 
   renderHistoryList() {
-    if(this.state.historyList.length === 0) {
+    if(this.state.isLoading) {
+      return(
+        <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', backgroundColor: colors.white }}>
+          <ActivityIndicator size="large" color={colors.red}/>
+        </View>
+      )
+    }
+    else if(this.state.historyList.length === 0) {
       return (
         this.renderEmptySchedule()
       )
@@ -236,26 +288,25 @@ class MyOrdersScreen extends Component {
       <SafeAreaView style={styles.flexContainer}>
         <StatusBar barStyle="dark-content"/>
         <View style={styles.flexContainer}>
-            <Text style={styles.heading}>My Orders</Text>
-            {this.renderToggle()}
-            {/* {this.props.ordersList.length === 0 ? this.renderEmptySchedule() : this.renderOrdersList()} */}
-            {this.state.view === 'UPCOMING' ? this.renderUpcomingList() : this.renderHistoryList()}
-            <Popup
-              isVisible={this.state.isPopupVisble}
-              onCancelPressed={() => this.setState({ isPopupVisble: false })}
-              onAppPressed={() => this.setState({ isPopupVisble: false })}
-              onBackButtonPressed={() => this.setState({ isPopupVisble: false })}
-              modalProps={{ animationIn: 'slideInUp' }}
-              appsWhiteList={[]}
-              options={{
-                alwaysIncludeGoogle: true,
-                latitude: this.state.itemPressed.lat,
-                longitude: this.state.itemPressed.lng,
-                title: `${this.state.itemPressed.street}, ${this.state.itemPressed.city}`,
-                dialogTitle: 'Open With',
-                cancelText: 'Cancel'
-              }}
-            />
+          <Text style={styles.heading}>My Orders</Text>
+          {this.renderToggle()}
+          {this.state.view === 'UPCOMING' ? this.renderUpcomingList() : this.renderHistoryList()}
+          <Popup
+            isVisible={this.state.isPopupVisble}
+            onCancelPressed={() => this.setState({ isPopupVisble: false })}
+            onAppPressed={() => this.setState({ isPopupVisble: false })}
+            onBackButtonPressed={() => this.setState({ isPopupVisble: false })}
+            modalProps={{ animationIn: 'slideInUp' }}
+            appsWhiteList={[]}
+            options={{
+              alwaysIncludeGoogle: true,
+              latitude: this.state.itemPressed.lat,
+              longitude: this.state.itemPressed.lng,
+              title: `${this.state.itemPressed.street}, ${this.state.itemPressed.city}`,
+              dialogTitle: 'Open With',
+              cancelText: 'Cancel'
+            }}
+          />
         </View>
       </SafeAreaView>
     )
