@@ -1,11 +1,29 @@
 const db = require('./database')
 
-
-intervalFunc = (req, res) => {
+// UPDATE Orders SET Starttime = NOW() - INTERVAL '1 day', Bool_notify = 'True', Status = 'Confirmed' WHERE OrderID IN (23, 1187, 381)
+success = (req, res) => {
+    const query = `UPDATE Orders SET Status = 'Success'
+                    WHERE
+                    Status = 'Confirmed'
+                    AND Starttime AT TIME ZONE 'UTC' < (NOW() - INTERVAL '1 day')
+                    RETURNING Orderid`
+    db.query(query)
+        .then(result => {
+            var Orderids = result.rows;
+            if(Orderids.length > 0){
+                console.log(Orderids)
+                console.log("Notify to client that we would like to see him again!")
+            }
+        })
+        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+}
+// UPDATE Orders SET Starttime = NOW() + INTERVAL '1 day', Bool_notify = 'False', Status = 'Confirmed' WHERE OrderID IN (3,12,8);
+reminder = (req, res) => {
     // add where bool_notify = 'False' and bla bla..
     const query = `UPDATE Orders SET bool_notify = 'True'
                     WHERE
-                    Status = 'Confirmed'
+                    bool_notify = 'False'
+                    AND Status = 'Confirmed'
                     AND ((Starttime AT TIME ZONE 'UTC') BETWEEN now() AND (now() + '1 day'::interval))
                     RETURNING Orderid`
 
@@ -13,6 +31,8 @@ intervalFunc = (req, res) => {
         .then(result => {
             var Orderids = result.rows;
             if (Orderids.length > 0){
+                console.log(Orderids)
+                console.log("Notify to client he has srevice tommorow")
                 ordersIdsStr = `(` + Orderids[0].orderid
                 Orderids.shift()
                 
@@ -33,7 +53,7 @@ intervalFunc = (req, res) => {
                 db.query(userQuery)
                 .then(result => {
                     var rows = result.rows
-                    // console.log("Notify to clients!!")
+                    console.log("Notify to client he has srevice tommorow")
                 })
                 .catch(err => res.status(404).send(`Query error: ${err.stack}`))
             }
@@ -42,5 +62,6 @@ intervalFunc = (req, res) => {
 }
   
   module.exports = {
-    intervalFunc: intervalFunc 
+    reminder: reminder,
+    success: success 
 } 
