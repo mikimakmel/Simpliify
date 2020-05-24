@@ -141,7 +141,7 @@ class MyOrdersScreen extends Component {
                 containerStyle={styles.avatarContiner}
                 rounded
                 size={60}
-                source={{ uri: item.avatar }}
+                source={{ uri: item.coverpic }}
               />
               <View style={[styles.textLeftAlign , {
                   overflow: 'hidden',

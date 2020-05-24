@@ -93,7 +93,7 @@ module.exports = {
 
         const query = 
             `SELECT 
-            orderid, customer AS CustomerID, business AS BusinessID, Business.Name AS BusinessName, Business.Avatar AS avatar,
+            orderid, customer AS CustomerID, business AS BusinessID, Business.Name AS BusinessName, Carousel.imagelink AS coverPic,
             Service AS ServiceID, Service.Name as ServiceName, status, Service.durationminutes as durationminutes,
             starttime AT TIME ZONE 'UTC' as starttime, 
             orderedat AT TIME ZONE 'UTC' as orderedat, 
@@ -103,7 +103,8 @@ module.exports = {
             INNER JOIN Business ON (Orders.Business = Business.BusinessID) 
             INNER JOIN Service ON (Orders.Service = Service.ServiceID) 
             INNER JOIN Address ON (Business.Address = Address.AddressID) 
-            WHERE customer=${userID} ORDER BY starttime`;
+            INNER JOIN Carousel ON (Orders.Business = Carousel.BusinessID)
+            WHERE customer=${userID} AND primarypic = 'True' ORDER BY starttime`;
         
         db.query(query)
             .then(result => {
