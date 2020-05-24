@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // app.get('/intervals', intervals.intervalFunc);
-setInterval(intervals.intervalFunc, 20000);
+setInterval(intervals.intervalFunc, 60000);
 
 /*** User routes ***/
 app.get('/user/getAllUsers', userCtl.getAllUsers);

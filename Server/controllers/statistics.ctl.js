@@ -1,3 +1,4 @@
+var moment = require('moment');
 const db = require('../database');
 
 
@@ -178,9 +179,11 @@ statByAddress = (req, res) => {
 
 // 5. get business total income under a period of time
 statTotalIncome = (req, res) => {
-    // data example
-    // array size is 12, present 12 month
-    // const businessincome = [50, 10, 40, 95, 50, 10, 40, 95, 50, 10, 40, 95]
+    // data example when May is the current month:
+    // {
+    //     "months": [6,7,8,9,10,11,12,1,2,3,4,5],
+    //     "amount": [0,0,0,0,0,0,0,0,0,0,50,425]
+    // }
 
     console.log("getIncomeByTimePeriod()");
 
@@ -196,15 +199,29 @@ statTotalIncome = (req, res) => {
     
     db.query(query)
         .then(result => {
-            var businessincome = new Array(12).fill(0)
-            
             var rows = result.rows
-            console.log(rows)
+
+            var months = []
+            m = moment().month() +1
+            var j = m
+            while (j != 12){
+                j++
+                months.push(j)
+            }
+            for (var i = 0; i < m; i++){
+                months.push(i+1)
+            }
+
+            var amount = new Array(12).fill(0)   
             rows.map((row) => {
-                var d = new Date(row.starttime)
-                businessincome[d.getUTCMonth()] += parseInt(row.total, 10)
+                var date = new Date(row.starttime)
+                const index = months.findIndex((element) => date.getUTCMonth() == element) +1
+                amount[index] += parseInt(row.total, 10)
             })
-            res.json(businessincome)
+            res.json({
+                months: months,
+                amount: amount
+            })
         })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
