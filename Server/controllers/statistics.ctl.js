@@ -192,7 +192,7 @@ statTotalIncome = (req, res) => {
     const query = `SELECT Orders.Business, Orders.Starttime::date, SUM(Service.Price) as Total FROM Orders
                     LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID)
                     WHERE Orders.Business=${businessID}
-                    AND Status='Confirmed'
+                    AND Status='Success'
                     AND Orders.Starttime::date BETWEEN (NOW() - INTERVAL '1 YEAR')
                     AND NOW()
                     GROUP BY Orders.Starttime::date, Orders.Business ORDER BY Starttime`;
@@ -375,7 +375,7 @@ getAllStatisticsByBusinessID = (req, res) =>{
     const cityQuery =
     `SELECT Address.City, COUNT(Address.City) FROM Orders INNER JOIN Users ON (Orders.Customer = Users.UserID) INNER JOIN Address ON (Users.Address = Address.AddressID) WHERE Orders.Business=${businessID} GROUP BY Address.City ORDER BY Count DESC`
     const incomeQuery =
-    `SELECT Orders.Business, Orders.Starttime::date, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${businessID} AND Status='Confirmed' AND Orders.Starttime::date BETWEEN (NOW() - INTERVAL '1 YEAR') AND NOW() GROUP BY Orders.Starttime::date, Orders.Business ORDER BY Starttime`;
+    `SELECT Orders.Business, Orders.Starttime::date, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${businessID} AND Status='Success' AND Orders.Starttime::date BETWEEN (NOW() - INTERVAL '1 YEAR') AND NOW() GROUP BY Orders.Starttime::date, Orders.Business ORDER BY Starttime`;
     const hoursQuery =
     `SELECT Business, EXTRACT(HOUR FROM Starttime) as Hour, COUNT(EXTRACT(HOUR FROM Starttime)) AS Popularity FROM Orders WHERE Business=${businessID} GROUP BY Business, Hour ORDER BY Popularity DESC`;
     const customersQuery = 
@@ -406,7 +406,7 @@ getAllStatisticsByBusinessID = (req, res) =>{
             var rows = result.rows
             rows.map((row) => {
                 gendercount.category.push(row.gender)
-                gendercount.amount.push(row.count)
+                gendercount.amount.push(parseInt(row.count))
             })
             finalResult.statistics.gendercount = gendercount;
         })
@@ -417,7 +417,7 @@ getAllStatisticsByBusinessID = (req, res) =>{
             const rows = result.rows
             rows.map((row) => {
                 serviceincome.category.push(row.name)
-                serviceincome.amount.push(row.total)    
+                serviceincome.amount.push(parseInt(row.total))    
             })
             finalResult.statistics.serviceincome = serviceincome;
     })
@@ -439,7 +439,7 @@ getAllStatisticsByBusinessID = (req, res) =>{
 
         Object.keys(data).forEach((key) => {
             customersage.category.push(key)
-            customersage.amount.push(data[key])
+            customersage.amount.push(parseInt(data[key]))
         });
         finalResult.statistics.customersage = customersage;
     })
@@ -450,20 +450,32 @@ getAllStatisticsByBusinessID = (req, res) =>{
         var rows = result.rows            
         rows.map((row) => {
             citycount.category.push(row.city)
-            citycount.amount.push(row.count)
+            citycount.amount.push(parseInt(row.count))
         })
         finalResult.statistics.citycount = citycount;
     })
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     
     db.query(incomeQuery).then(result => {
-        var businessincome = new Array(12).fill(0)
         var rows = result.rows
+        var category = []
+        m = moment().month() +1
+        var j = m
+        while (j != 12){
+            j++
+            category.push(j)
+        }
+        for (var i = 0; i < m; i++)
+        category.push(i+1)
+        
+        var amount = new Array(12).fill(0)   
         rows.map((row) => {
-            var d = new Date(row.starttime)
-            businessincome[d.getUTCMonth()] += parseInt(row.total, 10)
+            var date = new Date(row.starttime)
+            const index = category.findIndex((element) => date.getUTCMonth() == element) +1
+            amount[index] += parseInt(row.total, 10)
         })
-        finalResult.statistics.businessincome = businessincome;
+        finalResult.statistics.businessincome.push(category)
+        finalResult.statistics.businessincome.push(amount)
     })
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 
@@ -480,7 +492,7 @@ getAllStatisticsByBusinessID = (req, res) =>{
         stronghours = { category: [], amount: [] }
         Object.keys(data).forEach((key) => {
             stronghours.category.push(key)
-            stronghours.amount.push(data[key])
+            stronghours.amount.push(parseInt(data[key]))
         });
         finalResult.statistics.stronghours = stronghours;
     })
@@ -491,7 +503,7 @@ getAllStatisticsByBusinessID = (req, res) =>{
         var rows = result.rows
         rows.map((row) => {
             bestcustomer.category.push(row.name)
-            bestcustomer.amount.push(row.total)
+            bestcustomer.amount.push(parseInt(row.total))
         })
         finalResult.statistics.bestcustomer = bestcustomer;
     })
@@ -502,7 +514,7 @@ getAllStatisticsByBusinessID = (req, res) =>{
         var rows = result.rows
         rows.map((row) => {
             ratingcount.category.push(row.rating)
-            ratingcount.amount.push(row.count)
+            ratingcount.amount.push(parseInt(row.count))
         })
         finalResult.statistics.ratingcount = ratingcount;
         res.json(finalResult)
