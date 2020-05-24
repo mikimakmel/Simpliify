@@ -386,14 +386,14 @@ getAllStatisticsByBusinessID = (req, res) =>{
     var finalResult = {
         statistics: {
             dailycounter: 0,
-            gendercount: [],
-            serviceincome: [],
-            customersage: [],
-            citycount: [],
-            businessincome: [],
-            stronghours: [],
-            bestcustomer: [],
-            ratingcount: [],
+            gendercount: null,
+            serviceincome: null,
+            customersage: null,
+            citycount: null,
+            businessincome: null,
+            stronghours: null,
+            bestcustomer: null,
+            ratingcount: null,
         },
     };
 
@@ -458,24 +458,27 @@ getAllStatisticsByBusinessID = (req, res) =>{
     
     db.query(incomeQuery).then(result => {
         var rows = result.rows
-        var category = []
+        var businessincome = { category: [], amount: [] }
         m = moment().month() +1
         var j = m
         while (j != 12){
             j++
-            category.push(j)
+            businessincome.category.push(j)
         }
         for (var i = 0; i < m; i++)
-        category.push(i+1)
+        businessincome.category.push(i+1)
         
         var amount = new Array(12).fill(0)   
         rows.map((row) => {
             var date = new Date(row.starttime)
-            const index = category.findIndex((element) => date.getUTCMonth() == element) +1
+            const index = businessincome.category.findIndex((element) => date.getUTCMonth() == element) +1
             amount[index] += parseInt(row.total, 10)
         })
-        finalResult.statistics.businessincome.push(category)
-        finalResult.statistics.businessincome.push(amount)
+        
+        amount.forEach (month => {
+            businessincome.amount.push(month)
+        })
+        finalResult.statistics.businessincome = businessincome
     })
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 
