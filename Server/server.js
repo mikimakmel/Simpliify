@@ -21,8 +21,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-// app.get('/intervals', intervals.intervalFunc);
-setInterval(intervals.intervalFunc, 20000);
+setInterval(intervals.reminder, 12000);
+setInterval(intervals.success, 12000);
 
 /*** User routes ***/
 app.get('/user/getAllUsers', userCtl.getAllUsers);
