@@ -463,10 +463,10 @@ getAllStatisticsByBusinessID = (req, res) =>{
         var j = m
         while (j != 12){
             j++
-            businessincome.category.push(j)
+            businessincome.category.push(j.toString())
         }
         for (var i = 0; i < m; i++)
-        businessincome.category.push(i+1)
+        businessincome.category.push((i + 1).toString())
         
         var amount = new Array(12).fill(0)   
         rows.map((row) => {
