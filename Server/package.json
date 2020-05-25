@@ -16,6 +16,7 @@
     "mathjs": "^6.6.4",
     "moment": "^2.25.3",
     "moment-range": "^4.0.2",
+    "node-fetch": "^2.6.0",
     "pg": "^8.0.3",
     "radians": "^1.0.0"
   },
