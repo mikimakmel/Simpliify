@@ -19,26 +19,6 @@ class Insights extends Component {
       browncolors: ['#603101', '#7a3f02', '#924b03', '#c76b0f', '#f6d193', '#fae8c9'],
       statistics: null,
       isLoading: true
-
-      // dailycounter: 0,
-      // gendercount: [],
-      // serviceincome: [],
-      // customersage: [],
-      // citycount: [],
-      // businessincome: [],
-      // stronghours: [],
-      // bestcustomer: [],
-      // ratingcount: [],
-
-      // dailycounter: 9781,
-      // gendercount: [{ category: ['Female', 'Male'], amount: [0, 0] }],
-      // serviceincome: [{ category: ["Kids Marketing", "Computers Sales", "Movies Marketing", "Computers Legal", "Baby Legal"], amount: ["175", "25", "25", "100", "100"], }],
-      // customersage: [{ category: ['18-24', '25-34', '44-35', '55-65', '65+'], amount: [3840, 1920, 960, 400, 400] }],
-      // citycount: [{ category: ['Herzelia', 'Tel Aviv', 'Rishon Lezion'], amount: [5, 2, 1] }],
-      // businessincome: [50, 10, 40, 95, 50, 10, 40, 195, 50, 10, 40, 95],
-      // stronghours: [{ category: ['0-9', '9-12', '12-15', '15-18', '18-24'], amount: [4, 4, 9, 2, 0] }],
-      // bestcustomer: [{ category: ["Miki Makmel", "Dulciana Humpage", "Sarena Blinde", "Lovell Sellor", "Cristin Jeremiah", "Claudianus Peealess"], amount: [250, 175, 150, 150, 125, 50] }],
-      // ratingcount: [{ category: [5, 4, 3, 2, 1], amount: ["2", "3", "2", "1", "1"] }],
     };
     this.fetchAllStatistics = this.fetchAllStatistics.bind(this);
   }
@@ -82,18 +62,17 @@ class Insights extends Component {
       )
     }
     else {
-      // console.log(statistics.gendercount)
       return(
         <SafeAreaView>
            <ScrollView>
-             <Text style={styles.headline}> Page Visitors Today - {statistics.dailycounter}</Text>
+             <Text style={styles.headline}> {statistics.dailycounter} Page Visitors Today </Text>
              <View style = {styles.horizontalLine}/>
              <PercentPie
                name = "Gender Distribution"
                data = {statistics.gendercount}
                colors = {this.state.purplecolors}
              />
-              {/* <DoughnutChart
+              <DoughnutChart
                name = "Income Per Service"
                data = {statistics.serviceincome}
                colors = {this.state.purplecolors}
@@ -121,7 +100,7 @@ class Insights extends Component {
                name = "Top 10 Customers"
                data = {statistics.bestcustomer}
                colors = {this.state.browncolors}
-              /> */}
+              />
           </ScrollView>
         </SafeAreaView>
       )

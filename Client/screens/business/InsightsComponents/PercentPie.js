@@ -28,11 +28,11 @@ class PercentPie extends Component {
     {
       temp.push({key: this.props.data.category[i] + ' (' + this.props.data.amount[i] + ')',
       value: this.props.data.amount[i],
-      svg: { fill: this.props.colors[i % 5] },},)
+      svg: { fill: this.props.colors[i % this.props.colors.length] },},)
     }
     
-    // this.setState({data: temp})
-    // this.setState({genderSum: this.props.data[0].amount.reduce((a, b) => a + b, 0)})
+    this.setState({data: temp})
+    this.setState({genderSum: this.props.data.amount.reduce((a, b) => a + b, 0)})
   }
 
   renderItem = ({ item }) => (
