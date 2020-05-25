@@ -65,7 +65,7 @@ class MenuScreen extends Component {
             <Divider style={{ backgroundColor: colors.gray05, marginHorizontal: 24, height: 1 }} />
             <Text style={styles.secondaryHeadline}>Account</Text>
             <ListItem
-              title={'Prsonal information'}
+              title={'Personal information'}
               titleStyle={{ fontWeight: '500', fontSize: 16, marginLeft: 5 }}
               containerStyle={{}}
               chevron={(<FontAwesome name="user-o" size={25} style={{marginRight: 5}}/>)}
