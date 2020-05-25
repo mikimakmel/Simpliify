@@ -214,7 +214,8 @@ module.exports = {
                     var tmpTime = startAvailability.clone().add(durationMinutes, 'minutes')
                     while (tmpTime.isSameOrBefore(endAvailability))
                     {
-                        allSegments.push(moment.range(moment(currentAvailability), moment(currentAvailability).clone().add(durationMinutes, 'minutes')))
+                        if(moment(currentAvailability).format("HH:mm") > moment().format("HH:mm"))
+                            allSegments.push(moment.range(moment(currentAvailability), moment(currentAvailability).clone().add(durationMinutes, 'minutes')))
                         currentAvailability.add(durationMinutes, 'minutes')
                         tmpTime.add(durationMinutes, 'minutes')
                     }
