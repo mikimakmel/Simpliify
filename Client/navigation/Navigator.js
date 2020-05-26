@@ -80,10 +80,19 @@ function ExploreStack() {
   );
 }
 
-function ScheduleStack() {
+function businessScheduleStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: true }}>
       <Stack.Screen name="Schedule" component={CalendarScreen} options={{title: 'Business Schedule'}}/>
+    </Stack.Navigator>
+  );
+}
+
+function customerScheduleStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Schedule" component={MyOrdersScreen} options={{title: 'Schedule'}}/>
+      <Stack.Screen name="Booking" component={BookingScreen} options={{headerShown: true}}/>
     </Stack.Navigator>
   );
 }
@@ -112,7 +121,7 @@ function CustomerBottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Schedule"
-        component={MyOrdersScreen}
+        component={customerScheduleStack}
         options={{
           title: 'Schedule',
           tabBarIcon: ({ color }) => (
@@ -179,7 +188,7 @@ function BusinessBottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Schedule"
-        component={ScheduleStack}
+        component={businessScheduleStack}
         options={{
           title: 'Schedule',
           tabBarIcon: ({ color }) => (
