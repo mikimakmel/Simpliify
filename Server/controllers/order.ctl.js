@@ -120,17 +120,15 @@ module.exports = {
         const businessID = req.body.businessID;
 
         const query = 
-            `SELECT status, starttime AT TIME ZONE 'UTC' as starttime, durationminutes FROM Orders 
+            `SELECT Status, Starttime AT TIME ZONE 'UTC' as Starttime, Starttime + INTERVAL '1 MINUTES' * DurationMinutes AS Endtime,
+            Firstname || ' ' || Lastname AS FullName, Service.Name AS ServiceName, Users.Phone, Street || ', ' || City AS Address
+            FROM Orders 
             INNER JOIN Business ON (Orders.Business = Business.BusinessID)
             INNER JOIN Service ON (Orders.Service= Service.ServiceID)
+            INNER JOIN Users ON (Orders.Customer= Users.UserID)
+            INNER JOIN Address ON (Address.AddressID = Users.Address)
             WHERE business=${businessID}
             ORDER BY starttime ASC`;
-
-        // const query = 
-        //     `SELECT * FROM Orders 
-        //     INNER JOIN Business ON (Orders.Business = Business.BusinessID) 
-        //     INNER JOIN Service ON (Orders.Service = Orders.Service) 
-        //     WHERE business=${businessID}`;
 
         db.query(query)
             .then(result => res.json(result.rows))
@@ -214,7 +212,7 @@ module.exports = {
                     var tmpTime = startAvailability.clone().add(durationMinutes, 'minutes')
                     while (tmpTime.isSameOrBefore(endAvailability))
                     {
-                        if(moment(currentAvailability).format("HH:mm") > moment().format("HH:mm"))
+                        if(moment(currentAvailability) > moment())
                             allSegments.push(moment.range(moment(currentAvailability), moment(currentAvailability).clone().add(durationMinutes, 'minutes')))
                         currentAvailability.add(durationMinutes, 'minutes')
                         tmpTime.add(durationMinutes, 'minutes')
