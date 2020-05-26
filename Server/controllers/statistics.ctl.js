@@ -335,26 +335,37 @@ statDailyCounter = (req, res) =>{
 // 9. get rating data
 statRating = (req, res) =>{
     console.log("getRatingData()");
-    // const ratingcount = [{ 
-    //      rating: [5,4,3,2,1],
-    //      amount: [5,7,2,5,4]
-    // }],
+    // data example when month 11 is the current month
+    // {
+    //     "months": [0,1,2,3,4,5,6,7,8,9,10,11],
+    //     "amount": [null,null,null,null,null,null,null,null,null,null,"3.4","3.2"]
+    // }
     const businessID = req.body.businessID;
 
-    const query = `SELECT Rating, COUNT(Rating) FROM Review WHERE Business=${businessID} GROUP BY Rating ORDER BY Rating DESC`;
-    
+    var query = `SELECT
+                    (SELECT AVG(rating)::NUMERIC(2,1) FROM review WHERE Business=${businessID} AND Reviewedat BETWEEN (SELECT MIN(Reviewedat) FROM Review) AND NOW() GROUP BY Business) AS month0,`
+    for (var i = 1; i<=10; i++){
+        query = query.concat(" ", `(SELECT AVG(rating)::NUMERIC(2,1) FROM review WHERE Business=${businessID} AND Reviewedat BETWEEN (SELECT MIN(Reviewedat) FROM Review) AND (NOW() - INTERVAL '` + i + ` MONTHS') GROUP BY Business) AS month`+ i +`,`)
+    }
+    query = query.concat(" ", `(SELECT AVG(rating)::NUMERIC(2,1) FROM review WHERE Business=${businessID} AND Reviewedat BETWEEN (SELECT MIN(Reviewedat) FROM Review) AND (NOW() - INTERVAL '11 MONTHS') GROUP BY Business) AS month11
+                                FROM review
+                                WHERE Business=${businessID}
+                                GROUP BY Business`);
     db.query(query)
         .then(result => {
-            var ratingcount = {
-                category: [],
-                amount: []
+            var months = Array.from(Array(12).keys())
+            var row = result.rows[0]
+            var amount = new Array(12);
+            var j = 11
+            console.log(row["month0"])
+            for(var i = 0; i < 12; i++){
+                amount[j] = row["month"+i]
+                j--
             }
-            var rows = result.rows
-            rows.map((row) => {
-                ratingcount.category.push(row.rating)
-                ratingcount.amount.push(row.count)
+            res.json({
+                months: months,
+                amount: amount
             })
-            res.json([ratingcount])
         })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 }
