@@ -5,7 +5,7 @@ import styles from '../../styles/customer/Style_MyOrdersScreen';
 import database from '../../database';
 import colors from '../../constants/Colors';
 // import Swipeout from 'react-native-swipeout';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import { connect } from "react-redux";
 import * as Actions_Customer from '../../redux/actions/Actions_Customer';
 import { Popup } from 'react-native-map-link';
@@ -40,6 +40,8 @@ class MyOrdersScreen extends Component {
     this.handleCancelling = this.handleCancelling.bind(this);
     this.devideUpcomingAndHistory = this.devideUpcomingAndHistory.bind(this);
     this.fetchCustomerOrdersList = this.fetchCustomerOrdersList.bind(this);
+    this.renderBookAgain = this.renderBookAgain.bind(this);
+    this.renderGetDirections = this.renderGetDirections.bind(this);
   }
 
   componentDidMount() {
@@ -101,6 +103,34 @@ class MyOrdersScreen extends Component {
     })
   }
 
+  async bookAgain(item) {
+    const url = `${route}/business/getBusinessByID`;
+    const options = { 
+      method: 'POST', 
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({businessID: item.businessid})
+    };
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(data => {
+        this.props.navigation.navigate('Booking', {
+          serviceData: {
+            businessid: item.businessid,
+            durationminutes: item.durationminutes,
+            name: item.servicename,
+            serviceid: item.serviceid,
+          },
+          businessData: data.businessDetails
+        })
+      })
+      .catch(error => console.log(error))
+  }
+
   renderEmptySchedule() {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -116,6 +146,40 @@ class MyOrdersScreen extends Component {
           <Text style={styles.emptyListText}>Book your favorite services now!</Text>
         </View>
       </View>
+    )
+  }
+
+  renderGetDirections(item) {
+    return(
+      <TouchableOpacity
+        onPress={() => this.setState({ isPopupVisble: true, itemPressed: item })}
+        style={styles.getDirectionsButtonContainer}
+      >
+        <MaterialCommunityIcons
+          name="directions"
+          size={22}
+          color={colors.blue}
+          style={styles.getDirectionsIcon}
+        />
+        <Text style={styles.getDirectionsText}>Get Directions</Text>
+      </TouchableOpacity>
+    )
+  }
+
+  renderBookAgain(item) {
+    return(
+      <TouchableOpacity
+        onPress={() => this.bookAgain(item)}
+        style={styles.getDirectionsButtonContainer}
+      >
+        <Feather
+          name="repeat"
+          size={16}
+          color={colors.blue}
+          style={styles.getDirectionsIcon}
+        />
+        <Text style={styles.getDirectionsText}>Book Again</Text>
+      </TouchableOpacity>
     )
   }
 
@@ -164,20 +228,7 @@ class MyOrdersScreen extends Component {
             </View>
             <Divider style={styles.divider} />
             <View style={styles.getDirectionsContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  this.setState({ isPopupVisble: true, itemPressed: item })
-                }}
-                style={styles.getDirectionsButtonContainer}
-              >
-                <MaterialCommunityIcons
-                  name="directions"
-                  size={25}
-                  color={colors.blue}
-                  style={styles.getDirectionsIcon}
-                />
-                <Text style={styles.getDirectionsText}>Get Directions</Text>
-              </TouchableOpacity>
+              {this.state.view === 'UPCOMING' ? this.renderGetDirections(item) : this.renderBookAgain(item)}
             </View>
           </View>
       </TouchableOpacity>
