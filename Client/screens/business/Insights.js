@@ -101,6 +101,10 @@ class Insights extends Component {
                data = {statistics.bestcustomer}
                colors = {this.state.browncolors}
               />
+              <LineDistribution
+                name = "Rating Over Time"
+                data = {statistics.ratingcount}
+              />
           </ScrollView>
         </SafeAreaView>
       )

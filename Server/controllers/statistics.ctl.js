@@ -492,10 +492,10 @@ getAllStatisticsByBusinessID = (req, res) =>{
         var j = m
         while (j != 12){
             j++
-            businessincome.category.push(j.toString())
+            businessincome.category.push(j)
         }
         for (var i = 0; i < m; i++)
-        businessincome.category.push((i + 1).toString())
+        businessincome.category.push((i + 1))
         
         var amount = new Array(12).fill(0)   
         rows.map((row) => {
@@ -543,16 +543,30 @@ getAllStatisticsByBusinessID = (req, res) =>{
 
     db.query(ratingQuery).then(result => {
         var ratingcount = { category: [], amount: [] }
-        var months = Array.from(Array(12).keys())
+        var months = []
+        m = moment().month() +1
+        var j = m
+        while (j != 12){
+            j++
+            months.push(j)
+        }
+        for (var i = 0; i < m; i++){
+            months.push(i+1)
+        }
         var row = result.rows[0]
         var amount = new Array(12);
         var j = 11
         for(var i = 0; i < 12; i++){
-            amount[j] = row["month"+i]
+            amount[j] = parseFloat(row["month"+i])
             j--
         }
-        ratingcount.category.push(months)
-        ratingcount.amount.push(amount)
+        amount.forEach (function(rate, index) {
+        if(isNaN(rate))
+            amount[index] = 0
+        })
+        
+        ratingcount.category = months
+        ratingcount.amount = amount
         finalResult.statistics.ratingcount = ratingcount;
         res.json(finalResult)
     })
