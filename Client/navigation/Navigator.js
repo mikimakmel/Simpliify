@@ -88,6 +88,15 @@ function businessScheduleStack() {
   );
 }
 
+function MyBusinessStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: true }}>
+      <Stack.Screen name="MyBusiness" component={MyBusiness} options={{title: 'My Business'}}/>
+      <Stack.Screen name="BusinessForm" component={BusinessForm} options={{headerShown: true, title: 'Edit Business'}}/>
+    </Stack.Navigator>
+  );
+}
+
 function customerScheduleStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -198,7 +207,7 @@ function BusinessBottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Home"
-        component={MyBusiness}
+        component={MyBusinessStack}
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => (

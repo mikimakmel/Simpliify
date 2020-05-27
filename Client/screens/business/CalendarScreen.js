@@ -4,9 +4,10 @@ import { Agenda } from 'react-native-calendars';
 import { ListItem } from 'react-native-elements';
 import PhoneCall from 'react-native-phone-call';
 import { Popup } from 'react-native-map-link';
-var moment = require('moment');
+import moment from 'moment';
 import colors from '../../constants/Colors';
 import styles from '../../styles/business/Style_CalendarScreen';
+import route from '../../routeConfig';
 
 class CalendarScreen extends Component {
   constructor(props) {
@@ -19,6 +20,7 @@ class CalendarScreen extends Component {
       orders: null
     };
     this.fetchAllOrders = this.fetchAllOrders.bind(this);
+    this.MapOrders = this.MapOrders.bind(this);
   }
 
   componentDidMount() {
@@ -26,6 +28,7 @@ class CalendarScreen extends Component {
   }
 
   async fetchAllOrders() {
+    this.setState({isLoading: true});
     const { BusinessID } = this.state;
 
     const url = `${route}/order/getAllBusinessOrders`;
@@ -42,12 +45,13 @@ class CalendarScreen extends Component {
     await fetch(request)
       .then(response => response.json())
       .then(data => {
+        // console.log(data)
         this.setState({orders: data});
       })
       .catch(error => console.log(error))
 
+    await this.MapOrders();
     this.setState({isLoading: false});
-    this.MapOrders();
   }
 
   MapOrders() {
@@ -135,22 +139,22 @@ class CalendarScreen extends Component {
         />
         <View style={{backgroundColor: statusColor, height: 2, width: '90%', borderRadius: 10, alignSelf: 'center', marginTop: 5}}/>
         {item.status === 'Confirmed' ? null : this.renderStatusIcon(item)}
-      <Popup
-            isVisible={this.state.isPopupVisble}
-            onCancelPressed={() => this.setState({ isPopupVisble: false })}
-            onAppPressed={() => this.setState({ isPopupVisble: false })}
-            onBackButtonPressed={() => this.setState({ isPopupVisble: false })}
-            modalProps={{ animationIn: 'slideInUp' }}
-            appsWhiteList={[]}
-            options={{
-              alwaysIncludeGoogle: true,
-              latitude: 32.1563346,
-              longitude: 34.8814187,
-              title: item.address,
-              dialogTitle: `${item.address}`,
-              cancelText: 'Cancel'
-            }}
-          />
+        <Popup
+          isVisible={this.state.isPopupVisble}
+          onCancelPressed={() => this.setState({ isPopupVisble: false })}
+          onAppPressed={() => this.setState({ isPopupVisble: false })}
+          onBackButtonPressed={() => this.setState({ isPopupVisble: false })}
+          modalProps={{ animationIn: 'slideInUp' }}
+          appsWhiteList={[]}
+          options={{
+            alwaysIncludeGoogle: true,
+            latitude: 32.1563346,
+            longitude: 34.8814187,
+            title: item.address,
+            dialogTitle: `${item.address}`,
+            cancelText: 'Cancel'
+          }}
+        />
       </TouchableOpacity>
     );
   }
@@ -159,14 +163,14 @@ class CalendarScreen extends Component {
     if(item.status === 'Cancelled') {
       return(
         <View style={styles.statusIcon}>
-          <Text style={styles.statusText, {color: colors.red}}>Cancelled</Text>
+          <Text style={[styles.statusText, {color: colors.red}]}>Cancelled</Text>
         </View>
       )
     }
     if(item.status === 'Success') {
       return(
         <View style={styles.statusIcon}>
-          <Text style={styles.statusText, {color: colors.green03}}>Paid</Text>
+          <Text style={[styles.statusText, {color: colors.green03}]}>Paid</Text>
         </View>
       )
     }
@@ -185,20 +189,20 @@ class CalendarScreen extends Component {
     else {
       return (
         <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-        <StatusBar barStyle="dark-content"/>
-        <Agenda
-          style={styles.calendar}
-          items={this.state.items}
-          loadItemsForMonth={this.loadItems.bind(this)}
-          renderItem={this.renderItem.bind(this)}
-          theme={{
-            backgroundColor: colors.gray01,
-            agendaKnobColor: colors.red,
-            dotColor: colors.lightBlack,
-            selectedDayBackgroundColor: colors.red,
-          }}
-        />
-      </SafeAreaView>
+          <StatusBar barStyle="dark-content"/>
+          <Agenda
+            style={styles.calendar}
+            items={this.state.items}
+            loadItemsForMonth={this.loadItems.bind(this)}
+            renderItem={this.renderItem.bind(this)}
+            theme={{
+              backgroundColor: colors.gray01,
+              agendaKnobColor: colors.red,
+              dotColor: colors.lightBlack,
+              selectedDayBackgroundColor: colors.red,
+            }}
+          />
+        </SafeAreaView>
       );
     }
   }
