@@ -353,11 +353,22 @@ statRating = (req, res) =>{
                                 GROUP BY Business`);
     db.query(query)
         .then(result => {
-            var months = Array.from(Array(12).keys())
+            
+            var months = []
+            m = moment().month() +1
+            var j = m
+            while (j != 12){
+                j++
+                months.push(j)
+            }
+            for (var i = 0; i < m; i++){
+                months.push(i+1)
+            }
+
             var row = result.rows[0]
             var amount = new Array(12);
             var j = 11
-            console.log(row["month0"])
+
             for(var i = 0; i < 12; i++){
                 amount[j] = row["month"+i]
                 j--
