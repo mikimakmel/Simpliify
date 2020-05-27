@@ -121,7 +121,7 @@ module.exports = {
 
         const query = 
             `SELECT Status, Starttime AT TIME ZONE 'UTC' as Starttime, Starttime + INTERVAL '1 MINUTES' * DurationMinutes AS Endtime,
-            Firstname || ' ' || Lastname AS FullName, Service.Name AS ServiceName, Users.Phone, Street || ', ' || City AS Address
+            Firstname || ' ' || Lastname AS Name, Service.Name AS Service, Users.Phone, Street || ', ' || City AS Address
             FROM Orders 
             INNER JOIN Business ON (Orders.Business = Business.BusinessID)
             INNER JOIN Service ON (Orders.Service= Service.ServiceID)

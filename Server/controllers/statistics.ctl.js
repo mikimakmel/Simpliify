@@ -391,8 +391,15 @@ getAllStatisticsByBusinessID = (req, res) =>{
     `SELECT Business, EXTRACT(HOUR FROM Starttime) as Hour, COUNT(EXTRACT(HOUR FROM Starttime)) AS Popularity FROM Orders WHERE Business=${businessID} GROUP BY Business, Hour ORDER BY Popularity DESC`;
     const customersQuery = 
     `SELECT Orders.Customer, CONCAT(Users.Firstname, ' ',Users.Lastname) AS Name, SUM(Service.Price) AS Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) LEFT OUTER JOIN Users ON (Orders.Customer= Users.UserID) WHERE Orders.Business=${businessID} AND Status NOT IN ('Cancelled') GROUP BY Customer, Users.Firstname, Users.Lastname ORDER BY Total DESC`;
-    const ratingQuery =
-    `SELECT Rating, COUNT(Rating) FROM Review WHERE Business=${businessID} GROUP BY Rating ORDER BY Rating DESC`;
+    var ratingQuery = `SELECT
+                    (SELECT AVG(rating)::NUMERIC(2,1) FROM review WHERE Business=${businessID} AND Reviewedat BETWEEN (SELECT MIN(Reviewedat) FROM Review) AND NOW() GROUP BY Business) AS month0,`
+    for (var i = 1; i<=10; i++){
+        ratingQuery = ratingQuery.concat(" ", `(SELECT AVG(rating)::NUMERIC(2,1) FROM review WHERE Business=${businessID} AND Reviewedat BETWEEN (SELECT MIN(Reviewedat) FROM Review) AND (NOW() - INTERVAL '` + i + ` MONTHS') GROUP BY Business) AS month`+ i +`,`)
+    }
+    ratingQuery = ratingQuery.concat(" ", `(SELECT AVG(rating)::NUMERIC(2,1) FROM review WHERE Business=${businessID} AND Reviewedat BETWEEN (SELECT MIN(Reviewedat) FROM Review) AND (NOW() - INTERVAL '11 MONTHS') GROUP BY Business) AS month11
+                                FROM review
+                                WHERE Business=${businessID}
+                                GROUP BY Business`);
 
     var finalResult = {
         statistics: {
@@ -525,11 +532,16 @@ getAllStatisticsByBusinessID = (req, res) =>{
 
     db.query(ratingQuery).then(result => {
         var ratingcount = { category: [], amount: [] }
-        var rows = result.rows
-        rows.map((row) => {
-            ratingcount.category.push(row.rating)
-            ratingcount.amount.push(parseInt(row.count))
-        })
+        var months = Array.from(Array(12).keys())
+        var row = result.rows[0]
+        var amount = new Array(12);
+        var j = 11
+        for(var i = 0; i < 12; i++){
+            amount[j] = row["month"+i]
+            j--
+        }
+        ratingcount.category.push(months)
+        ratingcount.amount.push(amount)
         finalResult.statistics.ratingcount = ratingcount;
         res.json(finalResult)
     })
