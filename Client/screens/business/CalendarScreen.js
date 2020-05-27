@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Text, Alert, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { Text, Alert, TouchableOpacity, SafeAreaView, StatusBar, ActivityIndicator, View } from 'react-native';
 import { Agenda } from 'react-native-calendars';
-import { ListItem, Rating, Overlay } from 'react-native-elements';
-import { View } from 'react-native-animatable';
+import { ListItem } from 'react-native-elements';
 import PhoneCall from 'react-native-phone-call';
 import { Popup } from 'react-native-map-link';
 var moment = require('moment');
@@ -13,161 +12,45 @@ class CalendarScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      BusinessID: 13,
       items: {},
       isPopupVisble: false,
-      orders: [
-        {
-              "status": "Cancelled",
-              "starttime": "2020-04-17T01:38:22.000Z",
-              "endtime": "2020-04-16T23:08:22.000Z",
-              "name": "Jarvis Flatt",
-              "service": "Sports Services",
-              "phone": "0548843282",
-              "address": "15 Yetzira, Rehovot"
-          },
-          {
-              "status": "Success",
-              "starttime": "2020-04-17T08:16:07.000Z",
-              "endtime": "2020-04-17T05:46:07.000Z",
-              "name": "Cristin Jeremiah",
-              "service": "Beauty Product Management",
-              "phone": "0502996001",
-              "address": "5 Hashalom, Tel Aviv"
-          },
-          {
-              "status": "Success",
-              "starttime": "2020-04-18T07:22:03.000Z",
-              "endtime": "2020-04-18T05:52:03.000Z",
-              "name": "Claudianus Peealess",
-              "service": "Jewelery Legal",
-              "phone": "0504512360",
-              "address": "98 Rabbi Akiva, Bnei Brak"
-          },
-          {
-              "status": "Success",
-              "starttime": "2020-05-05T14:00:00.000Z",
-              "endtime": "2020-05-05T12:00:00.000Z",
-              "name": "Sarena Blinde",
-              "service": "Grocery Legal",
-              "phone": "0506156522",
-              "address": "18 Hachalutzim, Tel Aviv"
-          },
-          {
-              "status": "Success",
-              "starttime": "2020-05-05T15:00:00.000Z",
-              "endtime": "2020-05-05T13:00:00.000Z",
-              "name": "Sarena Blinde",
-              "service": "Grocery Legal",
-              "phone": "0506156522",
-              "address": "18 Hachalutzim, Tel Aviv"
-          },
-          {
-              "status": "Cancelled",
-              "starttime": "2020-05-05T16:56:59.000Z",
-              "endtime": "2020-05-05T14:26:59.000Z",
-              "name": "Carry Damarell",
-              "service": "Sports Research and Development",
-              "phone": "0505965707",
-              "address": "94 Em Hamoshavot, Petah Tikva"
-          },
-          {
-              "status": "Success",
-              "starttime": "2020-05-11T14:09:55.000Z",
-              "endtime": "2020-05-11T12:39:55.000Z",
-              "name": "Dulciana Humpage",
-              "service": "Music Legal",
-              "phone": "0504799763",
-              "address": "15 Yetzira, Rehovot"
-          },
-          {
-              "status": "Success",
-              "starttime": "2020-05-23T13:00:00.000Z",
-              "endtime": "2020-05-23T11:30:00.000Z",
-              "name": "Miki Makmel",
-              "service": "Jewelery Legal",
-              "phone": "0525368689",
-              "address": "HaKishon, Tel Aviv"
-          },
-          {
-              "status": "Success",
-              "starttime": "2020-05-23T14:30:00.000Z",
-              "endtime": "2020-05-23T13:00:00.000Z",
-              "name": "Miki Makmel",
-              "service": "Jewelery Legal",
-              "phone": "0525368689",
-              "address": "HaKishon, Tel Aviv"
-          },
-          {
-              "status": "Success",
-              "starttime": "2020-05-23T16:09:01.000Z",
-              "endtime": "2020-05-23T14:09:01.000Z",
-              "name": "Lovell Sellor",
-              "service": "Kids Training",
-              "phone": "0544595363",
-              "address": "12 Harab Lewin, Afula"
-          },
-          {
-              "status": "Success",
-              "starttime": "2020-05-24T06:51:50.606Z",
-              "endtime": "2020-05-24T05:21:50.606Z",
-              "name": "Miki Makmel",
-              "service": "Jewelery Legal",
-              "phone": "0525368689",
-              "address": "HaKishon, Tel Aviv"
-          },
-          {
-              "status": "Cancelled",
-              "starttime": "2020-05-25T13:20:21.696Z",
-              "endtime": "2020-05-25T11:50:21.696Z",
-              "name": "Miki Makmel",
-              "service": "Jewelery Legal",
-              "phone": "0525368689",
-              "address": "HaKishon, Tel Aviv"
-          },
-          {
-              "status": "Confirmed",
-              "starttime": "2020-05-26T12:00:00.000Z",
-              "endtime": "2020-05-26T10:30:00.000Z",
-              "name": "Miki Makmel",
-              "service": "Music Legal",
-              "phone": "0525368689",
-              "address": "HaKishon, Tel Aviv"
-          },
-          {
-              "status": "Success",
-              "starttime": "2020-05-26T13:30:00.000Z",
-              "endtime": "2020-05-26T12:00:00.000Z",
-              "name": "Miki Makmel",
-              "service": "Music Legal",
-              "phone": "0525368689",
-              "address": "HaKishon, Tel Aviv"
-          },
-          {
-              "status": "Confirmed",
-              "starttime": "2020-05-28T15:00:00.000Z",
-              "endtime": "2020-05-28T13:30:00.000Z",
-              "name": "Miki Makmel",
-              "service": "Jewelery Legal",
-              "phone": "0525368689",
-              "address": "HaKishon, Tel Aviv"
-          },
-          {
-              "status": "Confirmed",
-              "starttime": "2020-05-28T16:30:00.000Z",
-              "endtime": "2020-05-28T15:00:00.000Z",
-              "name": "Miki Makmel",
-              "service": "Jewelery Legal",
-              "phone": "0525368689",
-              "address": "HaKishon, Tel Aviv"
-        }]
+      isLoading: true,
+      orders: null
     };
+    this.fetchAllOrders = this.fetchAllOrders.bind(this);
   }
 
   componentDidMount() {
     this.fetchAllOrders();
   }
 
-  fetchAllOrders() {
+  async fetchAllOrders() {
+    const { BusinessID } = this.state;
+
+    const url = `${route}/order/getAllBusinessOrders`;
+    const options = { 
+      method: 'POST', 
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({businessID: BusinessID})
+    };
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({orders: data});
+      })
+      .catch(error => console.log(error))
+
+    this.setState({isLoading: false});
+    this.MapOrders();
+  }
+
+  MapOrders() {
     let temp = this.state.items;
     this.state.orders.map((item) => {
       let start = moment(item.starttime).format('HH:mm')
@@ -224,21 +107,21 @@ class CalendarScreen extends Component {
         style={[styles.item, {opacity: item.status !== 'Confirmed' ? 0.8 : 1}]} 
         onPress={() => Alert.alert('Contact Customer', '',
         [
-            {
-              text: 'Call - ' + item.phone,
-              onPress: () => {
+          {
+            text: 'Call - ' + item.phone,
+            onPress: () => {
               const args = {
                 number: item.phone,
                 prompt: false
               }
-              PhoneCall(args).catch(console.error)
-            }
-            },
-            {
-              text: 'Navigate - ' + item.address,
-              onPress: () => this.setState({ isPopupVisble: true })
-            },
-            { text: 'Cancel', onPress: () => console.log('OK Pressed'), style: 'cancel' }
+            PhoneCall(args).catch(console.error)
+          }
+          },
+          {
+            text: 'Navigate - ' + item.address,
+            onPress: () => this.setState({ isPopupVisble: true })
+          },
+          { text: 'Cancel', onPress: () => console.log('OK Pressed'), style: 'cancel' }
         ],
         { cancelable: false }
         )} 
@@ -290,8 +173,18 @@ class CalendarScreen extends Component {
   }
 
   render() {
-    return (
-      <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    const { isLoading } = this.state;
+
+    if(isLoading) {
+      return(
+        <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', backgroundColor: colors.white }}>
+          <ActivityIndicator size="large" color={colors.red}/>
+        </View>
+      )
+    }
+    else {
+      return (
+        <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
         <StatusBar barStyle="dark-content"/>
         <Agenda
           style={styles.calendar}
@@ -306,7 +199,8 @@ class CalendarScreen extends Component {
           }}
         />
       </SafeAreaView>
-    );
+      );
+    }
   }
 }
 
