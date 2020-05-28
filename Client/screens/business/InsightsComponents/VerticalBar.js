@@ -4,6 +4,7 @@ import { ListItem } from 'react-native-elements';
 import { BarChart, XAxis, Grid } from 'react-native-svg-charts'
 import * as scale from 'd3-scale'
 import styles from './Style_Statistics'
+import colors from '../../../constants/Colors';
 
 class VerticalBar extends Component {
   constructor(props) {
@@ -26,17 +27,20 @@ class VerticalBar extends Component {
     {
       temp.push({key: this.props.data.category[i] + ' (' + this.props.data.amount[i] + ')',
                  value: this.props.data.amount[i],
-                 svg: { fill: this.props.colors[i % this.props.colors.length] },},)
+                 svg: { fill: colors.redColors[(i % colors.redColors.length)] },},)
     }
 
     this.setState({data: temp})
   }
   
   renderItem = ({ item }) => (
-    <ListItem
-      title = {item.key}
-      leftAvatar = {<View style={[styles.itemStyle, {backgroundColor:item.svg.fill}]}></View>}
-    />
+    <View>
+      <ListItem
+        title = {item.key}
+        leftAvatar = {<View style={[styles.itemStyle, {backgroundColor:item.svg.fill}]}></View>}
+      />
+       <View style = {styles.horizontalLine}/>
+    </View>
   )
 
   RenderPie()
@@ -57,13 +61,13 @@ class VerticalBar extends Component {
 
   render() {
     return(
-        <View>
+      <View style={styles.chart}>
             <View>
               <Text style={styles.headline}>{this.props.name}</Text>
             </View>
 
-            <View>
-                {this.RenderPie()}
+            <View style={styles.itemMargin}>
+              {this.RenderPie()}
             </View>
 
             <View style={{ height: 300, paddingVertical: 16 }}>
@@ -83,7 +87,6 @@ class VerticalBar extends Component {
                     labelStyle={ { color: 'black' } }
                 />
             </View>
-            <View style = {styles.horizontalLine}/>
         </View>
     )
   }

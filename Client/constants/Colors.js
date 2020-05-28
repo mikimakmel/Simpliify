@@ -20,4 +20,7 @@ export default {
   blue: '#4995cd',
   red: '#FF5A5F',
   yellow: '#FEB726',
+  redColors: [
+    '#000000','#5d0003','#82191d', '#a80006','#ff4146','#ff5a5f', '#ff7478','#ff8d90','#ffa7a9',
+  ]
 };

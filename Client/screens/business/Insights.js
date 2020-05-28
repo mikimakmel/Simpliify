@@ -15,8 +15,6 @@ class Insights extends Component {
     this.state =
     {
       BusinessID: 13,
-      purplecolors: ['#600080', '#9900cc', '#c61aff', '#d966ff', '#ecb3ff'],
-      browncolors: ['#603101', '#7a3f02', '#924b03', '#c76b0f', '#f6d193', '#fae8c9'],
       statistics: null,
       isLoading: true
     };
@@ -63,29 +61,25 @@ class Insights extends Component {
     }
     else {
       return(
-        <SafeAreaView>
+        <SafeAreaView style={{backgroundColor: colors.gray01}}>
            <ScrollView>
              <Text style={styles.headline}> {statistics.dailycounter} Page Visitors Today </Text>
              <View style = {styles.horizontalLine}/>
              <PercentPie
                name = "Gender Distribution"
                data = {statistics.gendercount}
-               colors = {this.state.purplecolors}
              />
               <DoughnutChart
                name = "Income Per Service"
                data = {statistics.serviceincome}
-               colors = {this.state.purplecolors}
               />
               <HorizontalBar
                 name = "Customers' Age Distribution"
                 data = {statistics.customersage}
-                colors = {this.state.purplecolors}
               />
               <HorizontalBar
                 name = "Customers' City Distribution"
                 data = {statistics.citycount}
-                colors = {this.state.purplecolors}
               />
               <LineDistribution
                 name = "Business's Monthly Income"
@@ -94,12 +88,10 @@ class Insights extends Component {
               <VerticalBar
                 name = "Strongest Hours"
                 data = {statistics.stronghours}
-                colors = {this.state.purplecolors}
               />
               <HorizontalBar
                name = "Top 10 Customers"
                data = {statistics.bestcustomer}
-               colors = {this.state.browncolors}
               />
               <LineDistribution
                 name = "Rating Over Time"

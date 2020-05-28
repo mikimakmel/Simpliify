@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { Grid, LineChart, XAxis, YAxis } from 'react-native-svg-charts'
 import * as scale from 'd3-scale'
 import styles from './Style_Statistics'
+import colors from '../../../constants/Colors';
 
 class LineDistribution extends Component {
   constructor(props) {
@@ -35,7 +36,7 @@ class LineDistribution extends Component {
 
   render() {
     return(
-        <View>
+        <View style={styles.chart}>
             <View>
               <Text style={styles.headline}>{this.props.name}</Text>
             </View>
@@ -52,23 +53,20 @@ class LineDistribution extends Component {
                         style={{ flex: 1 }}
                         data={this.props.data.amount}
                         contentInset={this.state.verticalContentInset}
-                        svg={{ stroke: 'rgb(134, 65, 244)' }}
+                        svg={{ stroke: colors.redColors[0] }}
                     >
                         <Grid/>
                     </LineChart>
                     <XAxis
                         style={{ marginHorizontal: -10, height: this.state.xAxisHeight }}
                         data={this.state.data}
-                        xAccessor={({ item, index }) => item.key}
+                        xAccessor={({ item }) => item.key}
                         scale={scale.scaleBand}
                         contentInset={{ left: 10, right: 10 }}
                         svg={this.state.axesSvg}
                     />
                 </View>
             </View>
-
-            <View style = {styles.horizontalLine}/>
-
         </View>
     )
   }

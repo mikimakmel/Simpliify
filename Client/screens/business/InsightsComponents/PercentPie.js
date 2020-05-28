@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import { View, FlatList, Text } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { PieChart } from 'react-native-svg-charts'
-import { Path, Text as Txt } from 'react-native-svg';
+import { Text as Txt } from 'react-native-svg';
 import styles from './Style_Statistics'
+import colors from '../../../constants/Colors';
 
 class PercentPie extends Component {
   constructor(props) {
@@ -28,7 +29,7 @@ class PercentPie extends Component {
     {
       temp.push({key: this.props.data.category[i] + ' (' + this.props.data.amount[i] + ')',
       value: this.props.data.amount[i],
-      svg: { fill: this.props.colors[i % this.props.colors.length] },},)
+      svg: { fill: colors.redColors[(i % colors.redColors.length) * 2] },},)
     }
     
     this.setState({data: temp})
@@ -36,10 +37,14 @@ class PercentPie extends Component {
   }
 
   renderItem = ({ item }) => (
-    <ListItem
-      title = {item.key}
-      leftAvatar = {<View style={[styles.itemStyle, {backgroundColor:item.svg.fill}]}></View>}
-    />
+    <View>
+      <ListItem
+        title = {item.key}
+        leftAvatar = {<View style={[styles.itemStyle, {backgroundColor:item.svg.fill}]}></View>}
+        style={{backgroundColor: item.svg.fill}}
+      />
+       <View style = {styles.horizontalLine}/>
+    </View>
   )
 
   RenderPie()
@@ -86,13 +91,13 @@ class PercentPie extends Component {
     }
 
     return(
-        <View>
+        <View style={styles.chart}>
             <View>
               <Text style={styles.headline}>{this.props.name}</Text>
             </View>
 
-            <View>
-            {this.RenderPie()}
+            <View style={styles.itemMargin}>
+              {this.RenderPie()}
             </View>
 
             <PieChart
@@ -104,8 +109,6 @@ class PercentPie extends Component {
              >
              <Labels/>
              </PieChart>
-
-             <View style = {styles.horizontalLine}/>
         </View>
     )
   }

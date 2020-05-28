@@ -3,6 +3,7 @@ import { View, FlatList, Text} from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { BarChart, Grid } from 'react-native-svg-charts'
 import styles from './Style_Statistics'
+import colors from '../../../constants/Colors';
 
 class HorizontalBar extends Component {
   constructor(props) {
@@ -25,17 +26,20 @@ class HorizontalBar extends Component {
     {
       temp.push({key: this.props.data.category[i] + ' (' + this.props.data.amount[i] + ')',
                  value: this.props.data.amount[i],
-                 svg: { fill: this.props.colors[i % this.props.colors.length] },},)
+                 svg: { fill: colors.redColors[(i % colors.redColors.length)] },},)
     }
 
     this.setState({data: temp})
   }
 
   renderItem = ({ item }) => (
-    <ListItem
-      title = {item.key}
-      leftAvatar = {<View style={[styles.itemStyle, {backgroundColor:item.svg.fill}]}></View>}
-    />
+    <View>
+      <ListItem
+        title = {item.key}
+        leftAvatar = {<View style={[styles.itemStyle, {backgroundColor:item.svg.fill}]}></View>}
+      />
+       <View style = {styles.horizontalLine}/>
+    </View>
   )
 
   RenderPie()
@@ -56,31 +60,29 @@ class HorizontalBar extends Component {
 
   render() {
     return(
+      <View style={styles.chart}>
         <View>
-            <View>
-              <Text style={styles.headline}>{this.props.name}</Text>
-            </View>
-
-            <View>
-            {this.RenderPie()}
-            </View>
-
-            <View style={{ flexDirection: 'row', height: 300, paddingVertical: 16 }}>
-                <BarChart
-                    style={{ flex: 1, marginLeft: 8, marginRight: 8 }}
-                    data={this.state.data}
-                    horizontal={true}
-                    yAccessor={({ item }) => item.value}
-                    contentInset={{ top: 10, bottom: 10 }}
-                    spacing={0.2}
-                    gridMin={0}
-                >
-                    <Grid direction={Grid.Direction.VERTICAL}/>
-                </BarChart>
-            </View>
-
-            <View style = {styles.horizontalLine}/>
+          <Text style={styles.headline}>{this.props.name}</Text>
         </View>
+
+        <View style={styles.itemMargin}>
+          {this.RenderPie()}
+        </View>
+
+        <View style={{ flexDirection: 'row', height: 300, paddingVertical: 16 }}>
+          <BarChart
+              style={{ flex: 1, marginLeft: 8, marginRight: 8 }}
+              data={this.state.data}
+              horizontal={true}
+              yAccessor={({ item }) => item.value}
+              contentInset={{ top: 10, bottom: 10 }}
+              spacing={0.2}
+              gridMin={0}
+          >
+              <Grid direction={Grid.Direction.VERTICAL}/>
+          </BarChart>
+        </View>
+    </View>
     )
   }
 }
