@@ -26,7 +26,6 @@ statByGender = (req, res) => {
         }
 
         var rows = result.rows
-        console.log(rows)
         rows.map((row) => {
             if (row.gender == 'Female')
                 data["Female"] += 1
@@ -107,7 +106,6 @@ statByAge = (req, res) => {
 
     db.query(query)
         .then(result => {
-            console.log(result.rows)
             var data = {
                 "13-17": 0,
                 "18-24": 0,
@@ -210,6 +208,7 @@ statTotalIncome = (req, res) => {
     db.query(query)
         .then(result => {
             var rows = result.rows
+            console.log(rows)
 
             var months = []
             m = moment().month() +1
@@ -263,7 +262,6 @@ statStrongHours = (req, res) => {
                 "18-24": 0,
             }
             var rows = result.rows
-            console.log(rows)
             rows.map((row) => {
                 if (row.hour > 0 && row.hour <=9){
                     data["0-9"] += parseInt(row.popularity, 10)
@@ -407,7 +405,7 @@ getAllStatisticsByBusinessID = (req, res) =>{
     const cityQuery =
     `SELECT Address.City, COUNT(Address.City) FROM Orders INNER JOIN Users ON (Orders.Customer = Users.UserID) INNER JOIN Address ON (Users.Address = Address.AddressID) WHERE Orders.Business=${businessID} GROUP BY Address.City ORDER BY Count DESC`
     const incomeQuery =
-    `SELECT Orders.Business, Orders.Starttime::date, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${businessID} AND Status='Success' AND Orders.Starttime::date BETWEEN (NOW() - INTERVAL '1 YEAR') AND NOW() GROUP BY Orders.Starttime::date, Orders.Business ORDER BY Starttime`;
+    `SELECT Orders.Business, TO_CHAR(Orders.Starttime::date, 'YYYY-MM-DD') as starttime, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${businessID} AND Status='Success' AND Orders.Starttime::date BETWEEN (NOW() - INTERVAL '1 YEAR') AND NOW() GROUP BY Orders.Starttime::date, Orders.Business ORDER BY Starttime`;
     const hoursQuery =
     `SELECT Business, EXTRACT(HOUR FROM Starttime) as Hour, COUNT(EXTRACT(HOUR FROM Starttime)) AS Popularity FROM Orders WHERE Business=${businessID} GROUP BY Business, Hour ORDER BY Popularity DESC`;
     const customersQuery = 
@@ -484,18 +482,21 @@ getAllStatisticsByBusinessID = (req, res) =>{
         var rows = result.rows
         rows.map((row) => {
             if (row.age >= 13 && row.age <= 17) { data["13-17"] += 1 }
-            else if (row.age >= 18 && row.age <= 24) { data["18-24"] += 1 }
-            else if (row.age >= 25 && row.age <= 34) { data["25-34"] += 1 }
-            else if (row.age >= 35 && row.age <= 44) { data["35-44"] += 1 }
-            else if (row.age >= 45 && row.age <= 54) { data["45-54"] += 1 }
-            else if (row.age >= 55 && row.age <= 65) { data["55-65"] += 1 }
-            else if (row.age >= 65){ data["65+"] += 1 }
+            if (row.age >= 18 && row.age <= 24) { data["18-24"] += 1 }
+            if (row.age >= 25 && row.age <= 34) { data["25-34"] += 1 }
+            if (row.age >= 35 && row.age <= 44) { data["35-44"] += 1 }
+            if (row.age >= 45 && row.age <= 54) { data["45-54"] += 1 }
+            if (row.age >= 55 && row.age <= 65) { data["55-65"] += 1 }
+            if (row.age >= 65){ data["65+"] += 1 }
         })
         var customersage = { category: [], amount: [] }
 
         Object.keys(data).forEach((key) => {
-            customersage.category.push(key)
-            customersage.amount.push(parseInt(data[key]))
+            if(parseInt(data[key]) > 0)
+            {
+                customersage.category.push(key)
+                customersage.amount.push(parseInt(data[key]))
+            }
         });
         finalResult.statistics.customersage = customersage;
     })
@@ -522,12 +523,14 @@ getAllStatisticsByBusinessID = (req, res) =>{
             businessincome.category.push(j)
         }
         for (var i = 0; i < m; i++)
-        businessincome.category.push((i + 1))
+            businessincome.category.push((i + 1))
         
+            
+        // console.log(businessincome.category)
         var amount = new Array(12).fill(0)   
         rows.map((row) => {
             var date = new Date(row.starttime)
-            const index = businessincome.category.findIndex((element) => date.getUTCMonth() == element) +1
+            const index = businessincome.category.findIndex((element) => date.getMonth() + 1 == element)
             amount[index] += parseInt(row.total, 10)
         })
         
@@ -550,8 +553,10 @@ getAllStatisticsByBusinessID = (req, res) =>{
         })
         stronghours = { category: [], amount: [] }
         Object.keys(data).forEach((key) => {
-            stronghours.category.push(key)
-            stronghours.amount.push(parseInt(data[key]))
+            if(parseInt(data[key]) > 0) {
+                stronghours.category.push(key)
+                stronghours.amount.push(parseInt(data[key]))
+            }
         });
         finalResult.statistics.stronghours = stronghours;
     })
@@ -571,7 +576,7 @@ getAllStatisticsByBusinessID = (req, res) =>{
     db.query(ratingQuery).then(result => {
         var ratingcount = { category: [], amount: [] }
         var months = []
-        m = moment().month() +1
+        m = moment().month() + 1
         var j = m
         while (j != 12){
             j++
