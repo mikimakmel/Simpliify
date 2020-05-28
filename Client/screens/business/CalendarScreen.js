@@ -13,7 +13,7 @@ class CalendarScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      BusinessID: 13,
+      BusinessID: 174,
       items: {},
       isPopupVisble: false,
       isLoading: true,
@@ -59,7 +59,7 @@ class CalendarScreen extends Component {
     this.state.orders.map((item) => {
       let start = moment(item.starttime).format('HH:mm')
       let end = moment(item.endtime).format('HH:mm')
-      let duration = end.concat(' - ', start)
+      let duration = start.concat(' - ', end)
 
       if(!temp[moment(item.starttime).format('YYYY-MM-DD')])
         temp[moment(item.starttime).format('YYYY-MM-DD')] = []

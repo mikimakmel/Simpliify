@@ -15,24 +15,34 @@ statByGender = (req, res) => {
     console.log("getCustomersSortedByGender()");
 
     const businessID = req.body.businessID;
-    const query = `SELECT Gender, COUNT(Gender) FROM Orders
-                   LEFT OUTER JOIN Users ON (Orders.customer = Users.UserID)
-                   WHERE
-                   Business=${businessID} GROUP BY Gender`;
+    const query = `SELECT DISTINCT Customer, Gender FROM Orders
+                   LEFT OUTER JOIN Users ON (Orders.customer = Users.UserID) WHERE Business=${businessID}`;
     
     db.query(query)
     .then(result => {
-        var gendercount = 
-            {
-                category: [],
-                amount: [],
-            }
-        var rows = result.rows
-        rows.map((row) => {
-            gendercount.category.push(row.gender)
-            gendercount.amount.push(row.count)
+        var data = {
+            "Female": 0,
+            "Male": 0
+        }
 
+        var rows = result.rows
+        console.log(rows)
+        rows.map((row) => {
+            if (row.gender == 'Female')
+                data["Female"] += 1
+            if (row.gender == 'Male')
+                data["Male"] += 1
         })
+
+        var gendercount = {
+            category: [],
+            amount: []
+        }
+
+        Object.keys(data).forEach((key) => {
+            gendercount.category.push(key)
+            gendercount.amount.push(data[key])
+        });
         res.json([gendercount])
     })
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
@@ -389,7 +399,7 @@ getAllStatisticsByBusinessID = (req, res) =>{
     const counterQuery =
     `SELECT DailyCounter FROM Business WHERE BusinessID=${businessID}`;
     const genderQuery = 
-    `SELECT Gender, COUNT(Gender) FROM Orders LEFT OUTER JOIN Users ON (Orders.customer = Users.UserID) WHERE Business=${businessID} GROUP BY Gender`;
+    `SELECT DISTINCT Customer, Gender FROM Orders LEFT OUTER JOIN Users ON (Orders.customer = Users.UserID) WHERE Business=${businessID}`;
     const serviceQuery =
     `SELECT Orders.Business, Orders.Service, Service.Name, SUM(Service.Price) as Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) WHERE Orders.Business=${businessID} GROUP BY Orders.Service, Orders.Business, Service.Name`;
     const ageQuery =
@@ -401,7 +411,7 @@ getAllStatisticsByBusinessID = (req, res) =>{
     const hoursQuery =
     `SELECT Business, EXTRACT(HOUR FROM Starttime) as Hour, COUNT(EXTRACT(HOUR FROM Starttime)) AS Popularity FROM Orders WHERE Business=${businessID} GROUP BY Business, Hour ORDER BY Popularity DESC`;
     const customersQuery = 
-    `SELECT Orders.Customer, CONCAT(Users.Firstname, ' ',Users.Lastname) AS Name, SUM(Service.Price) AS Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) LEFT OUTER JOIN Users ON (Orders.Customer= Users.UserID) WHERE Orders.Business=${businessID} AND Status NOT IN ('Cancelled') GROUP BY Customer, Users.Firstname, Users.Lastname ORDER BY Total DESC`;
+    `SELECT Orders.Customer, CONCAT(Users.Firstname, ' ',Users.Lastname) AS Name, SUM(Service.Price) AS Total FROM Orders LEFT OUTER JOIN Service ON (Orders.Service = Service.ServiceID) LEFT OUTER JOIN Users ON (Orders.Customer= Users.UserID) WHERE Orders.Business=${businessID} AND Status NOT IN ('Cancelled') GROUP BY Customer, Users.Firstname, Users.Lastname ORDER BY Total DESC LIMIT 10`;
     var ratingQuery = `SELECT
                     (SELECT AVG(rating)::NUMERIC(2,1) FROM review WHERE Business=${businessID} AND Reviewedat BETWEEN (SELECT MIN(Reviewedat) FROM Review) AND NOW() GROUP BY Business) AS month0,`
     for (var i = 1; i<=10; i++){
@@ -431,12 +441,29 @@ getAllStatisticsByBusinessID = (req, res) =>{
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
 
     db.query(genderQuery).then(result => {
-            var gendercount = { category: [], amount: [] }
-            var rows = result.rows
-            rows.map((row) => {
-                gendercount.category.push(row.gender)
-                gendercount.amount.push(parseInt(row.count))
-            })
+        var data = {
+            "Female": 0,
+            "Male": 0
+        }
+
+        var rows = result.rows
+        rows.map((row) => {
+            if (row.gender == 'Female')
+                data["Female"] += 1
+            if (row.gender == 'Male')
+                data["Male"] += 1
+        })
+        
+        var gendercount = {
+            category: [],
+            amount: []
+        }
+
+        Object.keys(data).forEach((key) => {
+            gendercount.category.push(key)
+            gendercount.amount.push(data[key])
+        });
+
             finalResult.statistics.gendercount = gendercount;
         })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))

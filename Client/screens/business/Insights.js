@@ -14,7 +14,7 @@ class Insights extends Component {
     super(props);
     this.state =
     {
-      BusinessID: 13,
+      BusinessID: 174,
       statistics: null,
       isLoading: true
     };
