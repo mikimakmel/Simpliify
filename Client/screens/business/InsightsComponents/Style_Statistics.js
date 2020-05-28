@@ -9,11 +9,12 @@ export default StyleSheet.create({
   headline: {
     fontSize: 28,
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: 10
   },
   chart: {
-    backgroundColor: colors.red  + '77',
+    // backgroundColor: colors.gray06,
+    backgroundColor: colors.white,
     borderRadius: 50,
     margin: 20
   },
@@ -23,5 +24,12 @@ export default StyleSheet.create({
   itemMargin: {
     marginLeft: 20,
     marginRight: 20,
+  },
+  viewers: {
+    fontSize: 30,
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+    color: colors.white
   }
 })

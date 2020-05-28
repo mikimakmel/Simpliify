@@ -61,10 +61,9 @@ class Insights extends Component {
     }
     else {
       return(
-        <SafeAreaView style={{backgroundColor: colors.gray01}}>
+        <SafeAreaView style={{backgroundColor: colors.redColors[2] + 'BB'}}>
            <ScrollView>
-             <Text style={styles.headline}> {statistics.dailycounter} Page Visitors Today </Text>
-             <View style = {styles.horizontalLine}/>
+             <Text style={styles.viewers}> {statistics.dailycounter} Page Visitors Today </Text>
              <PercentPie
                name = "Gender Distribution"
                data = {statistics.gendercount}

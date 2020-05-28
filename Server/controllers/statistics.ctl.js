@@ -504,11 +504,29 @@ getAllStatisticsByBusinessID = (req, res) =>{
     
     db.query(cityQuery).then(result => {
         var citycount = { category: [], amount: [] }
-        var rows = result.rows            
+        var rows = result.rows
+        var current = -1
+        var citiesString = ""
         rows.map((row) => {
-            citycount.category.push(row.city)
-            citycount.amount.push(parseInt(row.count))
+            if(current == -1)
+            {
+                citiesString = row.city
+                current = (parseInt(row.count))
+            }
+            else if(current != (parseInt(row.count)))
+            {
+                citycount.category.push(citiesString)
+                citycount.amount.push(parseInt(current))
+                citiesString = row.city
+                current = (parseInt(row.count))
+            }
+            else
+            {
+                citiesString += ', ' + row.city
+            }
         })
+        citycount.category.push(citiesString)
+        citycount.amount.push(parseInt(current))
         finalResult.statistics.citycount = citycount;
     })
     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
