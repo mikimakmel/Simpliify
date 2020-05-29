@@ -173,7 +173,7 @@ class SplashScreen extends Component {
   }
 
   async fetchUserProfile() {
-    // console.log('fetchUserProfile');
+    console.log('fetchUserProfile');
     const url = `${route}/user/getUserByEmail`;
     const options = { 
       method: 'POST', 
@@ -189,7 +189,7 @@ class SplashScreen extends Component {
       .then(response => response.json())
       .then(data => {
         // console.log('======================')
-        // console.log(data)
+        // console.log(data.user)
         // console.log('======================')
         // let user = data.user;
         // user.profilepic = this.props.route.params.profilePic;
@@ -259,7 +259,7 @@ class SplashScreen extends Component {
 
   async fetchManagerBusiness() {
     // console.log('fetchManagerBusiness');
-    if(!this.props.currentUser.hasbusiness) {////////////////////////////////////////////////////////////////////////////////
+    if(this.props.currentUser.hasbusiness) {
       const url = `${route}/business/getBusinessByManagerID`;
       const options = { 
         method: 'POST', 
@@ -277,6 +277,7 @@ class SplashScreen extends Component {
           this.fetchBusiness(data.businessid)
             .then((result) => {
               this.props.dispatch(Actions_User.updateMyBusiness(result));
+              this.props.dispatch(Actions_User.changeAppView());
             });
         })
         .catch(error => console.log(error))

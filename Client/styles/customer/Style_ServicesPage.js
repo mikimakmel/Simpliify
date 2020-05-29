@@ -9,15 +9,16 @@ export default StyleSheet.create({
   pricingCardContainer: {
     width: 260,
     height: 170,
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: colors.gray06,
     marginBottom: 35,
     alignItems: 'center',
     shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 5,
-    shadowColor: colors.gray04,
+    shadowRadius: 10,
+    shadowColor: colors.gray02,
     shadowOpacity: 0.3,
-    elevation: 3
+    elevation: 3,
+    borderRadius: 15
   },
   titleText: {
     marginTop: 13,

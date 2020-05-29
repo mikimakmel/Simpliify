@@ -70,28 +70,8 @@ const data = [
         image: 'https://www.shareicon.net/data/2017/03/22/881409_health_512x512.png',
         label: 'Health'
     },
-    // {
-    //     image: require('../../../assets/images/Categories/orthodontist.png'),
-    //     label: 'Food'
-    // },
-    // {
-    //     image: require('../../../assets/images/Categories/cosmetic.png'),
-    //     label: 'Technology'
-    // },
-    // {
-    //     image: require('../../../assets/images/Categories/hairdresser.png'),
-    //     label: 'Design'
-    // },
     {
         image: 'https://media.istockphoto.com/vectors/cute-kids-with-balloons-air-party-characters-icon-vector-id803735292',
         label: 'Kids'
     },
-    // {
-    //     image: require('../../../assets/images/Categories/hairdresser.png'),
-    //     label: 'Events'
-    // },
-    // {
-    //     image: require('../../../assets/images/Categories/hairdresser.png'),
-    //     label: 'Music'
-    // },
 ]

@@ -417,7 +417,7 @@ class LoginScreen extends Component {
       async logInViaGoogle() {
         try {
           const result = await Google.logInAsync({
-              behavior: 'web',
+            behavior: 'web',
             // androidClientId: YOUR_CLIENT_ID_HERE,
             iosClientId: '1068271769932-ro1oeq9koi558n60h5v3urc6tftakj0i.apps.googleusercontent.com',
             scopes: ['profile', 'email'],
@@ -425,8 +425,9 @@ class LoginScreen extends Component {
       
           if (result.type === 'success') {
               console.log("success");
+            //   console.log(result)
               this.onSignIn(result);
-              this.props.navigation.navigate('Profile');
+              this.props.navigation.navigate('SplashScreen', {socialLogin: true, email: result.user.email, profilePic: `${result.user.photoUrl}?height=500`});
             return result.accessToken;
           } else {
             console.log("cancel");
