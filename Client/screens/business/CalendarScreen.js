@@ -8,12 +8,13 @@ import moment from 'moment';
 import colors from '../../constants/Colors';
 import styles from '../../styles/business/Style_CalendarScreen';
 import route from '../../routeConfig';
+import { connect } from 'react-redux';
 
 class CalendarScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      BusinessID: 174,
+      BusinessID: this.props.myBusiness.businessDetails.business.businessid,
       items: {},
       isPopupVisble: false,
       isLoading: true,
@@ -208,4 +209,15 @@ class CalendarScreen extends Component {
   }
 }
 
-export default CalendarScreen;
+const mapStateToProps = ({ App, User, Customer, Business}) => {
+  return {
+    hasBusiness: User.hasBusiness,
+    currentUser: User.currentUser,
+    favoritesList: Customer.favoritesList,
+    categoriesList: App.categoriesList,
+    myBusiness: User.myBusiness,
+    ordersList: Customer.ordersList,
+  }
+}
+
+export default connect(mapStateToProps)(CalendarScreen);

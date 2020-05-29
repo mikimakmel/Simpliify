@@ -8,13 +8,14 @@ import VerticalBar from './InsightsComponents/VerticalBar';
 import styles from './InsightsComponents/Style_Statistics';
 import route from '../../routeConfig';
 import colors from '../../constants/Colors';
+import { connect } from 'react-redux';
 
 class Insights extends Component {
   constructor(props) {
     super(props);
     this.state =
     {
-      BusinessID: 174,
+      BusinessID: this.props.myBusiness.businessDetails.business.businessid,
       statistics: null,
       isLoading: true
     };
@@ -103,4 +104,15 @@ class Insights extends Component {
   }  
 }
 
-export default Insights;
+const mapStateToProps = ({ App, User, Customer, Business}) => {
+  return {
+    hasBusiness: User.hasBusiness,
+    currentUser: User.currentUser,
+    favoritesList: Customer.favoritesList,
+    categoriesList: App.categoriesList,
+    myBusiness: User.myBusiness,
+    ordersList: Customer.ordersList,
+  }
+}
+
+export default connect(mapStateToProps)(Insights);
