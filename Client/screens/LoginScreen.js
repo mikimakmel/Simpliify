@@ -395,8 +395,7 @@ class LoginScreen extends Component {
           // Check if we are already signed-in Firebase with the correct user.
           if (!isUserEqual(googleUser, firebaseUser)) {
             // Build Firebase credential with the Google ID token.
-            var credential = firebase.auth.GoogleAuthProvider.credential(
-                googleUser.getAuthResponse().id_token);
+            var credential = firebase.auth.GoogleAuthProvider.credential(googleUser.getAuthResponse().id_token);
             // Sign in with credential from the Google user.
             firebase.auth().signInWithCredential(credential).catch(function(error) {
               // Handle Errors here.
@@ -424,10 +423,19 @@ class LoginScreen extends Component {
           });
       
           if (result.type === 'success') {
-              console.log("success");
-            //   console.log(result)
-              this.onSignIn(result);
-              this.props.navigation.navigate('SplashScreen', {socialLogin: true, email: result.user.email, profilePic: `${result.user.photoUrl}?height=500`});
+            // console.log(result.user)
+            this.onSignIn(result);
+            
+            this.props.navigation.navigate('SplashScreen', {
+                shouldRefresh: false, 
+                socialLogin: true,
+                email: result.user.email,
+                firstName: result.user.givenName,
+                lastName: result.user.familyName,
+                profilePic: `${result.user.photoUrl}?height=500`
+            });
+                
+            console.log("Google Login Success");
             return result.accessToken;
           } else {
             console.log("cancel");

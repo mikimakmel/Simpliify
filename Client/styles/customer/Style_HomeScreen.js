@@ -57,13 +57,13 @@ export default StyleSheet.create({
     height: 50,
     marginTop: 100,
     shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 5,
-    shadowColor: Colors.red,
+    shadowRadius: 3,
+    shadowColor: Colors.gray04,
     shadowOpacity: 0.3,
     elevation: 3,
     borderWidth: 0.2,
     borderColor: Colors.lightBlack,
-    borderRadius: 80,
+    borderRadius: 25,
     alignItems: 'center'
   },
   FindServicesButtonTitle: {

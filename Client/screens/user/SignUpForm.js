@@ -18,20 +18,20 @@ class SignUpForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        email: this.props.route.params.hasProfile ? this.props.route.params.currentUser.email : '',
-        firstName: this.props.route.params.hasProfile ? this.props.route.params.currentUser.firstname : '',
-        lastName: this.props.route.params.hasProfile ? this.props.route.params.currentUser.lastname : '',
-        phone: this.props.route.params.hasProfile ? this.props.route.params.currentUser.phone : '',
-        profilepic: this.props.route.params.currentUser.profilepic ? this.props.route.params.currentUser.profilepic : 'https://www.lococrossfit.com/wp-content/uploads/2019/02/user-icon-300x300.png',
-        gender: this.props.route.params.hasProfile ? this.props.route.params.currentUser.gender : '',
-        dateOfBirth: this.props.route.params.hasProfile ? this.props.route.params.currentUser.birthday : new Date(),
-        street: this.props.route.params.hasProfile ? this.props.route.params.currentUser.street : '',
-        city: this.props.route.params.hasProfile ? this.props.route.params.currentUser.city : '',
-        country: this.props.route.params.hasProfile ? this.props.route.params.currentUser.country : '',
-        maleChecked: this.props.route.params.currentUser.gender === 'Male' ? true : false,
-        femaleChecked: this.props.route.params.currentUser.gender === 'Female' ? true : false,
-        showDatePicker: false,
-        prettyDate: ''
+      email: '',
+      firstName: '',
+      lastName: '',
+      phone: '',
+      profilePic: 'https://www.lococrossfit.com/wp-content/uploads/2019/02/user-icon-300x300.png',
+      gender: '',
+      dateOfBirth: new Date(),
+      street: '',
+      city: '',
+      country: '',
+      maleChecked: false,
+      femaleChecked: false,
+      showDatePicker: false,
+      prettyDate: ''
     };
     this.setDateOfBirth = this.setDateOfBirth.bind(this);
     this.handleMalePress = this.handleMalePress.bind(this);
@@ -50,7 +50,16 @@ class SignUpForm extends Component {
           style={{marginRight: 10}} 
           onPress={() => {
             this.createOrUpdateProfile();
-            this.props.navigation.navigate('Menu');
+            if(this.props.route.params.hasProfile) {
+              this.props.navigation.navigate('Menu');
+            }
+            else {
+              this.props.navigation.navigate('SplashScreen', {
+                shouldRefresh: true, 
+                email: this.state.email,
+                profilePic: this.state.profilePic
+              })
+            } 
           }}
         />
       ),
@@ -59,18 +68,44 @@ class SignUpForm extends Component {
           name={'keyboard-arrow-left'} 
           size={45} 
           color={Colors.blue}
-          onPress={() => this.props.navigation.navigate('Menu')}
+          onPress={() => this.props.route.params.hasProfile ? this.props.navigation.navigate('Menu') : this.props.navigation.navigate('LogIn')}
         />
       ),
     });
-    this.initDate();
+    this.initProfile();
   }
 
-  initDate() {
-    const day = this.state.dateOfBirth.split('-')[2].substring(0,2);
-    const month = Months[new Date(this.state.dateOfBirth).getMonth()];
-    const year = this.state.dateOfBirth.split('-')[0];
-    this.setState({prettyDate: `${day} ${month} ${year}`});
+  initProfile() {
+    const day = moment.utc(this.state.dateOfBirth).format('D');
+    const month = Months[moment.utc(this.state.dateOfBirth).format('M') - 1];
+    const year = moment.utc(this.state.dateOfBirth).format('Y');
+
+    if(this.props.route.params.hasProfile) {
+      this.setState({
+        email: this.props.route.params.currentUser.email,
+        firstName: this.props.route.params.currentUser.firstname,
+        lastName: this.props.route.params.currentUser.lastname,
+        phone: this.props.route.params.currentUser.phone,
+        profilePic: this.props.route.params.currentUser.profilepic,
+        gender: this.props.route.params.currentUser.gender,
+        dateOfBirth: this.props.route.params.currentUser.birthday,
+        street: this.props.route.params.currentUser.street,
+        city: this.props.route.params.currentUser.city,
+        country: this.props.route.params.currentUser.country,
+        maleChecked: this.props.route.params.currentUser.gender === 'Male' ? true : false,
+        femaleChecked: this.props.route.params.currentUser.gender === 'Female' ? true : false,
+        prettyDate: `${day} ${month} ${year}`
+      });
+    }
+    else if (this.props.route.params.socialLogin) {
+      this.setState({
+        email: this.props.route.params.email,
+        firstName: this.props.route.params.firstName,
+        lastName: this.props.route.params.lastName,
+        profilePic: this.props.route.params.profilePic,
+        prettyDate: `${day} ${month} ${year}`
+      });
+    }
   }
 
   setDateOfBirth(event, date) {
@@ -98,8 +133,8 @@ class SignUpForm extends Component {
 
   async createOrUpdateProfile() {
     const user = {
-      userID: this.props.route.params.currentUser.userid,
-      addressID: this.props.route.params.currentUser.addressid,
+      userID: this.props.route.params.hasProfile ? this.props.route.params.currentUser.userid : null,
+      addressID: this.props.route.params.hasProfile ? this.props.route.params.currentUser.addressid : null,
       street: this.state.street,
       city: this.state.city,
       country: this.state.country,
@@ -109,6 +144,7 @@ class SignUpForm extends Component {
       phone: this.state.phone,
       birthday: this.state.dateOfBirth,
       gender: this.state.gender,
+      profilePic: this.state.profilePic
     }
 
     let url = this.props.route.params.hasProfile ? `${route}/user/updateUserDetails` : `${route}/user/createNewUser`;
@@ -143,11 +179,11 @@ class SignUpForm extends Component {
       <ScrollView style={{}} showsVerticalScrollIndicator={false}>
       <KeyboardAwareScrollView>
         <Avatar
-          source={{uri: this.state.profilepic}}
+          source={{uri: this.state.profilePic}}
           showEditButton
           rounded 
           size={100}
-          containerStyle={{alignSelf: 'center', marginBottom: 20, marginTop: 20}}
+          containerStyle={{alignSelf: 'center', marginBottom: 20, marginTop: 20, borderWidth: 1, borderColor: Colors.gray03}}
         />
         <View style={{flexDirection: 'row', alignSelf: 'center'}}>
           <Input

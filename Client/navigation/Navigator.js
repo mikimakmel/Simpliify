@@ -45,7 +45,7 @@ function LogInStack() {
       <Stack.Screen name="CheckLoginStatus" component={CheckLoginStatus} options={{animationEnabled: false}}/>
       <Stack.Screen name="LogIn" component={LoginScreen} options={{animationEnabled: false}}/>
       <Stack.Screen name="SplashScreen" component={SplashScreen} options={{animationEnabled: false}}/>
-      <Stack.Screen name="SignUpForm" component={SignUpForm}/>
+      <Stack.Screen name="SignUpForm" component={SignUpForm} options={{headerShown: true}}/>
     </Stack.Navigator>
   );
 }
