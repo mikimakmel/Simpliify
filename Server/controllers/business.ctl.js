@@ -151,6 +151,8 @@ module.exports = {
     async createNewBusiness(req, res) {
         console.log("createNewBusiness()");
 
+/////////////////////////////////// chnage client hasBusiness status after creating new business/////////////////////////////////////////////////////////
+
         const managerID = req.body.managerID;
         const name = req.body.name;
         const category = req.body.category;
@@ -164,17 +166,14 @@ module.exports = {
         const availability = req.body.availability;
         const carousel = req.body.carousel;
         const avatar = req.body.avatar;
-        const ServicesList = req.body.ServicesList;
-        // console.log(req.body)
-
-        // console.log(managerID, name, category, tags, phone, street, city, country, website, availability, carousel, description, avatar);
+        const servicesList = req.body.servicesList;
         
         const addressQuery =
             `INSERT INTO Address 
-            (street, city, country)
+            (street, city, country, coordinates)
             VALUES 
-            ('${street}', '${city}', '${country}')
-            RETURNING addressid`;
+            ('${street}', '${city}', '${country}', '(33.333333,33.333333)')
+            RETURNING *`;///////////////////////////////////////////////////////////////coordinates/////////////////////////////////////////
 
         db.query(addressQuery)
         .then(result => {
@@ -182,31 +181,156 @@ module.exports = {
 
             const businessQuery = 
                 `INSERT INTO Business 
-                (address, manager, name, category, phone, website, description, DailyCounter, avatar) 
+                (address, manager, name, category, phone, website, description, dailycounter, avatar) 
                 VALUES 
                 (${addressID}, ${managerID}, '${name}', '${category}', '${phone}', '${website}', '${description}', 0, '${avatar}')
                 RETURNING *`;
 
             db.query(businessQuery)
-            .then(result => {
-                console.log(result)
-                // const businessID = result.rows[0].businessid;
-                // carousel.map((item, index) => {
-                //     console.log(index, item)
-                    // const carouselQuery =
-                    //     `INSERT INTO Carousel 
-                    //     (businessid, imagelink, primarypic)
-                    //     VALUES 
-                    //     (${businessID}, '${city}', '${country}')
-                    //     RETURNING addressid`;
+            .then(async result => {
+                const businessID = result.rows[0].businessid;
 
-                    // db.query(carouselQuery)
-                    //     .then(result => res.json(result.rows))
-                    //     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-                // })
-                // res.json(result.rows[0].businessid)
+                carousel.forEach((item, index) => {
+                    const carouselQuery = index === 0 ?
+                        `INSERT INTO Carousel 
+                        (businessid, imagelink, primarypic) 
+                        VALUES 
+                        (${businessID}, '${item}', 'True')
+                        RETURNING *`
+                        :
+                        `INSERT INTO Carousel 
+                        (businessid, imagelink, primarypic) 
+                        VALUES 
+                        (${businessID}, '${item}', null)
+                        RETURNING *`;
+    
+                    db.query(carouselQuery)
+                        .then(result => console.log(result.rows[0]))
+                        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                });
+
+                tags.forEach(item => {
+                    const carouselQuery = 
+                        `INSERT INTO Tags 
+                        (BusinessID, Tag) 
+                        VALUES 
+                        (${businessID}, '${item}')
+                        RETURNING *`;
+    
+                    db.query(carouselQuery)
+                        .then(result => console.log(result.rows[0]))
+                        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                });
+
+                if(availability['sunday'].isOpen) {
+                    let availabilityQuery = 
+                        `INSERT INTO Availability 
+                        (BusinessID, DOW, StartTime, EndTime) 
+                        VALUES 
+                        (${businessID}, 'Sunday', '${availability['sunday'].open}', '${availability['sunday'].closes}')
+                        RETURNING *`;
+
+                    db.query(availabilityQuery)
+                        .then(result => console.log(result.rows[0]))
+                        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                }
+                if(availability['monday'].isOpen) {
+                    let availabilityQuery = 
+                        `INSERT INTO Availability 
+                        (BusinessID, DOW, StartTime, EndTime) 
+                        VALUES 
+                        (${businessID}, 'Monday', '${availability['monday'].open}', '${availability['monday'].closes}')
+                        RETURNING *`;
+
+                    db.query(availabilityQuery)
+                        .then(result => console.log(result.rows[0]))
+                        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                }
+                if(availability['tuesday'].isOpen) {
+                    let availabilityQuery = 
+                        `INSERT INTO Availability 
+                        (BusinessID, DOW, StartTime, EndTime) 
+                        VALUES 
+                        (${businessID}, 'Tuesday', '${availability['tuesday'].open}', '${availability['tuesday'].closes}')
+                        RETURNING *`;
+
+                    db.query(availabilityQuery)
+                        .then(result => console.log(result.rows[0]))
+                        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                }
+                if(availability['wednesday'].isOpen) {
+                    let availabilityQuery = 
+                        `INSERT INTO Availability 
+                        (BusinessID, DOW, StartTime, EndTime) 
+                        VALUES 
+                        (${businessID}, 'Wednesday', '${availability['wednesday'].open}', '${availability['wednesday'].closes}')
+                        RETURNING *`;
+
+                    db.query(availabilityQuery)
+                        .then(result => console.log(result.rows[0]))
+                        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                }
+                if(availability['thursday'].isOpen) {
+                    let availabilityQuery = 
+                        `INSERT INTO Availability 
+                        (BusinessID, DOW, StartTime, EndTime) 
+                        VALUES 
+                        (${businessID}, 'Thursday', '${availability['thursday'].open}', '${availability['thursday'].closes}')
+                        RETURNING *`;
+
+                    db.query(availabilityQuery)
+                        .then(result => console.log(result.rows[0]))
+                        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                }
+                if(availability['friday'].isOpen) {
+                    let availabilityQuery = 
+                        `INSERT INTO Availability 
+                        (BusinessID, DOW, StartTime, EndTime) 
+                        VALUES 
+                        (${businessID}, 'Friday', '${availability['friday'].open}', '${availability['friday'].closes}')
+                        RETURNING *`;
+
+                    db.query(availabilityQuery)
+                        .then(result => console.log(result.rows[0]))
+                        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                }
+                if(availability['saturday'].isOpen) {
+                    let availabilityQuery = 
+                        `INSERT INTO Availability 
+                        (BusinessID, DOW, StartTime, EndTime) 
+                        VALUES 
+                        (${businessID}, 'Saturday', '${availability['saturday'].open}', '${availability['saturday'].closes}')
+                        RETURNING *`;
+
+                    db.query(availabilityQuery)
+                        .then(result => console.log(result.rows[0]))
+                        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                }
+
+                // servicesList.forEach(item => {
+                //     let serviceQuery = 
+                //         `INSERT INTO Service 
+                //         (businessid, name, price, durationminutes, quota)
+                //         VALUES 
+                //         (${businessID}, '${item.name}', ${item.price}, ${item.durationminutes}, ${item.qouta})
+                //         RETURNING *`;
+                
+                //     db.query(serviceQuery)
+                //         .then(result => res.json(result.rows[0]))
+                //         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                // });
+
+                const userQuery = `UPDATE Users SET hasbusiness=true WHERE userid=${managerID} RETURNING hasbusiness`;
+                db.query(userQuery)
+                    .then(result => console.log(result.rows[0]))
+                    .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+
+                res.json(result.rows[0].businessid);
             })
-            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+            .catch(err => {
+                console.log(err.stack)
+                res.status(404).send(`Query error: ${err.stack}`)
+            })
         })
         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },

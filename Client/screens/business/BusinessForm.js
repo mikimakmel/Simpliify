@@ -19,6 +19,7 @@ import ScrollableTabView from 'react-native-scrollable-tab-view';
 import { connect } from "react-redux";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import route from '../../routeConfig';
+import * as Actions_User from '../../redux/actions/Actions_User';
 
 const items = [
   { label: 'Football', value: 'football', image: 'bla' },
@@ -42,7 +43,7 @@ class BusinessForm extends Component {
       avatarEdited: false,
       isAvatarFormVisible: false,
       avatarUrlText: '',
-      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+      description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since 1500',
       descriptionIsEditing: false,
       phone: '0501234567',
       phoneIsEditing: false,
@@ -96,7 +97,7 @@ class BusinessForm extends Component {
         closes: '0:00'
         },
       },
-      ServicesList: [],
+      servicesList: [],
       isServicFormVisible: false,
       isEditingService: false,
       serviceName: 'Service Name',
@@ -132,7 +133,10 @@ class BusinessForm extends Component {
           size={35} 
           color={colors.green03} 
           style={{marginRight: 15}} 
-          onPress={() => this.createOrUpdateBusiness()}
+          onPress={async () => {
+            await this.createOrUpdateBusiness();
+            this.props.navigation.goBack();
+          }}
         />
       )
     });
@@ -160,41 +164,6 @@ class BusinessForm extends Component {
     }
   }
 
-  // async fetchBusiness() {
-  //   const url = `${route}/business/getBusinessByID`;
-  //   const options = { 
-  //     method: 'POST', 
-  //     headers: { 
-  //         'Accept': 'application/json',
-  //         'Content-Type': 'application/json' 
-  //     },
-  //     body: JSON.stringify({businessID: this.state.currentBusinessID})
-  //   };
-  //   const request = new Request(url, options)
-
-  //   await fetch(request)
-  //     .then(response => response.json())
-  //     .then(async data => {
-  //       console.log(data);
-  //       this.setState({ 
-  //         currentBusiness: data,
-  //         name: data.name,
-  //         description: data.description,
-  //         phone: data.phone,
-  //         website: data.website,
-  //         addressID: data.address,
-  //         street: 'bring address',
-  //         city: 'bring address',
-  //         country: 'bring address',
-  //         category: data.category,
-  //         // tags: [],
-  //         avatar: data.avatar,
-  //         // carousel: database.businesses[0].Pictures.Carousel,
-  //       });
-  //     })
-  //     .catch(error => console.log(error))
-  // }
-
   async fetchBusinessServicesList() {
     const url = `${route}/service/getAllBusinessServices`;
     const options = { 
@@ -211,7 +180,7 @@ class BusinessForm extends Component {
       .then(response => response.json())
       .then(async data => {
         // console.log(data)
-        this.setState({ServicesList: data});
+        this.setState({servicesList: data});
       })
       .catch(error => console.log(error))
   }
@@ -254,7 +223,7 @@ class BusinessForm extends Component {
       category: this.state.category,
       tags: this.state.tags,
       availability: this.state.availability,
-      ServicesList: this.state.ServicesList
+      servicesList: this.state.servicesList
     };
     
     let url = this.props.myBusiness ? `${route}/business/updateBusinessDetails` : `${route}/business/createNewBusiness`;
@@ -295,7 +264,7 @@ class BusinessForm extends Component {
     };
 
     if(!this.props.myBusiness) {
-      this.setState({ServicesList: [...this.state.ServicesList, service]});
+      this.setState({servicesList: [...this.state.servicesList, service]});
     } else {
       let action = this.state.isEditingService ? 'updateServiceDetails' : 'createNewService';
 
@@ -1039,7 +1008,7 @@ class BusinessForm extends Component {
           <View style={{ alignItems: 'center', marginTop: 35 }}>
           <FlatList
               keyExtractor={(item, index) => index.toString()}
-              data={this.state.ServicesList}
+              data={this.state.servicesList}
               renderItem={this.renderPricingCard}
           />
           </View>
