@@ -1,3 +1,4 @@
+import os
 import cv2 as cv
 import numpy as np
 from preprocess import preprocess
@@ -39,8 +40,8 @@ def detection(img):
 
     return img, outs
 
-@profile
-def detect_card_details(card_img, image_path=".jpg", prepro=False):
+
+def detect_card_details(card_img, save=False, image_path=".jpg", prepro=False):
     # Preprocess image
     if prepro:
         card_img = preprocess(card_img)
@@ -49,7 +50,8 @@ def detect_card_details(card_img, image_path=".jpg", prepro=False):
     card_img, outs = detection(card_img)
 
     # Postprocess to extract card details
-    image_name = image_path.split('/')[-1]
-    _card_details = postprocess(card_img, outs, image_name)
+    image_name = os.path.split(image_path)[1]
+    # image_name = image_path.split('/')[-1]
+    _card_details = postprocess(card_img, outs, image_name, save)
 
     return _card_details

@@ -192,7 +192,7 @@ def get_card_number(array, classes):
 
 
 # Remove the bounding boxes with low confidence using non-maxima suppression
-def postprocess(_frame, outs, image_name):
+def postprocess(_frame, outs, image_name, save):
 
     # Load names of classes
     classes_file = "models/classes.names"
@@ -293,8 +293,8 @@ def postprocess(_frame, outs, image_name):
                 card_details_dict["full_name"] = name
                 cv.putText(_frame, "Card holder : " + name, (10, 50), cv.FONT_HERSHEY_DUPLEX, 0.75, (255, 255, 255), 2)
                 continue
-
-    cv.imwrite("output_imgs/output_" + image_name, _frame)
+    if save:
+        cv.imwrite("output_imgs/output_" + image_name, _frame)
 
     return card_details_dict
 
