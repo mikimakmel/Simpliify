@@ -51,7 +51,7 @@ module.exports = {
 
         const query = 
             `INSERT INTO Service 
-            (BusinessID, Name, Price, DurationMinutes, Qouta)
+            (BusinessID, Name, Price, DurationMinutes, Quota)
             VALUES 
             (${BusinessID}, '${name}', ${price}, ${durationMinutes}, ${qouta})
             RETURNING *`;
