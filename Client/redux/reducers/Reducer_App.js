@@ -2,6 +2,7 @@ import { actionsTypes } from '../actions/Actions_App';
 
 const initialState = {
     categoriesList: [],
+    tagsList: [],
 }
 
 const AppReducer = (state = initialState, action) => {
@@ -11,6 +12,13 @@ const AppReducer = (state = initialState, action) => {
             return {
                 ...state,
                 categoriesList: action.data
+            }
+        }
+
+        case actionsTypes.UPDATE_TAGS_LIST: {
+            return {
+                ...state,
+                tagsList: action.data
             }
         }
 

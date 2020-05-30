@@ -133,64 +133,82 @@ module.exports = {
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
+    // get all tags.
+    async getTagsList(req, res) {
+        console.log("getTagsList()");
+
+        const query = `SELECT DISTINCT(Tag) FROM Tags`;
+        
+        db.query(query)
+            .then(async result => {
+                const tagsArr = await Promise.all(result.rows.map((item) => { return { label: item.tag, value: item.tag } }));
+                res.json(tagsArr);
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+    },
+
     // create a new business page.
     async createNewBusiness(req, res) {
         console.log("createNewBusiness()");
-        let business = JSON.parse(req.body.business);
-        console.log(business);
-        // console.log(req.files);
 
-        const managerID = business.managerID;
-        const name = business.name;
-        const category = business.category;
-        const tags = business.tags;//////////////////////
-        const street = business.street;
-        const city = business.city;
-        const country = business.country;
-        const phone = business.phone;
-        const website = business.website;
-        const description = business.description;
-        const availability = business.availability;////////////////
+        const managerID = req.body.managerID;
+        const name = req.body.name;
+        const category = req.body.category;
+        const tags = req.body.tags;
+        const street = req.body.street;
+        const city = req.body.city;
+        const country = req.body.country;
+        const phone = req.body.phone;
+        const website = req.body.website;
+        const description = req.body.description;
+        const availability = req.body.availability;
+        const carousel = req.body.carousel;
+        const avatar = req.body.avatar;
+        const ServicesList = req.body.ServicesList;
+        // console.log(req.body)
 
-        const carousel = req.files.carousel;///////////////////////
-        const avatar = req.files.avatar;///////////////////////
-
-        // console.log(addressID, managerID, name, category, phone, website, description, avatar);
+        // console.log(managerID, name, category, tags, phone, street, city, country, website, availability, carousel, description, avatar);
         
-        // const addressQuery =
-        // `INSERT INTO Address 
-        //     (street, city, country)
-        //     VALUES 
-        //     ('${street}', '${city}', '${country}')
-        //     RETURNING addressid`;
+        const addressQuery =
+            `INSERT INTO Address 
+            (street, city, country)
+            VALUES 
+            ('${street}', '${city}', '${country}')
+            RETURNING addressid`;
 
-            // const businessQuery = 
-            //     `INSERT INTO Business 
-            //     (address, manager, name, category, phone, website, description, DailyCounter, avatar) 
-            //     VALUES 
-            //     (${addressID}, ${managerID}, '${name}', '${category}', '${phone}', '${website}', '${description}',0 , '${avatar}')
-            //     RETURNING *`;
+        db.query(addressQuery)
+        .then(result => {
+            const addressID = result.rows[0].addressid;
 
+            const businessQuery = 
+                `INSERT INTO Business 
+                (address, manager, name, category, phone, website, description, DailyCounter, avatar) 
+                VALUES 
+                (${addressID}, ${managerID}, '${name}', '${category}', '${phone}', '${website}', '${description}', 0, '${avatar}')
+                RETURNING *`;
 
-        // db.query(addressQuery)
-        // .then(result => {
-        //     let addressID = result.rows[0].addressid;
+            db.query(businessQuery)
+            .then(result => {
+                console.log(result)
+                // const businessID = result.rows[0].businessid;
+                // carousel.map((item, index) => {
+                //     console.log(index, item)
+                    // const carouselQuery =
+                    //     `INSERT INTO Carousel 
+                    //     (businessid, imagelink, primarypic)
+                    //     VALUES 
+                    //     (${businessID}, '${city}', '${country}')
+                    //     RETURNING addressid`;
 
-        //     const businessQuery = 
-        //         `INSERT INTO Business 
-        //         (address, manager, name, category, phone, website, description, DailyCounter, avatar) 
-        //         VALUES 
-        //         (${addressID}, ${managerID}, '${name}', '${category}', '${phone}', '${website}', '${description}',0 , '${avatar}')
-        //         RETURNING *`;
-
-        //     db.query(businessQuery)
-        //     .then(result => {
-        //         console.log('here')
-        //         res.json(result.rows[0].businessid)
-        //     })
-        //     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-        // })
-        // .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                    // db.query(carouselQuery)
+                    //     .then(result => res.json(result.rows))
+                    //     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                // })
+                // res.json(result.rows[0].businessid)
+            })
+            .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+        })
+        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
     // close and delete a business page.

@@ -25,6 +25,7 @@ class SplashScreen extends Component {
     };
     this.initApp = this.initApp.bind(this);
     this.fetchCategoriesList = this.fetchCategoriesList.bind(this);
+    this.fetchTagsList = this.fetchTagsList.bind(this);
     this.fetchUserProfile = this.fetchUserProfile.bind(this);
     this.fetchUserFavoritesList = this.fetchUserFavoritesList.bind(this);
     this.fetchManagerBusiness = this.fetchManagerBusiness.bind(this);
@@ -59,6 +60,7 @@ class SplashScreen extends Component {
     await this.props.navigation.navigate('Profile');
     await this.registerForPushNotificationsAsync();
     await this.fetchCategoriesList();
+    await this.fetchTagsList();
   }
 
   async registerForPushNotificationsAsync() { 
@@ -150,7 +152,40 @@ class SplashScreen extends Component {
 
     await fetch(request)
       .then(response => response.json())
-      .then(data => this.props.dispatch(Actions_App.updateCategoriesList(data)))
+      .then(data => {
+        this.props.dispatch(Actions_App.updateCategoriesList(data));
+        console.log(data)
+      })
+      .catch(error => console.log(error))
+  }
+
+  async fetchCategoriesList() {
+    // console.log('fetchCategoriesList');
+    const url = `${route}/business/getCategoriesList`;
+    const options = { method: 'GET', headers: { 'Content-Type': 'application/json' } }
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(data => {
+        this.props.dispatch(Actions_App.updateCategoriesList(data));
+        // console.log(data)
+      })
+      .catch(error => console.log(error))
+  }
+
+  async fetchTagsList() {
+    // console.log('fetchTagsList');
+    const url = `${route}/business/getTagsList`;
+    const options = { method: 'GET', headers: { 'Content-Type': 'application/json' } }
+    const request = new Request(url, options)
+
+    await fetch(request)
+      .then(response => response.json())
+      .then(data => {
+        this.props.dispatch(Actions_App.updateTagsList(data));
+        // console.log(data)
+      })
       .catch(error => console.log(error))
   }
 

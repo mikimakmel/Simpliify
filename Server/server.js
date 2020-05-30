@@ -54,6 +54,7 @@ app.post('/business/getBusinessByManagerID', businessCtl.getBusinessByManagerID)
 app.get('/business/getAllCustomers', businessCtl.getAllCustomers);
 app.get('/business/getBusinessAvailability', businessCtl.getBusinessAvailability);
 app.get('/business/getCategoriesList', businessCtl.getCategoriesList);
+app.get('/business/getTagsList', businessCtl.getTagsList);
 app.get('/business/getAllBusinessesByCategory', businessCtl.getAllBusinessesByCategory);
 app.post('/business/createNewBusiness', businessCtl.createNewBusiness); 
 app.post('/business/deleteYourBusiness', businessCtl.deleteYourBusiness);

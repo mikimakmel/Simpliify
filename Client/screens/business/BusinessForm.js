@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard, Platform, FlatList } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard, Platform, FlatList, SafeAreaView } from 'react-native';
 import { Avatar, Rating, Divider, Button, Overlay, Input } from 'react-native-elements';
 import colors from '../../constants/Colors';
 import styles from '../../styles/business/Style_BusinessForm';
@@ -12,101 +12,99 @@ import RNPickerSelect from 'react-native-picker-select';
 import { Collapse, CollapseHeader, CollapseBody } from 'accordion-collapse-react-native';
 import TimePicker from "react-native-24h-timepicker";
 import * as ImagePicker from 'expo-image-picker';
-import Constants from 'expo-constants';
-import * as Permissions from 'expo-permissions';
-import GradientButton from 'react-native-gradient-buttons';
+// import Constants from 'expo-constants';
+// import * as Permissions from 'expo-permissions';
+// import GradientButton from 'react-native-gradient-buttons';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import { connect } from "react-redux";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import route from '../../routeConfig';
 
 const items = [
-  { label: 'Football', value: 'football' },
-  { label: 'Baseball', value: 'baseball' },
-  { label: 'Hockey', value: 'hockey' },
-  { label: 'Soccer', value: 'soccer' },
-  { label: 'Vollyball', value: 'vollyball' },
+  { label: 'Football', value: 'football', image: 'bla' },
+  { label: 'Baseball', value: 'baseball', image: 'bla' },
+  { label: 'Hockey', value: 'hockey', image: 'bla' },
+  { label: 'Soccer', value: 'soccer', image: 'bla' },
+  { label: 'Vollyball', value: 'vollyball', image: 'bla' },
 ]
 
 class BusinessForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-       managerID: 1,
-       name: 'Business Name',
-       nameIsEditing: false,
-       description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-       descriptionIsEditing: false,
-       phone: '03-9011111',
-       phoneIsEditing: false,
-       website: 'www.example.com',
-       websiteIsEditing: false,
-       addressID: null,
-       street: 'Street',
-       streetIsEditing: false,
-       city: 'City',
-       cityIsEditing: false,
-       country: 'Country',
-       countryIsEditing: false,
-       categoriesList: this.props.categoriesList,
-       category: 'Category',
-       categoryIsEditing: false,
-       tagsList: [],
-       tags: [],
-       avatar: 'https://www.lococrossfit.com/wp-content/uploads/2019/02/user-icon-300x300.png',
-       avatarEdited: false,
-       carousel: ['https://www.interpeace.org/wp-content/themes/geneva/img/image-placeholder.png'],
-       carouselEdited: false,
-       isServicFormVisible: false,
-       availability: {
-         sunday: {
-          isOpen: true,
-          open: '0:00',
-          closes: '0:00'
-         },
-         monday: {
-          isOpen: true,
-          open: '0:00',
-          closes: '0:00'
-         },
-         tuesday: {
-          isOpen: true,
-          open: '0:00',
-          closes: '0:00'
-         },
-         wednesday: {
-          isOpen: true,
-          open: '0:00',
-          closes: '0:00'
-         },
-         thursday: {
-          isOpen: true,
-          open: '0:00',
-          closes: '0:00'
-         },
-         friday: {
-          isOpen: true,
-          open: '0:00',
-          closes: '0:00'
-         },
-         saturday: {
-          isOpen: true,
-          open: '0:00',
-          closes: '0:00'
-         },
-       },
-       currentBusinessID: null,
-       currentBusiness: {},
-       isEditingBusiness: false,
-       serviceName: 'Service Name',
-       price: 111,
-       durationMinutes: 9,
-       qouta: 1,
-       ServicesList: [],
-       currentService: {},
-       isEditingService: false,
-       isCarouselFormVisible: false,
-       carouselUrlText: '',
+      carousel: ['https://www.interpeace.org/wp-content/themes/geneva/img/image-placeholder.png'],
+      carouselEdited: false,
+      isCarouselFormVisible: false,
+      carouselUrlText: '',
+      name: 'Business Name',
+      nameIsEditing: false,
+      avatar: 'https://www.lococrossfit.com/wp-content/uploads/2019/02/user-icon-300x300.png',
+      avatarEdited: false,
+      isAvatarFormVisible: false,
+      avatarUrlText: '',
+      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+      descriptionIsEditing: false,
+      phone: '0501234567',
+      phoneIsEditing: false,
+      website: 'www.example.com',
+      websiteIsEditing: false,
+      addressID: null,
+      street: 'Street',
+      streetIsEditing: false,
+      city: 'City',
+      cityIsEditing: false,
+      country: 'Country',
+      countryIsEditing: false,
+      categoriesList: this.props.categoriesList,
+      category: 'Category',
+      tagsList: this.props.tagsList,
+      tags: [],
+      availability: {
+        sunday: {
+        isOpen: true,
+        open: '0:00',
+        closes: '0:00'
+        },
+        monday: {
+        isOpen: true,
+        open: '0:00',
+        closes: '0:00'
+        },
+        tuesday: {
+        isOpen: true,
+        open: '0:00',
+        closes: '0:00'
+        },
+        wednesday: {
+        isOpen: true,
+        open: '0:00',
+        closes: '0:00'
+        },
+        thursday: {
+        isOpen: true,
+        open: '0:00',
+        closes: '0:00'
+        },
+        friday: {
+        isOpen: true,
+        open: '0:00',
+        closes: '0:00'
+        },
+        saturday: {
+        isOpen: true,
+        open: '0:00',
+        closes: '0:00'
+        },
+      },
+      ServicesList: [],
+      isServicFormVisible: false,
+      isEditingService: false,
+      serviceName: 'Service Name',
+      price: 0,
+      durationminutes: 0,
+      qouta: 0,
+      currentService: {},
+      newServicesList: []
     };
 
     this.renderViewMore = this.renderViewMore.bind(this);
@@ -116,22 +114,17 @@ class BusinessForm extends Component {
     this.renderSolidButon = this.renderSolidButon.bind(this);
     this.handleCloseButton = this.handleCloseButton.bind(this);
     this.createOrUpdateBusiness = this.createOrUpdateBusiness.bind(this);
-    this.fetchCategories = this.fetchCategories.bind(this);
     this.renderAbout = this.renderAbout.bind(this);
     this.renderServices = this.renderServices.bind(this);
     this.renderPricingCard = this.renderPricingCard.bind(this);
     this.createOrUpdateService = this.createOrUpdateService.bind(this);
-    this.renderFormOverlay = this.renderFormOverlay.bind(this);
-    this.fetchBusiness = this.fetchBusiness.bind(this);
+    this.renderServiceFormOverlay = this.renderServiceFormOverlay.bind(this);
+    // this.fetchBusiness = this.fetchBusiness.bind(this);
+    this.handleCarouselPick = this.handleCarouselPick.bind(this);
+    this.initBusiness = this.initBusiness.bind(this);
   }
 
   componentDidMount() {
-    this.getPermissionAsync();
-    this.fetchCategories();
-    if (this.state.isEditingBusiness) {
-      this.fetchBusiness();
-    }
-    this.fetchBusinessServicesList();
     this.props.navigation.setOptions({
       headerRight: () => (
         <Octicons 
@@ -139,63 +132,68 @@ class BusinessForm extends Component {
           size={35} 
           color={colors.green03} 
           style={{marginRight: 15}} 
-          // onPress={() => this.fetchBusinessServicesList()}
+          onPress={() => this.createOrUpdateBusiness()}
         />
       )
     });
+
+    this.initBusiness();
   }
 
-  async fetchCategories() {
-    const url = `${route}/business/getCategoriesList`;
-    const options = { method: 'GET', headers: { 'Content-Type': 'application/json' } }
-    const request = new Request(url, options)
-
-    await fetch(request)
-      .then(response => response.json())
-      .then(async data => {
-        let splits = data.categories.slice(1, data.categories.length - 1).split(',');
-        let categoriesArr = splits.map((item) => {
-          return { label: item, value: item }
-        });
-        this.setState({ categoriesList: categoriesArr });
-      })
-      .catch(error => console.log(error))
+  initBusiness() {
+    if(this.props.myBusiness) {
+      console.log(this.props.myBusiness);
+      // this.setState({
+      //   carousel: this.state.carousel,
+      //   name: this.state.name,
+      //   avatar: this.state.avatar,
+      //   description: this.state.description,
+      //   phone: this.state.phone,
+      //   website: this.state.website,
+      //   street: this.state.street,
+      //   city: this.state.city,
+      //   country: this.state.country,
+      //   category: this.state.category,
+      //   tags: this.state.tags,
+      //   availability: this.state.availability,
+      // });
+    }
   }
 
-  async fetchBusiness() {
-    const url = `${route}/business/getBusinessByID`;
-    const options = { 
-      method: 'POST', 
-      headers: { 
-          'Accept': 'application/json',
-          'Content-Type': 'application/json' 
-      },
-      body: JSON.stringify({businessID: this.state.currentBusinessID})
-    };
-    const request = new Request(url, options)
+  // async fetchBusiness() {
+  //   const url = `${route}/business/getBusinessByID`;
+  //   const options = { 
+  //     method: 'POST', 
+  //     headers: { 
+  //         'Accept': 'application/json',
+  //         'Content-Type': 'application/json' 
+  //     },
+  //     body: JSON.stringify({businessID: this.state.currentBusinessID})
+  //   };
+  //   const request = new Request(url, options)
 
-    await fetch(request)
-      .then(response => response.json())
-      .then(async data => {
-        console.log(data);
-        this.setState({ 
-          currentBusiness: data,
-          name: data.name,
-          description: data.description,
-          phone: data.phone,
-          website: data.website,
-          addressID: data.address,
-          street: 'bring address',
-          city: 'bring address',
-          country: 'bring address',
-          category: data.category,
-          // tags: [],
-          avatar: data.avatar,
-          // carousel: database.businesses[0].Pictures.Carousel,
-        });
-      })
-      .catch(error => console.log(error))
-  }
+  //   await fetch(request)
+  //     .then(response => response.json())
+  //     .then(async data => {
+  //       console.log(data);
+  //       this.setState({ 
+  //         currentBusiness: data,
+  //         name: data.name,
+  //         description: data.description,
+  //         phone: data.phone,
+  //         website: data.website,
+  //         addressID: data.address,
+  //         street: 'bring address',
+  //         city: 'bring address',
+  //         country: 'bring address',
+  //         category: data.category,
+  //         // tags: [],
+  //         avatar: data.avatar,
+  //         // carousel: database.businesses[0].Pictures.Carousel,
+  //       });
+  //     })
+  //     .catch(error => console.log(error))
+  // }
 
   async fetchBusinessServicesList() {
     const url = `${route}/service/getAllBusinessServices`;
@@ -205,7 +203,7 @@ class BusinessForm extends Component {
           'Accept': 'application/json',
           'Content-Type': 'application/json' 
       },
-      body: JSON.stringify({businessID: this.state.currentBusinessID})
+      // body: JSON.stringify({businessID: this.state.currentBusinessID})
     };
     const request = new Request(url, options)
 
@@ -242,92 +240,90 @@ class BusinessForm extends Component {
   }
 
   async createOrUpdateBusiness() {
-    let formData = new FormData();
-
     const business = {
-      managerID: this.state.managerID,
+      managerID: this.props.currentUser.userid,
+      carousel: this.state.carousel,
       name: this.state.name,
-      category: this.state.category,
-      tags: this.state.tags,
+      avatar: this.state.avatar,
+      description: this.state.description,
+      phone: this.state.phone,
+      website: this.state.website,
       street: this.state.street,
       city: this.state.city,
       country: this.state.country,
-      phone: this.state.phone,
-      website: this.state.website,
-      description: this.state.description,
-      availability: this.state.availability
+      category: this.state.category,
+      tags: this.state.tags,
+      availability: this.state.availability,
+      ServicesList: this.state.ServicesList
     };
     
-    const avatar = {
-      name: 'avatar',
-      type: 'image/jpeg', 
-      uri: Platform.OS === 'android' ? this.state.avatar : this.state.avatar.replace('file://', '')
+    let url = this.props.myBusiness ? `${route}/business/updateBusinessDetails` : `${route}/business/createNewBusiness`;
+    const options = { 
+      method: this.props.myBusiness ? 'PUT' : 'POST', 
+      headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify(business)
     };
-
-    formData.append('business', JSON.stringify(business));
-    formData.append('avatar', avatar);
-
-    this.state.carousel.map((item, index) => {
-      let image = {
-        name: `image${index + 1}`,
-        type: 'image/jpeg', 
-        uri: Platform.OS === 'android' ? item : item.replace('file://', '')
-      };
-      formData.append('carousel', image);
-    })
-  
-    const url = `${route}/business/createNewBusiness`;
-    const options = { method: 'POST', body: formData };
     const request = new Request(url, options);
-
+    
     await fetch(request)
       .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Something went wrong ...');
-        }
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Something went wrong ...');
+          }
+        })
+      .then(data => {
+        console.log(data);
+        // this.props.dispatch(Actions_User.updateCurrentUser(data))
       })
-      .then(data => console.log(data))
       .catch(error => console.log(error))
   }
 
   async createOrUpdateService() {
+    // console.log(this.props.myBusiness)
     const service = {
-      BusinessID: this.state.currentBusinessID,
+      // BusinessID: this.state.currentBusinessID,
       serviceID: this.state.currentService.serviceid,
       name: this.state.serviceName,
       price: this.state.price,
-      durationMinutes: this.state.durationMinutes,
+      durationminutes: this.state.durationminutes,
       qouta: this.state.qouta,
     };
 
-    let action = this.state.isEditingService ? 'updateServiceDetails' : 'createNewService';
+    if(!this.props.myBusiness) {
+      this.setState({ServicesList: [...this.state.ServicesList, service]});
+    } else {
+      let action = this.state.isEditingService ? 'updateServiceDetails' : 'createNewService';
 
-    const url = `${route}/service/${action}`;
-    const options = { 
-      method: 'POST', 
-      headers: { 
-          'Accept': 'application/json',
-          'Content-Type': 'application/json' 
-      },
-      body: JSON.stringify(service)
-    };
-    const request = new Request(url, options);
-
-    await fetch(request)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Something went wrong ...');
-        }
-      })
-      .then(data => {
-        console.log(data);
-        this.fetchBusinessServicesList();
-      })
-      .catch(error => console.log(error))
+      const url = `${route}/service/${action}`;
+      const options = { 
+        method: 'POST', 
+        headers: { 
+            'Accept': 'application/json',
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(service)
+      };
+      const request = new Request(url, options);
+  
+      await fetch(request)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Something went wrong ...');
+          }
+        })
+        .then(data => {
+          console.log(data);
+          this.fetchBusinessServicesList();
+        })
+        .catch(error => console.log(error))
+    }
 
     this.setState({ isServicFormVisible: false, isEditingService: false });
   }
@@ -336,42 +332,50 @@ class BusinessForm extends Component {
     this.setState({ tags: tags });
   }
 
-  getPermissionAsync = async () => {
-    if (Constants.platform.ios) {
-      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
-      }
-    }
-  }
+  // getPermissionAsync = async () => {
+  //   if (Constants.platform.ios) {
+  //     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+  //     if (status !== 'granted') {
+  //       alert('Sorry, we need camera roll permissions to make this work!');
+  //     }
+  //   }
+  // }
 
-  _pickImage = async (type) => {
-    try {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-      if (!result.cancelled) {
-        // console.log(result);
-        if(type === 'carousel') {
-          if(this.state.carouselEdited) {
-            this.setState({ carousel: [...this.state.carousel, result.uri] });
-          } 
-          else {
-            this.setState({ 
-              carousel: [result.uri],
-              carouselEdited: true
-            });
-          }
-        }
-        else if(type === 'avatar') {
-          this.setState({ avatar: result.uri });
-        }
-      }
-    } catch (e) {
-      console.log(e);
+  // _pickImage = async (type) => {
+  //   try {
+  //     let result = await ImagePicker.launchImageLibraryAsync({
+  //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //       allowsEditing: true,
+  //       aspect: [4, 3],
+  //       quality: 1,
+  //     });
+  //     if (!result.cancelled) {
+  //       // console.log(result);
+  //       if(type === 'carousel') {
+  //         if(this.state.carouselEdited) {
+  //           this.setState({ carousel: [...this.state.carousel, result.uri] });
+  //         } 
+  //         else {
+  //           this.setState({ 
+  //             carousel: [result.uri],
+  //             carouselEdited: true
+  //           });
+  //         }
+  //       }
+  //       else if(type === 'avatar') {
+  //         this.setState({ avatar: result.uri });
+  //       }
+  //     }
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
+
+  handleCarouselPick() {
+    if(this.state.carousel[0] === 'https://www.interpeace.org/wp-content/themes/geneva/img/image-placeholder.png') {
+      this.setState({carousel: [this.state.carouselUrlText]});
+    } else {
+      this.setState({carousel: [...this.state.carousel, this.state.carouselUrlText]});
     }
   }
 
@@ -718,9 +722,9 @@ class BusinessForm extends Component {
             rounded
             size={50}
             source={{ uri: avatar }}
-            showEditButton
-            editButton={{type: 'MaterialIcons', name: 'add-a-photo', }}
-            onPress={() => this._pickImage('avatar')}
+            showAccessory
+            accessory={{type: 'MaterialIcons', name: 'add-a-photo'}}
+            onPress={() => this.setState({isAvatarFormVisible: true})}
           />
           { this.state.descriptionIsEditing ?
             <TextInput
@@ -851,7 +855,7 @@ class BusinessForm extends Component {
           <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, }}/>
         </View>
 
-        {/* <View style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}>
+        <View style={[styles.rowItems, styles.leftAlign, styles.infoRowsContainer]}>
           <View style={styles.iconsCircle}>
             <FontAwesome name="hashtag" size={20} color={colors.blue} style={{ marginLeft: 1 }} />
           </View>
@@ -860,7 +864,7 @@ class BusinessForm extends Component {
               onValueChange={(value) => this.setState({ tags: [...this.state.tags, value] })}
               placeholder={{label: 'Select...', value: null}}
               textInputProps={styles.iconsText}
-              items={items}
+              items={this.state.tagsList}
               // value={this.state.tags[0]}
             />
             <Text>,</Text>
@@ -868,7 +872,7 @@ class BusinessForm extends Component {
               onValueChange={(value) => this.setState({ tags: [...this.state.tags, value] })}
               placeholder={{label: 'Select...', value: null}}
               textInputProps={styles.iconsText}
-              items={items}
+              items={this.state.tagsList}
               // value={this.state.tags[1]}
             />
             <Text>,</Text>
@@ -876,12 +880,12 @@ class BusinessForm extends Component {
               onValueChange={(value) => this.setState({ tags: [...this.state.tags, value] })}
               placeholder={{label: 'Select...', value: null}}
               textInputProps={styles.iconsText}
-              items={items}
+              items={this.state.tagsList}
               // value={this.state.tags[2]}
             />
           </View>
           <MaterialCommunityIcons name="circle-edit-outline" size={20} color={colors.gray03} style={{ marginLeft: 10, marginRight: 10}}/>
-        </View> */}
+        </View>
 
         {this.renderOpeningHours(businessData)}
       </KeyboardAwareScrollView>
@@ -889,11 +893,12 @@ class BusinessForm extends Component {
     )
   }
 
-  renderFormOverlay() {
+  renderServiceFormOverlay() {
     return (
       <Overlay 
         isVisible={this.state.isServicFormVisible} 
         onBackdropPress={() => this.setState({ isServicFormVisible: false, isEditingService: false })}
+        overlayStyle={{width: '90%', height: '80%'}}
       >
         <View style={{flex: 1}}>
           <Text style={{fontSize: 24, fontWeight: '600', marginBottom: 30, marginTop: 20, alignSelf: 'center'}}>Service Details</Text>
@@ -916,9 +921,9 @@ class BusinessForm extends Component {
             label='Duration'
             placeholder='Enter Duration'
             containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
-            onChangeText={text => this.setState({durationMinutes: text})}
+            onChangeText={text => this.setState({durationminutes: text})}
             keyboardType='numeric'
-            value={this.state.durationMinutes.toString()}
+            value={this.state.durationminutes.toString()}
           />
           <Input
             label='Qouta'
@@ -931,8 +936,8 @@ class BusinessForm extends Component {
           <View style={{alignSelf: 'center', alignItems: 'center', width: '100%', position: 'absolute', bottom: 20}}>
             <Button
               title={this.state.isEditingService ? 'Update Service' : 'Create Service'}
-              containerStyle={{width: '70%', }}
-              buttonStyle={{}}
+              containerStyle={{width: '70%'}}
+              buttonStyle={{borderRadius: 10}}
               onPress={() => this.createOrUpdateService()}
             />
             {
@@ -942,7 +947,7 @@ class BusinessForm extends Component {
                 titleStyle={{color: 'red'}}
                 type="outline"
                 containerStyle={{width: '70%', marginTop: 20}}
-                buttonStyle={{borderColor: 'red'}}
+                buttonStyle={{borderColor: 'red', borderRadius: 10}}
                 onPress={() => this.deleteService()}
               />
             }
@@ -957,7 +962,7 @@ class BusinessForm extends Component {
       <Overlay 
         isVisible={this.state.isCarouselFormVisible} 
         onBackdropPress={() => this.setState({ isCarouselFormVisible: false})}
-        height={'40%'}
+        overlayStyle={{height: '40%', width: '90%'}}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={{flex: 1}}>
@@ -972,11 +977,13 @@ class BusinessForm extends Component {
           <View style={{alignSelf: 'center', alignItems: 'center', width: '100%', position: 'absolute', bottom: 20}}>
             <Button
               title="Submit"
-              // titleStyle={{color: }}
               type="outline"
               containerStyle={{width: '70%', marginTop: 20}}
-              // buttonStyle={{borderColor: 'blue'}}
-              // onPress={() => this._pickImage('carousel')}
+              buttonStyle={{borderRadius: 10}}
+              onPress={() => {
+                this.setState({ isCarouselFormVisible: false})
+                this.handleCarouselPick();
+              }}
             />
             {/* <Button
               title="Add from gallery"
@@ -986,6 +993,39 @@ class BusinessForm extends Component {
               // buttonStyle={{borderColor: 'blue'}}
               onPress={() => this._pickImage('carousel')}
             /> */}
+          </View>
+        </View>
+        </TouchableWithoutFeedback>
+      </Overlay>
+    )
+  }
+
+  renderAvatarOverlay() {
+    return (
+      <Overlay 
+        isVisible={this.state.isAvatarFormVisible} 
+        onBackdropPress={() => this.setState({ isAvatarFormVisible: false})}
+        overlayStyle={{height: '40%', width: '90%'}}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={{flex: 1}}>
+          <Text style={{fontSize: 24, fontWeight: '600', marginBottom: 30, marginTop: 20, alignSelf: 'center'}}>Avatar</Text>
+          <Input
+            label='Photo URL'
+            placeholder='http://'
+            containerStyle={{marginTop: 20, width: '90%', alignSelf: 'center'}}
+            onChangeText={text => this.setState({avatarUrlText: text})}
+          />
+          <View style={{alignSelf: 'center', alignItems: 'center', width: '100%', position: 'absolute', bottom: 20}}>
+            <Button
+              title="Submit"
+              type="outline"
+              containerStyle={{width: '70%', marginTop: 20}}
+              buttonStyle={{borderRadius: 10}}
+              onPress={() => {
+                this.setState({ isAvatarFormVisible: false, avatar: this.state.avatarUrlText });
+              }}
+            />
           </View>
         </View>
         </TouchableWithoutFeedback>
@@ -1005,23 +1045,21 @@ class BusinessForm extends Component {
           </View>
 
           <Button
-            // icon={<Ionicons name="ios-add-circle-outline" size={35} color="white"/>}
-            // iconRight
             title="Add new service"
-            containerStyle={{alignSelf: 'center', width: '60%', marginBottom: 20}}
-            buttonStyle={{}}
+            containerStyle={{alignSelf: 'center', width: '60%', marginBottom: 20, borderRadius: 10}}
+            buttonStyle={{backgroundColor: colors.red}}
             onPress={() => {
               this.setState({ 
                 isServicFormVisible: true,
                 serviceName: '',
                 price: '',
-                durationMinutes: '',
+                durationminutes: '',
                 qouta: '',
               })
             }}
           />
 
-          {this.renderFormOverlay()}
+          {this.renderServiceFormOverlay()}
       </ScrollView>
     )
   }
@@ -1061,7 +1099,7 @@ class BusinessForm extends Component {
                 isEditingService: true,
                 serviceName: item.name,
                 price: item.price,
-                durationMinutes: item.durationminutes,
+                durationminutes: item.durationminutes,
                 qouta: item.qouta,
               });
             }}
@@ -1115,6 +1153,7 @@ class BusinessForm extends Component {
         </ScrollableTabView>
 
         {this.renderCarouselOverlay()}
+        {this.renderAvatarOverlay()}
       </View>
     );
   }
@@ -1127,6 +1166,7 @@ const mapStateToProps = ({ User, Customer, App }) => {
     myBusiness: User.myBusiness,
     favoritesList: Customer.favoritesList,
     categoriesList: App.categoriesList,
+    tagsList: App.tagsList,
   }
 }
 
