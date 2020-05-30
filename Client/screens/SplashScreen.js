@@ -1,5 +1,5 @@
-import React, { Component, Children } from 'react';
-import { View, Text, ActivityIndicator, Image, Button, Vibration, Platform } from 'react-native';
+import React, { Component } from 'react';
+import { View, Image, Platform } from 'react-native';
 import * as Actions_App from '../redux/actions/Actions_App';
 import * as Actions_User from '../redux/actions/Actions_User';
 import * as Actions_Customer from '../redux/actions/Actions_Customer';
@@ -21,8 +21,7 @@ class SplashScreen extends Component {
     this.state = {
       email: this.props.route.params.email,
       profilePic: this.props.route.params.profilePic,
-      shouldUpdate: false,
-      expoPushToken: '',
+      expoPushToken: ''
     };
     this.initApp = this.initApp.bind(this);
     this.fetchCategoriesList = this.fetchCategoriesList.bind(this);
@@ -40,6 +39,14 @@ class SplashScreen extends Component {
   componentDidMount() {
     this.initApp();
   }
+
+  // async componentDidUpdate(prevProps) {
+  //   if (this.props.route.params.shouldRefresh !== prevProps.route.params.shouldRefresh) {
+  //     await this.setState({email: this.props.route.params.email, profilePic: this.props.route.params.profilePic})
+  //     await this.initApp();
+  //   }
+  // }
+
   
   async initApp() {
     console.log('initApp');
@@ -55,6 +62,7 @@ class SplashScreen extends Component {
   }
 
   async registerForPushNotificationsAsync() { 
+    // console.log('registerForPushNotificationsAsync');
     if (Constants.isDevice) {
       const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
       let finalStatus = existingStatus;
@@ -163,7 +171,7 @@ class SplashScreen extends Component {
       await fetch(request)
         .then(response => response.json())
         .then(data => {
-          console.log(data)
+          // console.log(data)
           // let user = data.user;
           // user.profilepic = this.props.route.params.profilePic;
           // this.props.dispatch(Actions_User.updateCurrentUser(user))
@@ -188,12 +196,20 @@ class SplashScreen extends Component {
     await fetch(request)
       .then(response => response.json())
       .then(data => {
-        // console.log('======================')
         // console.log(data.user)
-        // console.log('======================')
-        // let user = data.user;
-        // user.profilepic = this.props.route.params.profilePic;
-        this.props.dispatch(Actions_User.updateCurrentUser(data.user))
+        if(data.user === null) {
+          this.props.navigation.navigate('SignUpForm', {
+            hasProfile: false,
+            socialLogin: this.props.route.params.socialLogin,
+            email: this.props.route.params.email, 
+            firstName: this.props.route.params.firstName,
+            lastName: this.props.route.params.lastName,
+            profilePic: this.props.route.params.profilePic
+          })
+        }
+        else {
+          this.props.dispatch(Actions_User.updateCurrentUser(data.user));
+        }
       })
       .catch(error => console.log(error))
   }
@@ -221,7 +237,7 @@ class SplashScreen extends Component {
 
   async fetchUserFavoritesList() {
     // console.log('fetchUserFavoritesList');
-    // console.log(this.props.currentUser.userid)
+
     const url = `${route}/customer/getFavoritesList`;
     const options = { 
       method: 'POST', 

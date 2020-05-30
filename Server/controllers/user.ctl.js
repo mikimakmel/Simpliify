@@ -67,6 +67,7 @@ module.exports = {
         const phone = req.body.phone;
         const birthday = req.body.birthday;
         const gender = req.body.gender;
+        const profilepic = req.body.profilePic;
 
         const addressQuery =
             `INSERT INTO Address 
@@ -81,9 +82,9 @@ module.exports = {
 
             const userQuery = 
                 `INSERT INTO Users 
-                (FirstName, LastName, Phone, Gender, Email, address, HasBusiness, Birthday)
+                (FirstName, LastName, Phone, Gender, Email, address, HasBusiness, Birthday, profilepic)
                 VALUES 
-                ('${firstName}', '${lastName}', '${phone}', '${gender}', '${email}', ${addressID}, '${false}', '${birthday}')
+                ('${firstName}', '${lastName}', '${phone}', '${gender}', '${email}', ${addressID}, '${false}', '${birthday}', '${profilepic}')
                 RETURNING UserID`;
 
             db.query(userQuery)
