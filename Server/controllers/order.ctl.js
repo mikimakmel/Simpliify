@@ -172,9 +172,9 @@ module.exports = {
             WHERE businessid=${businessID}`;
         
         const ordersQuery = 
-            `SELECT status, starttime, durationminutes FROM Orders 
-            INNER JOIN Service ON (Orders.Service= Service.ServiceID)
-            WHERE business=${businessID} AND Status='Confirmed'
+            `SELECT status, TO_CHAR(Orders.Starttime, 'YYYY-MM-DD HH24:MI:00') as starttime, durationminutes, serviceid, quota FROM Orders 
+            INNER JOIN Service ON (Orders.Service=Service.ServiceID)
+            WHERE business=${businessID} AND Status='Confirmed' AND starttime::date='${currentDate}'::date
             ORDER BY starttime ASC`;
 
         var finalResult = {
@@ -190,7 +190,33 @@ module.exports = {
 
         db.query(ordersQuery)
             .then(result => {
+                var stillVacant = Array.apply(null, Array(result.rows.length)).map(function (x, i) { return i; })
+                result.rows.forEach(function(order, index) {
+                    var currentQuota = order.quota - 1
+                    if(currentQuota)
+                    {
+                        for(; currentQuota; currentQuota--)
+                            if(order.starttime.toString() != result.rows[index + 1].starttime.toString())
+                                break
+
+                        if(!currentQuota)
+                        {
+                            var i = stillVacant.indexOf(index)
+                            stillVacant.splice(i, order.quota - 1)
+                        }
+
+                    }
+                    else
+                    {
+                        var i = stillVacant.indexOf(index)
+                        stillVacant.splice(i, 1)
+                    }
+                })
                 finalResult.orders = result.rows;
+
+                for (var i = 0; i < stillVacant.length; ++i)
+                    finalResult.orders.splice(stillVacant[i] - i, 1);
+                
                 var allSegments = [];
                 var openHours = [];
                 var startAvailability = "";
@@ -206,7 +232,7 @@ module.exports = {
                         endAvailability = moment(new Date(moment(currentDate).year(), moment(currentDate).month(), moment(currentDate).date(), parseInt(t[0]), parseInt(t[1]), parseInt(t[2])))
                     }
                 })      
-
+                
                 if(startAvailability !== "") {
                     var currentAvailability = startAvailability.clone()
                     var tmpTime = startAvailability.clone().add(durationMinutes, 'minutes')
@@ -217,40 +243,30 @@ module.exports = {
                         currentAvailability.add(durationMinutes, 'minutes')
                         tmpTime.add(durationMinutes, 'minutes')
                     }
-                    
-                    // Gather orders from the same day
+
+                    // Create orders' time ranges
                     let timeSegments = [];
                     finalResult.orders.forEach (order => {
-                        if (moment(order.starttime).format('L') === moment(startAvailability).format('L'))
-                        {
-                            let tmpDate = moment(order.starttime)
-                            timeSegments.push(moment.range(moment(tmpDate), moment(tmpDate).add(order.durationminutes, 'minutes')))
-                        }
+                        let tmpDate = moment(order.starttime)
+                        timeSegments.push(moment.range(moment(tmpDate), moment(tmpDate).add(order.durationminutes, 'minutes')))
                     })
-                    
+
                     // If a range of time overlaps with each other (all & ordered), move it from the list
                     var overlapping = []
                     allSegments.forEach(function(timeFrame, index) {
                         timeSegments.forEach (segment => {
                             if(segment.overlaps(timeFrame))
-                            { 
                                 overlapping.push(index)
-                            }
                         })
                     })
                     
                     // Actual remove
-                    for (var i = 0; i < overlapping.length; ++i) {
+                    for (var i = 0; i < overlapping.length; ++i)
                         allSegments.splice(overlapping[i] - i, 1);
-                    }
                     
                     // Parse to an time objects array
-                    
-                    allSegments.forEach(segment => {
-                        openHours.push({'time':segment.start.format('HH:mm')})
-                    })
+                    allSegments.forEach(segment => {openHours.push({'time':segment.start.format('HH:mm')})})
                 }
-
                 res.json(openHours);
             })
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
