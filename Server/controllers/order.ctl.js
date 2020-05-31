@@ -23,48 +23,106 @@ module.exports = {
         const serviceID = req.body.serviceID;
         const status = 'Confirmed';
         const startTime = req.body.startTime;
-
+        const durationMinutes = req.body.durationMinutes;
         const query = 
+            `
+            SELECT Starttime, DurationMinutes, Quota, Status FROM Orders INNER JOIN Service ON (Orders.Service = Service.ServiceID)
+            WHERE
+            Business = '${businessID}' AND
+            Status = '${status}' AND
+            StartTime::DATE = '${startTime}'::date
+            ORDER BY StartTime
+            `
+        db.query(query)
+        .then(result => {
+            var stillVacant = Array.apply(null, Array(result.rows.length)).map(function (x, i) { return i; })
+            var relevantOrder = null
+            var isValidOrder = true;
+            result.rows.forEach(function(order, index) {
+                if(moment(order.starttime).toString() == moment(startTime).toString())
+                {
+                    relevantOrder = order
+                    var currentQuota = order.quota - 1
+                    if(currentQuota)
+                    {
+                        for(; currentQuota; currentQuota--)
+                            if(result.rows.length > index + 1)
+                                if(order.starttime.toString() != result.rows[index + 1].starttime.toString())
+                                    break
+                        
+                        if(!currentQuota && result.rows.length > index + 1)
+                            stillVacant.splice(stillVacant.indexOf(index), order.quota - 1)
+                    }
+                    else
+                        stillVacant.splice(stillVacant.indexOf(index), 1)
+                }
+            })
+
+            var ordersToCheck = result.rows;
+            for (var i = 0; i < stillVacant.length; ++i)
+                ordersToCheck.splice(stillVacant[i] - i, 1);
+
+            var segmentToCheck = moment.range(moment(startTime), moment(startTime).add(durationMinutes, 'minutes'))
+
+            ordersToCheck.forEach (order => {
+                let tmpDate = moment(order.starttime)
+                if(segmentToCheck.overlaps(moment.range(moment(tmpDate), moment(tmpDate).add(order.durationminutes, 'minutes'))))
+                    isValidOrder = !isValidOrder
+            })
+
+            if(!relevantOrder)
+                isValidOrder = !isValidOrder
+
+            const scheduleQuery =
             `INSERT INTO Orders 
             (Customer, Business, Service, status, starttime, orderedat) 
             VALUES 
             ('${userID}', '${businessID}', '${serviceID}', '${status}', '${startTime}', NOW() AT TIME ZONE 'EETDST')
             RETURNING Orderid, Customer, Business, Service, status, starttime AT TIME ZONE 'UTC' as starttime, orderedat AT TIME ZONE 'UTC' as orderedat`;
-        
-        db.query(query)
-            .then(result => res.json(result.rows[0]))
-            .catch(err => {
-                        if(err.code == '23505')
+            
+            if(!isValidOrder)
+                res.json('Unfortunately this has been already booked. Please try a different booking')
+            else
+            {
+                db.query(scheduleQuery)
+                .then(result => res.json(result.rows[0]))
+                .catch(err =>
+                {
+                    if(err.code == '23505')
+                    {
+                        const checkStatus =
+                        `SELECT OrderID FROM Orders WHERE
+                        Customer = '${userID}' AND
+                        Business = '${businessID}' AND
+                        Service = '${serviceID}' AND
+                        Starttime = '${startTime}' AND
+                        Status = 'Cancelled'
+                        `
+                        db.query(checkStatus)
+                        .then(result => {
+                            if(!result.rows[0])
+                                res.json('Order already exists!')
+                            else
                             {
-                                const checkStatus =
-                                `SELECT OrderID FROM Orders WHERE
-                                Customer = '${userID}' AND
-                                Business = '${businessID}' AND
-                                Service = '${serviceID}' AND
-                                Starttime = '${startTime}' AND
-                                Status = 'Cancelled'
+                                let orderID = result.rows[0].orderid;
+                                const updateStatus = 
+                                `UPDATE Orders SET Status = 'Confirmed' WHERE
+                                OrderID = '${orderID}'
+                                RETURNING Orderid, Customer, Business, Service, status, starttime AT TIME ZONE 'UTC' as starttime, orderedat AT TIME ZONE 'UTC' as orderedat
                                 `
-                                db.query(checkStatus)
-                                .then(result => {
-                                    if(!result.rows[0])
-                                        res.json('Order already exists!')
-                                    else
-                                    {
-                                        let orderID = result.rows[0].orderid;
-                                        const updateStatus = 
-                                        `UPDATE Orders SET Status = 'Confirmed' WHERE
-                                        OrderID = '${orderID}'
-                                        RETURNING Orderid, Customer, Business, Service, status, starttime AT TIME ZONE 'UTC' as starttime, orderedat AT TIME ZONE 'UTC' as orderedat
-                                        `
-                                        db.query(updateStatus)
-                                        .then(result => res.json(result.rows[0]))
-                                        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-                                    }
-                                })
-                                
+                                db.query(updateStatus)
+                                .then(result => res.json(result.rows[0]))
                                 .catch(err => res.status(404).send(`Query error: ${err.stack}`))
                             }
-                    })
+                        })
+                        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+                    }
+                    else
+                        res.status(404).send(`Query error: ${err.stack}`)
+                })
+            }
+        })
+        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
     // user cancel's an exsiting order for a service.
@@ -196,24 +254,18 @@ module.exports = {
                     if(currentQuota)
                     {
                         for(; currentQuota; currentQuota--)
-                            if(order.starttime.toString() != result.rows[index + 1].starttime.toString())
-                                break
+                            if(result.rows.length > index + 1)
+                                if(order.starttime.toString() != result.rows[index + 1].starttime.toString())
+                                    break
 
-                        if(!currentQuota)
-                        {
-                            var i = stillVacant.indexOf(index)
-                            stillVacant.splice(i, order.quota - 1)
-                        }
-
+                        if(!currentQuota && result.rows.length > index + 1)
+                            stillVacant.splice(stillVacant.indexOf(index), order.quota - 1)
                     }
                     else
-                    {
-                        var i = stillVacant.indexOf(index)
-                        stillVacant.splice(i, 1)
-                    }
+                        stillVacant.splice(stillVacant.indexOf(index), 1)
                 })
-                finalResult.orders = result.rows;
 
+                finalResult.orders = result.rows;
                 for (var i = 0; i < stillVacant.length; ++i)
                     finalResult.orders.splice(stillVacant[i] - i, 1);
                 
