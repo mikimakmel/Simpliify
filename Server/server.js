@@ -12,7 +12,7 @@ const searchCtl = require('./controllers/search.ctl')
 const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 app.set('port', port);
 app.use(cors());
