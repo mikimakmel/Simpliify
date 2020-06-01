@@ -9,27 +9,6 @@ module.exports = {
         console.log("getAllBusinesses()");
 
         const query = `SELECT * FROM Business FULL OUTER JOIN Address ON (Business.Address = Address.AddressID) WHERE BusinessID IS NOT NULL`;
-        
-        opencage.geocode({q: 'Theresienhöhe 11, München', key: opencage_apikey}).then(data => {
-            JSON.stringify(data)
-            if (data.status.code == 200) {
-              if (data.results.length > 0) {
-                var place = data.results[0];
-                console.log(place.formatted);
-                console.log(place.geometry);
-                console.log(place.annotations.timezone.name);
-              }
-            } else if (data.status.code == 402) {
-              console.log('hit free-trial daily limit');
-              console.log('become a customer: https://opencagedata.com/pricing'); 
-            } else {
-              // other possible response codes:
-              // https://opencagedata.com/api#codes
-              console.log('error', data.status.message);
-            }
-          }).catch(error => {
-            console.log('error', error.message);
-          });
 
         db.query(query)
             .then(result => res.json(result.rows))
@@ -191,12 +170,30 @@ module.exports = {
         // console.log(req.body)
 
         // console.log(managerID, name, category, tags, phone, street, city, country, website, availability, carousel, description, avatar);
-        
+        var fullAddress = `${street}, ${city}, ${country}`
+        var lat = null
+        var lng = null
+
+        await opencage.geocode({q: `'${fullAddress}'`, key: opencage_apikey})
+        .then(data => 
+            { 
+                JSON.stringify(data)
+                if (data.status.code == 200 && data.results.length > 0)
+                {
+                    lat = data.results[0].geometry.lat
+                    lng = data.results[0].geometry.lng
+                    console.log(lat)
+                    console.log(lng)
+                }
+            })
+        .catch(error => {console.log('error', error.message)});
+
+        // console.log(`'${street}', '${city}', '${country}', (point(${lat}, ${lng}))`)
         const addressQuery =
             `INSERT INTO Address 
-            (street, city, country)
+            (street, city, country, coordinates)
             VALUES 
-            ('${street}', '${city}', '${country}')
+            ('${street}', '${city}', '${country}', (point(${lat}, ${lng})))
             RETURNING addressid`;
 
         db.query(addressQuery)
@@ -210,9 +207,10 @@ module.exports = {
                 (${addressID}, ${managerID}, '${name}', '${category}', '${phone}', '${website}', '${description}', 0, '${avatar}')
                 RETURNING *`;
 
-            db.query(businessQuery)
-            .then(result => {
-                console.log(result)
+            // db.query(businessQuery)
+            // .then(result => {
+            //     console.log(result)
+                
                 // const businessID = result.rows[0].businessid;
                 // carousel.map((item, index) => {
                 //     console.log(index, item)
@@ -227,11 +225,11 @@ module.exports = {
                     //     .then(result => res.json(result.rows))
                     //     .catch(err => res.status(404).send(`Query error: ${err.stack}`))
                 // })
-                // res.json(result.rows[0].businessid)
+                res.json(result.rows[0].businessid)
             })
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-        })
-        .catch(err => res.status(404).send(`Query error: ${err.stack}`))
+        // })
+        // .catch(err => res.status(404).send(`Query error: ${err.stack}`))
     },
 
     // close and delete a business page.
