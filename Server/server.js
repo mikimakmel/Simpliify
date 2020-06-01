@@ -8,6 +8,7 @@ const orderCtl = require('./controllers/order.ctl');
 const reviewCtl = require('./controllers/review.ctl');
 const statisticsCtl = require('./controllers/statistics.ctl');
 const searchCtl = require('./controllers/search.ctl')
+const addressCtl = require('./controllers/address.ctl')
 // const fileupload = require('express-fileupload');
 const cors = require('cors');
 
@@ -23,6 +24,9 @@ app.use(express.urlencoded({ extended: true }));
 
 setInterval(intervals.reminder, 12000);
 setInterval(intervals.success, 12000);
+
+/*** Address route ***/
+app.put('/address/alignAllAddresses', addressCtl.alignAllAddresses);
 
 /*** User routes ***/
 app.get('/user/getAllUsers', userCtl.getAllUsers);
