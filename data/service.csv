@@ -1,0 +1,32 @@
+businessid;name;price;DurationMinutes;Quota
+234;TRX;60;60;10
+234;Persinal Training;200;60;1
+234;Couple Workout;300;60;2
+234;Adult Workout;100;45;3
+235;Ashtanga All Levels;70;90;15
+235;Ashtanga Advanced;70;90;15
+235;Ashtanga Begginers;70;90;15
+236;Pilates;75;60;8
+236;Pilates Props;80;60;8
+236;Pregnancy Pilates;100;90;8
+237;Bonding;200;60;1
+237;Bridges;250;90;1
+237;Crowns;250;90;1
+238;Private class;200;60;1
+238;Group class;50;60;8
+239;20 Minutes;30;20;8
+239;40 Minutes;50;40;8
+240;Virus issue;120;90;1
+240;Slow Internet Browsing;150;60;1
+240;Hardware fix;100;60;1
+241;Haircut;75;90;1
+241;Color;55;120;1
+241;Tips;30;50;1
+242;Begginers Lesson;60;45;1
+242;Advanced Lesson;60;45;1
+242;Double Advanced Lesson;120;90;1
+242;Double Begginers Lesson;120;90;1
+243;Woman Haircut;220;90;1
+243;Man Haircut;150;45;1
+243;Child Haircut;100;45;1
+243;Hair Colored;400;180;1
