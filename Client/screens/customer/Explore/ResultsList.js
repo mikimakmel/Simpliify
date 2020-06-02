@@ -9,7 +9,6 @@ class ResultsList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      align: 'auto'
     };
     this.renderItem = this.renderItem.bind(this);
   }

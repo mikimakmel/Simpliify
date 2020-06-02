@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, SafeAreaView } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import AboutPage from '../customer/AboutPage';
 import ServicesPage from '../customer/ServicesPage';
 import styles from '../../styles/customer/Style_BusinessScreen';
@@ -13,6 +13,7 @@ import { connect } from "react-redux";
 import * as Actions_Customer from '../../redux/actions/Actions_Customer';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
+
 class MyBusiness extends Component {
   constructor(props) {
     super(props);
@@ -20,6 +21,17 @@ class MyBusiness extends Component {
       businessData: this.props.myBusiness,
     }
     this.renderBusinessInfo = this.renderBusinessInfo.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.navigation.setOptions({
+      title: 'My Business',
+      headerRight: () => (
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('BusinessForm')}>
+          <Text style={{fontSize: 16, fontWeight: '400', marginRight: 10, color: colors.blue}}>Edit</Text>
+        </TouchableOpacity>
+      )
+    });
   }
 
   renderBusinessInfo() {

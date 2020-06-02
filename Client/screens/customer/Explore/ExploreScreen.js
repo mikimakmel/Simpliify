@@ -27,7 +27,6 @@ class ExploreScreen extends Component {
       isRatingOverylayVisible: false,
       category: 'All',
     };
-    // this.getPermissionAsync = this.getPermissionAsync.bind(this);
     this.initAnimation = this.initAnimation.bind(this);
     this.renderDistancePickerOverlay = this.renderDistancePickerOverlay.bind(this);
     this.renderRatingPickerOverlay = this.renderRatingPickerOverlay.bind(this);
@@ -38,23 +37,12 @@ class ExploreScreen extends Component {
   }
 
   async componentDidMount() {
-    // await this.getPermissionAsync();
     this.fetchSearch();
   }
 
   componentWillMount() {
     this.initAnimation();
   }
-
-  // async getPermissionAsync() {
-  //   let { status } = await Location.requestPermissionsAsync();
-  //   if (status !== 'granted') {
-  //     alert('Sorry, we need location permissions to make this work!');
-  //   }
-
-  //   let location = await Location.getCurrentPositionAsync({});
-  //   this.setState({ currentLocation: location });
-  // }
 
   async initAnimation() {
     this.scrollY = new Animated.Value(0);
@@ -88,7 +76,7 @@ class ExploreScreen extends Component {
   }
 
   async handleCategoryChange(chosen) {
-    await this.setState({ category: chosen});
+    await this.setState({category: chosen});
     this.fetchSearch();
   }
 
@@ -135,7 +123,7 @@ class ExploreScreen extends Component {
       <Overlay 
         isVisible={this.state.isDistanceOverylayVisible} 
         onBackdropPress={() => this.setState({ isDistanceOverylayVisible: false })}
-        overlayStyle={{height: 200}}
+        overlayStyle={{height: '30%', width: '90%'}}
       >
         <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
           <Text>Search by distance:</Text>
@@ -166,7 +154,7 @@ class ExploreScreen extends Component {
             type="outline"
             title="Apply"
             onPress={() => {
-              this.setState({ isDistanceOverylayVisible: false });
+              this.setState({ isDistanceOverylayVisible: false});
               this.fetchSearch();
             }}
           />
@@ -180,7 +168,7 @@ class ExploreScreen extends Component {
       <Overlay 
         isVisible={this.state.isRatingOverylayVisible} 
         onBackdropPress={() => this.setState({ isRatingOverylayVisible: false })}
-        overlayStyle={{height: 200}}
+        overlayStyle={{height: '30%', width: '90%'}}
       >
         <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
           <Rating
@@ -207,7 +195,7 @@ class ExploreScreen extends Component {
             type="outline"
             title="Apply"
             onPress={() => {
-              this.setState({ isRatingOverylayVisible: false });
+              this.setState({ isRatingOverylayVisible: false});
               this.fetchSearch();
             }}
           />
@@ -221,10 +209,10 @@ class ExploreScreen extends Component {
       <Overlay 
         isVisible={this.state.isPriceOverylayVisible} 
         onBackdropPress={() => this.setState({ isPriceOverylayVisible: false })}
-        overlayStyle={{height: 200}}
+        overlayStyle={{height: '30%', width: '90%'}}
       >
         <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{fontSize: 14, fontWeight: '600'}}>Price range:</Text>
+          <Text>Price range:</Text>
           <View style={{flexDirection: 'row', marginTop: 15, justifyContent: 'center', alignItems: 'center'}}>
             <Text style={{fontSize: 14, fontWeight: '400', marginRight: 10, marginLeft: 10}}>min</Text>
             <TextInput 

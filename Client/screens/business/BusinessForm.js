@@ -127,6 +127,7 @@ class BusinessForm extends Component {
 
   componentDidMount() {
     this.props.navigation.setOptions({
+      title: 'Edit',
       headerRight: () => (
         <Octicons 
           name="check" 
