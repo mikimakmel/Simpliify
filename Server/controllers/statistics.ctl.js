@@ -605,14 +605,15 @@ getAllStatisticsByBusinessID = (req, res) =>{
         }
         var row = result.rows[0]
         var amount = new Array(12);
+
         var j = 11
         for(var i = 0; i < 12; i++){
-            amount[j] = parseFloat(row["month"+i])
+            amount[j] = row ? parseFloat(row["month"+i]) : 0
             j--
         }
         amount.forEach (function(rate, index) {
-        if(isNaN(rate))
-            amount[index] = 0
+            if(isNaN(rate))
+                amount[index] = 0
         })
         
         ratingcount.category = months
