@@ -38,7 +38,8 @@ class LineDistribution extends Component {
     return(
         <View style={styles.chart}>
             <View>
-              <Text style={styles.headline}>{this.props.name}</Text>
+              <Text style={styles.headline}>{this.props.headline}</Text>
+              <Text style={styles.subHeadline}>{this.props.subHeadline}</Text>
             </View>
 
             <View style={{ height: 400, padding: 20, flexDirection: 'row' }}>

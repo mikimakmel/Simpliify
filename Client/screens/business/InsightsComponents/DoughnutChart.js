@@ -27,7 +27,7 @@ class DoughnutChart extends Component {
       temp.push({key: this.props.data.category[i] + ' (' + this.props.data.amount[i] + ')',
                  value: this.props.data.amount[i],
                  svg: { fill: colors.redColors[(i % colors.redColors.length)] },
-                 arc: { outerRadius:100 + this.props.data.amount[i] / 20}},)
+                 arc: { outerRadius:100 + this.props.data.amount[i] / 50}},)
     }
 
     this.setState({data: temp})
@@ -38,6 +38,7 @@ class DoughnutChart extends Component {
       <ListItem
         title = {item.key}
         leftAvatar = {<View style={[styles.itemStyle, {backgroundColor:item.svg.fill}]}></View>}
+        style={{backgroundColor: item.svg.fill, marginTop: -15}}
       />
        <View style = {styles.horizontalLine}/>
     </View>
@@ -63,7 +64,8 @@ class DoughnutChart extends Component {
     return(
       <View style={styles.chart}> 
             <View>
-              <Text style={styles.headline}>{this.props.name}</Text>
+              <Text style={styles.headline}>{this.props.headline}</Text>
+              <Text style={styles.subHeadline}>{this.props.subHeadline}</Text>
             </View>
 
             <View style={styles.itemMargin}>

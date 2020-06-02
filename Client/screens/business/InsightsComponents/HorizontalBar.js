@@ -37,6 +37,7 @@ class HorizontalBar extends Component {
       <ListItem
         title = {item.key}
         leftAvatar = {<View style={[styles.itemStyle, {backgroundColor:item.svg.fill}]}></View>}
+        style={{backgroundColor: item.svg.fill, marginTop: -15}}
       />
        <View style = {styles.horizontalLine}/>
     </View>
@@ -62,7 +63,8 @@ class HorizontalBar extends Component {
     return(
       <View style={styles.chart}>
         <View>
-          <Text style={styles.headline}>{this.props.name}</Text>
+          <Text style={styles.headline}>{this.props.headline}</Text>
+          <Text style={styles.subHeadline}>{this.props.subHeadline}</Text>
         </View>
 
         <View style={styles.itemMargin}>

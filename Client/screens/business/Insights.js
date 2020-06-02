@@ -62,39 +62,47 @@ class Insights extends Component {
     }
     else {
       return(
-        <SafeAreaView style={{backgroundColor: colors.redColors[2] + 'BB'}}>
+        <SafeAreaView style={{backgroundColor: colors.gray05}}>
            <ScrollView>
              <Text style={styles.viewers}> {statistics.dailycounter} Page Visitors Today </Text>
              <PercentPie
-               name = "Gender Distribution"
+               headline = "Gender Distribution"
+               subHeadline = "(Customers' Gender By Percent)"
                data = {statistics.gendercount}
              />
               <DoughnutChart
-               name = "Income Per Service"
+               headline = "Income Per Service"
+               subHeadline = "(Gross Income)"
                data = {statistics.serviceincome}
               />
               <HorizontalBar
-                name = "Customers' Age Distribution"
+                headline = "Customers' Age Distribution"
+                subHeadline = "(Age Range Count By Ordered Services)"
                 data = {statistics.customersage}
               />
               <HorizontalBar
-                name = "Customers' City Distribution"
+                headline = "Customers' City Distribution"
+                subHeadline = "(Cities Count By Ordered Services)"
                 data = {statistics.citycount}
               />
               <LineDistribution
-                name = "Business's Monthly Income"
+                headline = "Business's Monthly Income"
+                subHeadline = "(Last Year's Gross Income By Months)"
                 data = {statistics.businessincome}
               />
               <VerticalBar
-                name = "Strongest Hours"
+                headline = "Strongest Hours"
+                subHeadline = "(Hours Range Count By Ordered Services)"
                 data = {statistics.stronghours}
               />
               <HorizontalBar
-               name = "Top 10 Customers"
+               headline = "Top 10 Customers"
+               subHeadline = "(Most Profitable Customers)"
                data = {statistics.bestcustomer}
               />
               <LineDistribution
-                name = "Rating Over Time"
+                headline = "Rating Over Time"
+                subHeadline = "(Last Year's Rating By Months)"
                 data = {statistics.ratingcount}
               />
           </ScrollView>

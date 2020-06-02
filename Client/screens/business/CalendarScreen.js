@@ -70,8 +70,7 @@ class CalendarScreen extends Component {
           service: item.service,
           time: duration,
           status: item.status,
-          phone: item.phone,
-          address: item.address  
+          phone: item.phone
         })
       
     })
@@ -122,10 +121,6 @@ class CalendarScreen extends Component {
             PhoneCall(args).catch(console.error)
           }
           },
-          {
-            text: 'Navigate - ' + item.address,
-            onPress: () => this.setState({ isPopupVisble: true })
-          },
           { text: 'Cancel', onPress: () => console.log('OK Pressed'), style: 'cancel' }
         ],
         { cancelable: false }
@@ -151,8 +146,6 @@ class CalendarScreen extends Component {
             alwaysIncludeGoogle: true,
             latitude: 32.1563346,
             longitude: 34.8814187,
-            title: item.address,
-            dialogTitle: `${item.address}`,
             cancelText: 'Cancel'
           }}
         />

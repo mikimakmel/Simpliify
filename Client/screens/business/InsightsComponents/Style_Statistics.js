@@ -10,10 +10,14 @@ export default StyleSheet.create({
     fontSize: 28,
     textAlign: 'center',
     marginTop: 20,
-    marginBottom: 10
+  },
+  subHeadline: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginTop: 5,
+    marginBottom: 25
   },
   chart: {
-    // backgroundColor: colors.gray06,
     backgroundColor: colors.white,
     borderRadius: 50,
     margin: 20
@@ -29,7 +33,7 @@ export default StyleSheet.create({
     fontSize: 30,
     textAlign: 'center',
     marginTop: 20,
-    marginBottom: 10,
-    color: colors.white
+    marginBottom: 20,
+    color: colors.black
   }
 })
