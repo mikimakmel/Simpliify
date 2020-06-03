@@ -35,43 +35,32 @@ module.exports = {
             `
         db.query(query)
         .then(result => {
-            var stillVacant = Array.apply(null, Array(result.rows.length)).map(function (x, i) { return i; })
-            var relevantOrder = null
+            var segmentToCheck = moment.range(moment(startTime), moment(startTime).add(durationMinutes, 'minutes'))
             var isValidOrder = true;
             result.rows.forEach(function(order, index) {
-                if(moment(order.starttime).toString() == moment(startTime).toString())
-                {
-                    relevantOrder = order
-                    var currentQuota = order.quota - 1
-                    if(currentQuota)
-                    {
-                        for(; currentQuota; currentQuota--)
-                            if(result.rows.length > index + 1)
-                                if(order.starttime.toString() != result.rows[index + 1].starttime.toString())
-                                    break
-                        
-                        if(!currentQuota && result.rows.length > index + 1)
-                            stillVacant.splice(stillVacant.indexOf(index), order.quota - 1)
-                    }
-                    else
-                        stillVacant.splice(stillVacant.indexOf(index), 1)
-                }
-            })
-
-            var ordersToCheck = result.rows;
-            for (var i = 0; i < stillVacant.length; ++i)
-                ordersToCheck.splice(stillVacant[i] - i, 1);
-
-            var segmentToCheck = moment.range(moment(startTime), moment(startTime).add(durationMinutes, 'minutes'))
-
-            ordersToCheck.forEach (order => {
                 let tmpDate = moment(order.starttime)
                 if(segmentToCheck.overlaps(moment.range(moment(tmpDate), moment(tmpDate).add(order.durationminutes, 'minutes'))))
-                    isValidOrder = !isValidOrder
+                {
+                    if(moment(order.starttime).toString() == moment(startTime).toString())
+                    {
+                        var currentQuota = order.quota - 1
+                        if(currentQuota)
+                        {
+                            for(; currentQuota; currentQuota--)
+                                if(result.rows.length > index + 1)
+                                    if(order.starttime.toString() != result.rows[index + 1].starttime.toString())
+                                        break
+                            
+                            if(!currentQuota && result.rows.length > index + 1)
+                                isValidOrder = false
+                        }
+                        else
+                            isValidOrder = false
+                    }
+                    else
+                        isValidOrder = false
+                }
             })
-
-            if(!relevantOrder)
-                isValidOrder = !isValidOrder
 
             const scheduleQuery =
             `INSERT INTO Orders 
@@ -81,7 +70,7 @@ module.exports = {
             RETURNING Orderid, Customer, Business, Service, status, starttime AT TIME ZONE 'UTC' as starttime, orderedat AT TIME ZONE 'UTC' as orderedat`;
             
             if(!isValidOrder)
-                res.json('Unfortunately this has been already booked. Please try a different booking')
+                res.json('Unfortunately this booking is no longer available. Better luck next time!')
             else
             {
                 db.query(scheduleQuery)
@@ -90,31 +79,16 @@ module.exports = {
                 {
                     if(err.code == '23505')
                     {
-                        const checkStatus =
-                        `SELECT OrderID FROM Orders WHERE
+                        const updateStatus = 
+                        `UPDATE Orders SET Status = 'Confirmed' WHERE
                         Customer = '${userID}' AND
                         Business = '${businessID}' AND
                         Service = '${serviceID}' AND
-                        Starttime = '${startTime}' AND
-                        Status = 'Cancelled'
+                        Starttime = '${startTime}'
+                        RETURNING Orderid, Customer, Business, Service, status, starttime AT TIME ZONE 'UTC' as starttime, orderedat AT TIME ZONE 'UTC' as orderedat
                         `
-                        db.query(checkStatus)
-                        .then(result => {
-                            if(!result.rows[0])
-                                res.json('Order already exists!')
-                            else
-                            {
-                                let orderID = result.rows[0].orderid;
-                                const updateStatus = 
-                                `UPDATE Orders SET Status = 'Confirmed' WHERE
-                                OrderID = '${orderID}'
-                                RETURNING Orderid, Customer, Business, Service, status, starttime AT TIME ZONE 'UTC' as starttime, orderedat AT TIME ZONE 'UTC' as orderedat
-                                `
-                                db.query(updateStatus)
-                                .then(result => res.json(result.rows[0]))
-                                .catch(err => res.status(404).send(`Query error: ${err.stack}`))
-                            }
-                        })
+                        db.query(updateStatus)
+                        .then(result => res.json(result.rows[0]))
                         .catch(err => res.status(404).send(`Query error: ${err.stack}`))
                     }
                     else
