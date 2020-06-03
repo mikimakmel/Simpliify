@@ -123,13 +123,15 @@ module.exports = {
     async getCategoriesList(req, res) {
         console.log("getCategoriesList()");
 
-        const query = `SELECT enum_range(NULL::categories) as Categories`;
+        // const query = `SELECT enum_range(NULL::categories) as Categories`;
+        const query = `SELECT * FROM Category`;
         
         db.query(query)
             .then(result => {
-                let data = result.rows[0];
-                let splits = data.categories.slice(1, data.categories.length - 1).split(',');
-                let categoriesArr = splits.map((item) => { return { label: item, value: item } });
+                // console.log(result.rows)
+                let categoriesArr = result.rows.map((item) => { 
+                    return { label: item.categoryname, value: item.categoryname, image: item.imagelink } 
+                });
                 res.json(categoriesArr)
             })
             .catch(err => res.status(404).send(`Query error: ${err.stack}`))

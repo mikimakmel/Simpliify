@@ -174,7 +174,8 @@ class BookingScreen extends Component {
         userID: this.props.currentUser.userid,
         businessID: businessData.business.businessid,
         serviceID: serviceData.serviceid,
-        startTime: `${this.state.selectedDate} ${item.time}`
+        startTime: `${this.state.selectedDate} ${item.time}`,
+        durationMinutes: serviceData.durationminutes
       })
     };
     const request = new Request(url, options)
@@ -182,29 +183,33 @@ class BookingScreen extends Component {
     await fetch(request)
       .then(response => response.json())
       .then(data => {
-        let order = {
-          businessid: businessData.business.businessid,
-          manager: businessData.business.manager,
-          businessname: businessData.business.name,
-          avatar: businessData.business.avatar,
-          street: businessData.business.street,
-          city: businessData.business.city,
-          country: businessData.business.country,
-          lat: businessData.business.coordinates.x,
-          lng: businessData.business.coordinates.y,
-          customerid: this.props.currentUser.userid,
-          orderid: data.orderid,
-          serviceid: serviceData.serviceid,
-          servicename: serviceData.name,
-          durationminutes: serviceData.durationminutes,
-          starttime: data.starttime,
-          orderedat: data.orderedat,
-          status: data.status,
+        console.log(data)
+        if(data === 'Unfortunately this has been already booked. Please try a different booking') {
+          alert('Unfortunately this has been already booked. \nPlease try a different booking');
+        } else {
+          let order = {
+            businessid: businessData.business.businessid,
+            manager: businessData.business.manager,
+            businessname: businessData.business.name,
+            avatar: businessData.business.avatar,
+            street: businessData.business.street,
+            city: businessData.business.city,
+            country: businessData.business.country,
+            lat: businessData.business.coordinates.x,
+            lng: businessData.business.coordinates.y,
+            customerid: this.props.currentUser.userid,
+            orderid: data.orderid,
+            serviceid: serviceData.serviceid,
+            servicename: serviceData.name,
+            durationminutes: serviceData.durationminutes,
+            starttime: data.starttime,
+            orderedat: data.orderedat,
+            status: data.status,
+          }
+          this.setState({currentOrder: order});
+          this.props.dispatch(Actions_Customer.addToOrdersList(order));
+          this.sendPushNotification(order);
         }
-
-        this.setState({currentOrder: order});
-        this.props.dispatch(Actions_Customer.addToOrdersList(order));
-        this.sendPushNotification(order);
       })
       .catch(error => console.log(error))
   }

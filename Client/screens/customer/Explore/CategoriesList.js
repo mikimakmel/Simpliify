@@ -3,8 +3,9 @@ import { View, Text, Image, ScrollView, FlatList, SafeAreaView } from 'react-nat
 import colors from '../../../constants/Colors';
 import CategoryCard from './CategoryCard';
 import styles from '../../../styles/customer/Style_ExploreScreen';
+import { connect } from "react-redux";
 
-export default class CategoriesList extends Component {
+class CategoriesList extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -40,6 +41,18 @@ export default class CategoriesList extends Component {
         )
     }
 }
+
+const mapStateToProps = ({ User, Customer, App }) => {
+    return {
+      view: User.view,
+      currentUser: User.currentUser,
+      myBusiness: User.myBusiness,
+      favoritesList: Customer.favoritesList,
+      categoriesList: App.categoriesList,
+    }
+  }
+  
+export default connect(mapStateToProps)(CategoriesList);
 
 const data = [
     {
