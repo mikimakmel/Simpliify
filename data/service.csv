@@ -1,21 +1,18 @@
 businessid;name;price;DurationMinutes;Quota
-248;Manicure Gel;120;60;1
-248;Manicure;80;45;1
-248;Padicure Gel;180;60;1
-248;Padicure;150;45;1
-244;Facial treatment;350;90;1
-244;Manicure;180;45;3
-244;Nail building;300;60;3
-244;Massage therapy;250;45;3
-244;Permanent makeup;700;60;1
-244;Pedicure;230;45;3
-244;Manicure Gel;220;60;3
-244;Padicure Gel;260;60;3
-245;24 Hours;150;1440;15
-245;12 Hours;100;720;15
-245;6 Hours;60;360;15
-246;1 Hour;250;60;1
-246;45 Minutes;200;45;1
-247;Ashtanga;75;60;15
-247;Vinyasa;75;60;15
-247;Iyengar;75;60;15
+254;Yoga;70;60;15
+254;Dance;85;90;15
+254;Pilates;70;60;10
+255;Ashtanga;75;60;15
+255;Vinyasa;75;60;15
+255;Iyengar;75;60;15
+256;Pilates;70;60;10
+256;Ashtanga;75;60;15
+256;Vinyasa;75;60;15
+256;Iyengar;75;60;15
+257;Ashtanga;80;60;15
+257;Vinyasa;75;60;15
+257;Iyengar;75;60;15
+258;Iyengar;90;60;15
+258;Ashtanga;80;60;12
+258;Vinyasa;70;60;12
+258;Pilates;85;60;10

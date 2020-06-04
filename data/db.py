@@ -117,7 +117,7 @@ def add_stars(business_id):
             hour_2 = randint(0, 3)
         else:
             hour_2 = randint(0, 9)
-        starts = randint(1, 5)
+        starts = randint(3, 5)
 
         query = "insert into Review (Customer, Business, Description, ReviewedAt, Rating) " \
                 "values (%d, %d, null, '2020-0%s-%s %s:%s:00', %s);" \
@@ -153,6 +153,19 @@ def add_reviews(business_id):
             usr += 1
 
 
+# Update profile pictures to 'users' table
+def add_profile_pics():
+    with open('profilepic.csv', newline='') as csvfile:
+        csv_reader = csv.reader(csvfile, delimiter=';', quotechar='"')
+        first_row = next(csv_reader)
+        first_row = ', '.join(first_row)
+        print(first_row)
+        for row in csv_reader:
+            query = "UPDATE users SET profilepic='%s' WHERE userid=%d;" % (row[1], int(row[0]))
+            print(query)
+            cur.execute(query)
+
+
 # functions Usage:
 # add_businesses()
 # add_availability()
@@ -161,10 +174,12 @@ def add_reviews(business_id):
 # add_tags()
 
 # loop over businesses ids
-# for i in range(244, 249):
-#     add_stars(i)
-# for i in range(244, 249):
-#     add_reviews(i)
+for i in range(254, 259):
+    add_stars(i)
+for i in range(254, 259):
+    add_reviews(i)
+
+# add_profile_pics()
 
 # Make the changes to the database persistent
 conn.commit()
