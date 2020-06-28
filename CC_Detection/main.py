@@ -19,5 +19,5 @@ if __name__ == "__main__":
         print("Input image file ", args.image, " doesn't exist")
         sys.exit(1)
     img = cv2.imread(args.image)
-    card_details = detect_card_details(img, image_path=args.image)
+    card_details = detect_card_details(img, save=True, image_path=args.image)
     print("card details: ", card_details)

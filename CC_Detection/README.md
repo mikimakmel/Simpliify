@@ -1,6 +1,6 @@
 # Credit Card Detection
 
-"Detect credit card" is a deep learning project that detects credit card digits (name, number, valid date, type: visa/mastercard)
+"Credit Card Detection" is a deep learning project that detects credit card digits (name, number, valid date, type: visa/mastercard)
 
 ## Getting Started
 
@@ -22,13 +22,7 @@ python libraries:
 Install libreries using pip3
 
 ```bash
-pip3 install opencv-python
-
-pip3 install jsonpickle
-
-pip3 install flask_restful
-
-pip3 install numpy
+pip3 install -r requirements.txt
 ```
 
 ## Usage
@@ -45,22 +39,23 @@ python3 main.py <image_path>
 2. Rest API - running https server
 
 ```bash
+python3 REST_api.py
+```
+
+Optional:
+```bash
 python3 REST_api.py --host <host_ip> --port <port_number>
 ```
 
 Default argument:
 
---host = 127.0.0.1 (local host)
+--host = 0.0.0.0
 
 --port = 5000
 
-clinet url should be POST method and looks like this:  http://127.0.0.1:5000/pic
+clinet url should be POST method and looks like this:  http://<host_ip>:<port_number>/pic
 
 **Attach to the request credit card image that filmed from Simplify application.**
-
-## Authors
-
-* **Shira Levy** - *Initial work* - [Shira Star](https://github.com/ShiraStarL)
 
 ## License
 

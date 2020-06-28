@@ -165,6 +165,15 @@ def add_profile_pics():
             print(query)
             cur.execute(query)
 
+# SELECT * FROM "public"."orders" where business between 234 and 243
+# UPDATE orders
+# SET business = 255, service = 1155
+# WHERE orderid between 100 and 150
+
+# Update orders set status='Confirmed', bool_notify=null where status='Success' and Starttime AT TIME ZONE 'UTC' > NOW()
+
+# def add_orders():
+
 
 # functions Usage:
 # add_businesses()
@@ -174,10 +183,10 @@ def add_profile_pics():
 # add_tags()
 
 # loop over businesses ids
-for i in range(254, 259):
-    add_stars(i)
-for i in range(254, 259):
-    add_reviews(i)
+# for i in range(254, 259):
+#     add_stars(i)
+# for i in range(254, 259):
+#     add_reviews(i)
 
 # add_profile_pics()
 
