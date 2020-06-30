@@ -1,16 +1,24 @@
-businessid;imagelink;primarypic
-254;http://www.naim.org.il/wp-content/uploads/2015/07/rotchild-pilates.jpg;True
-254;https://www.kassai.co.il/wp-content/uploads/2017/03/%D7%A1%D7%98%D7%95%D7%93%D7%99%D7%95-%D7%A0%D7%A2%D7%99%D7%9D_2-%D7%A4%D7%99%D7%9C%D7%90%D7%98%D7%99%D7%A1-%D7%9E%D7%9B%D7%A9%D7%99%D7%A8%D7%99%D7%9D-.jpg;
-254;https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQb0jR4ghMqLzn5Y65kpkITqifk1BlwmukgG_4CtojjbgvLuyE0&usqp=CAU;
-255;https://www.oryoga.com/application/assets/upload/instructors/1488725439.jpg;True
-255;https://i.imgur.com/Ifq8c9m.jpg;
-255;https://commondatastorage.googleapis.com/easy/images/PICS/5402291.jpg;
-256;https://www.soltlv.com/wp-content/uploads/2019/12/homepage-small-image.jpg;True
-256;https://www.soltlv.com/wp-content/uploads/2018/08/Studio_SOL-Hot_Pilates.jpg;
-256;https://www.soltlv.com/wp-content/uploads/2018/08/Studio_SOL-Bikram_Yoga.jpg;
-257;https://freefit.co.il/Images/Clubs/image_27850_2.jpg;True
-257;https://freefit.co.il/Images/Clubs/image_27850_1.jpg;
-257;https://i.ytimg.com/vi/6RV8iL0aA14/hqdefault.jpg;
-258;https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcR_K_M0kQZJpyaZTLR00VE7xML2I6Z9Lb39gFM8n4BtcpN-mQ-2&usqp=CAU;True
-258;https://freefit.co.il/Images/Clubs/image_29305_1.jpg;
-258;https://cdn.azrieli.com/Images/2dfcefd7-814c-4ab7-9c5c-b17f586fca38/Normal/29ec8ef4.jpg;
+businessid;name;price;DurationMinutes;Quota
+267;Anti-Aging;250;60;1
+267;Pigmentation Treatment;200;60;1
+267;Permanent Eyebrows Tattoo;450;30;1
+267;Face Care;350;60;1
+268;Gel;70;60;1
+269;Microblading;600;60;1
+270;Manicure;70;60;3
+270;Pedicure;100;45;3
+270;Gel;100;60;3
+271;Manicure;70;60;3
+271;Pedicure;100;45;3
+271;Gel;100;60;3
+271;Microblading;600;60;1
+272;Wax Hair Removal;150;60;1
+273;Paula Method;500;90;1
+274;Treatment;450;90;1
+275;Treatment;450;90;1
+276;Power;100;60;10
+276;Core;100;60;10
+276;Boxing;150;60;5
+277;TRX;100;60;5
+278;Group;80;60;5
+278;Personal;150;60;1

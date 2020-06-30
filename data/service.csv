@@ -1,18 +1,24 @@
 businessid;name;price;DurationMinutes;Quota
-254;Yoga;70;60;15
-254;Dance;85;90;15
-254;Pilates;70;60;10
-255;Ashtanga;75;60;15
-255;Vinyasa;75;60;15
-255;Iyengar;75;60;15
-256;Pilates;70;60;10
-256;Ashtanga;75;60;15
-256;Vinyasa;75;60;15
-256;Iyengar;75;60;15
-257;Ashtanga;80;60;15
-257;Vinyasa;75;60;15
-257;Iyengar;75;60;15
-258;Iyengar;90;60;15
-258;Ashtanga;80;60;12
-258;Vinyasa;70;60;12
-258;Pilates;85;60;10
+267;Anti-Aging;250;60;1
+267;Pigmentation Treatment;200;60;1
+267;Permanent Eyebrows Tattoo;450;30;1
+267;Face Care;350;60;1
+268;Gel;70;60;1
+269;Microblading;600;60;1
+270;Manicure;70;60;3
+270;Pedicure;100;45;3
+270;Gel;100;60;3
+271;Manicure;70;60;3
+271;Pedicure;100;45;3
+271;Gel;100;60;3
+271;Microblading;600;60;1
+272;Wax Hair Removal;150;60;1
+273;Paula Method;500;90;1
+274;Treatment;450;90;1
+275;Treatment;450;90;1
+276;Power;100;60;10
+276;Core;100;60;10
+276;Boxing;150;60;5
+277;TRX;100;60;5
+278;Group;80;60;5
+278;Personal;150;60;1

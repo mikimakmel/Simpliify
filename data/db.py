@@ -165,6 +165,15 @@ def add_profile_pics():
             print(query)
             cur.execute(query)
 
+# find users in tel aviv
+# select users.userid, users.address, address.city
+# from users
+# inner join address on users.address=address.addressid
+# where
+# (address.city='Tel Aviv' and hasbusiness=false)
+# order by userid desc
+
+
 # SELECT * FROM "public"."orders" where business between 234 and 243
 # UPDATE orders
 # SET business = 255, service = 1155
@@ -172,9 +181,33 @@ def add_profile_pics():
 
 # Update orders set status='Confirmed', bool_notify=null where status='Success' and Starttime AT TIME ZONE 'UTC' > NOW()
 
-# def add_orders():
+# SELECT * FROM "public"."orders" where business=
+# SELECT * FROM "public"."availability" where businessid=
+# SELECT * FROM "public"."service" where businessid=
+
+# update "public"."orders" set status='Confirmed', bool_notify='False', OrderedAt='2020-01-01 09:45:00' where business=258
+
+# costumers 80-97
+def add_orders():
+    costumers = range(80, 98)
+    services = [1014, 1015, 1016, 1017, 1013]
+    limits = [1, 1, 1, 1, 2]
+    minuts = [30, 30, 30, 50, 50]
+    hours = [12, 13, 14, 15, 17]
+    day = '10'
+    month = '08'
+    for i in range(5):
+        r = randint(1, limits[i])
+        for j in range(r):
+            query = "insert into " \
+                    "Orders(Customer, Business, Service, status, starttime, OrderedAt, Bool_Notify) " \
+                    "values(%d, 174, %d, 'Confirmed', '2020-%s-%s %s:00:00', '2020-01-01 09:45:00', 'False')" \
+                    % (costumers[j], services[i], month, day, str(hours[i]))
+            print(query)
+            cur.execute(query)
 
 
+add_orders()
 # functions Usage:
 # add_businesses()
 # add_availability()

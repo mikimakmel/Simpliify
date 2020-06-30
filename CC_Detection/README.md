@@ -32,6 +32,7 @@ pip3 install -r requirements.txt
 ```bash
 python3 main.py <image_path> 
 ```
+Option: image_path = examples/1.jpg  or  image_path = examples/2.jpg
 
 **Image shold be credit card image with minimum background.**
 
