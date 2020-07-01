@@ -136,6 +136,8 @@ priceRange = (filterRows, minPrice, maxPrice) => {
     
 }
 
+
+// if string choosen and radius is defulte -> don't enter radius.
 search = (req, res) => {
     console.log("Search function");
     // properties choosen by client (lon & lat is required!)
@@ -148,6 +150,8 @@ search = (req, res) => {
     var minPrice = req.body.minPrice;
     var maxPrice = req.body.maxPrice;
 
+    searchQuery = searchQuery.replace(/\s+/g,' ').trim()
+    
     console.log('searchQuery: ' + searchQuery + ', radius: ' + 
         radius + ',  category: ' + category + ',   rating: ' 
         + rating + ',  lon: ' + lon + ',  lat: ' + lat + ',  minPrice: '
@@ -226,7 +230,6 @@ search = (req, res) => {
     query = query.concat(' ', `GROUP BY Business.Businessid, Service.serviceid, Carousel.imagelink`)
     query = query.concat(' ', strRadius4)
     query = query.concat(' ', `ORDER BY Businessid`)
-    
     
     db.query(query)
     .then(result => {

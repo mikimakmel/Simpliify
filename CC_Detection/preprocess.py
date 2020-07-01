@@ -8,10 +8,6 @@ def preprocess(img, debug=False):
     height, width = img.shape[:2]
 
     # crop image as card rectangle
-    # a = 200  # h
-    # b = 300  # w
-    # print(a/height)
-    # print(b/width)
     a = int(height * 0.125)
     b = int(width * 0.406)
     x1 = int(width/2) - b

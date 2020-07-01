@@ -207,7 +207,7 @@ def add_orders():
             cur.execute(query)
 
 
-add_orders()
+# add_orders()
 # functions Usage:
 # add_businesses()
 # add_availability()
@@ -216,8 +216,8 @@ add_orders()
 # add_tags()
 
 # loop over businesses ids
-# for i in range(254, 259):
-#     add_stars(i)
+for i in range(267, 279):
+    add_stars(i)
 # for i in range(254, 259):
 #     add_reviews(i)
 
