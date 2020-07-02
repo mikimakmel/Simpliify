@@ -179,7 +179,7 @@ def add_profile_pics():
 # SET business = 255, service = 1155
 # WHERE orderid between 100 and 150
 
-# Update orders set status='Confirmed', bool_notify=null where status='Success' and Starttime AT TIME ZONE 'UTC' > NOW()
+# Update orders set status='Confirmed', bool_notify='False' where status='Success' and Starttime AT TIME ZONE 'UTC' > NOW()
 
 # SELECT * FROM "public"."orders" where business=
 # SELECT * FROM "public"."availability" where businessid=
@@ -194,18 +194,39 @@ def add_orders():
     limits = [1, 1, 1, 1, 2]
     minuts = [30, 30, 30, 50, 50]
     hours = [12, 13, 14, 15, 17]
-    day = '10'
+    day = '11'
     month = '08'
+    random_month = randint(1, 6)
+    n = 7
+    # for n in range(1, random_month):
     for i in range(5):
         r = randint(1, limits[i])
         for j in range(r):
             query = "insert into " \
                     "Orders(Customer, Business, Service, status, starttime, OrderedAt, Bool_Notify) " \
-                    "values(%d, 174, %d, 'Confirmed', '2020-%s-%s %s:00:00', '2020-01-01 09:45:00', 'False')" \
-                    % (costumers[j], services[i], month, day, str(hours[i]))
+                    "values(%d, 174, %d, 'Success', '2020-%s-%s %s:00:00', '2020-01-01 09:50:00', 'True')" \
+                    % (costumers[j], services[i], str(n), day, str(hours[i]))
             print(query)
             cur.execute(query)
 
+
+def update_costumers():
+    for i in range(500):
+        try:
+            r_order = randint(3200, 3247)
+            r_costumer = randint(83, 89)
+            query = "update orders set customer=%d where orderid=%d" % (r_costumer, r_order)
+            cur.execute(query)
+            conn.commit()
+        except:
+            print("Failed", i)
+            continue
+
+
+update_costumers()
+
+# SELECT * FROM "public"."orders" where business=174 order by orderid
+#  2788  3247
 
 # add_orders()
 # functions Usage:
@@ -216,8 +237,8 @@ def add_orders():
 # add_tags()
 
 # loop over businesses ids
-for i in range(267, 279):
-    add_stars(i)
+# for i in range(267, 279):
+#     add_stars(i)
 # for i in range(254, 259):
 #     add_reviews(i)
 
