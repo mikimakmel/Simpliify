@@ -1,6 +1,7 @@
 const { degrees, radians } = require('radians')
 const math = require('mathjs')
 const db = require('../database')
+const { ConstantNodeDependencies } = require('mathjs')
 
 // query circle -> the circle with radius that choosen by the client
 
@@ -139,7 +140,6 @@ priceRange = (filterRows, minPrice, maxPrice) => {
 
 // if string choosen and radius is defulte -> don't enter radius.
 search = (req, res) => {
-    console.log("Search function");
     // properties choosen by client (lon & lat is required!)
     const lon = req.body.lon;
     const lat = req.body.lat;
@@ -151,6 +151,10 @@ search = (req, res) => {
     var maxPrice = req.body.maxPrice;
 
     searchQuery = searchQuery.replace(/\s+/g,' ').trim()
+    // Presents all real businesses we created (most of the businesses is fake)
+    if (! searchQuery){
+        searchQuery = 'Boutique'
+    }
     
     console.log('searchQuery: ' + searchQuery + ', radius: ' + 
         radius + ',  category: ' + category + ',   rating: ' 
