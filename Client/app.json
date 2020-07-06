@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Blank Template",
-    "slug": "Simpliify",
+    "name": "SimpliifyTest",
+    "slug": "simpliifytest",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "facebookAppId": "786955858495098",
@@ -28,6 +28,7 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": ""
   }
 }
