@@ -87,4 +87,24 @@ const data = [
         image: 'https://media.istockphoto.com/vectors/cute-kids-with-balloons-air-party-characters-icon-vector-id803735292',
         label: 'Kids'
     },
+    {
+        image: 'https://i.imgur.com/qZJz9mx.png',
+        label: 'Music'
+    },
+    {
+        image: 'https://i.imgur.com/OcPLjle.png',
+        label: 'Food'
+    },
+    {
+        image: 'https://i.imgur.com/S84CF1m.png',
+        label: 'Events'
+    },
+    {
+        image: 'https://i.imgur.com/OQFa5DY.png',
+        label: 'Technology'
+    },
+    {
+        image: 'https://i.imgur.com/W1nYpd3.png',
+        label: 'Design'
+    },
 ]
