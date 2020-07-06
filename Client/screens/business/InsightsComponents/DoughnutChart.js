@@ -24,10 +24,13 @@ class DoughnutChart extends Component {
     let temp = this.state.data;
     for (var i = 0; i < this.props.data.category.length; i++)
     {
+      var amount =  (100 + this.props.data.amount[i] / 100) * 0.7
+      if (amount > 150) amount = 150
+
       temp.push({key: this.props.data.category[i] + ' (' + this.props.data.amount[i] + ')',
                  value: this.props.data.amount[i],
                  svg: { fill: colors.redColors[(i % colors.redColors.length)] },
-                 arc: { outerRadius:100 + this.props.data.amount[i] / 50}},)
+                 arc: { outerRadius:amount}},)
     }
 
     this.setState({data: temp})

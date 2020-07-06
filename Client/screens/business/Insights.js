@@ -71,12 +71,12 @@ class Insights extends Component {
             </View>
             <PercentPie
               headline = "Gender Distribution"
-              subHeadline = "(Customers' Gender By Percent)"
+              subHeadline = "(Customers' Gender By %)"
               data = {statistics.gendercount}
             />
             <DoughnutChart
               headline = "Income Per Service"
-              subHeadline = "(Gross Income)"
+              subHeadline = "(Gross Income By ₪)"
               data = {statistics.serviceincome}
             />
             <HorizontalBar
@@ -91,7 +91,7 @@ class Insights extends Component {
             />
             <LineDistribution
               headline = "Business's Monthly Income"
-              subHeadline = "(Last Year's Gross Income By Months)"
+              subHeadline = "(Last Year's Gross Income By ₪)"
               data = {statistics.businessincome}
             />
             <VerticalBar
@@ -101,7 +101,7 @@ class Insights extends Component {
             />
             <HorizontalBar
               headline = "Top 10 Customers"
-              subHeadline = "(Most Profitable Customers)"
+              subHeadline = "(Most Profitable Customers By ₪)"
               data = {statistics.bestcustomer}
             />
             <LineDistribution
