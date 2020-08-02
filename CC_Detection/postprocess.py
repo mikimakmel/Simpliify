@@ -40,9 +40,6 @@ def drawPred(frame, classes, classes_color, _classId, conf, left, top, right, bo
     color = classes_color[_classId]
 
     cv.rectangle(frame, (left, top), (right, bottom), (int(color[0]), int(color[1]), int(color[2])), 5)
-    # Draw a bounding box.
-    # cv.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 3)
-
     label = '%.2f' % conf
 
     # Get the label for the class name and its confidence
@@ -56,7 +53,6 @@ def drawPred(frame, classes, classes_color, _classId, conf, left, top, right, bo
     top = max(top, labelSize[1])
     cv.rectangle(frame, (left, top - round(1.5 * labelSize[1])), (left + round(1.5 * labelSize[0]), top + baseLine),
                  (0, 0, 255), cv.FILLED)
-    # cv.rectangle(frame, (left, top - round(1.5*labelSize[1])), (left + round(1.5*labelSize[0]), top + baseLine), (255, 255, 255), cv.FILLED)
     cv.rectangle(frame, (left, top - round(1.5*labelSize[1])), (left + round(1.5*labelSize[0]), top + baseLine),
                  (int(color[0]), int(color[1]), int(color[2])), cv.FILLED)
     cv.putText(frame, label, (left, top), cv.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 1)

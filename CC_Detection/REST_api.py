@@ -11,6 +11,17 @@ save = False
 app = Flask(__name__)
 api = Api(app)
 
+# Give the configuration and weight files for the model and load the network using them.
+model_configuration = "models/darknet-yolov3.cfg"
+model_weights = "models/darknet-yolov3_best.weights"
+net = cv2.dnn.readNetFromDarknet(model_configuration, model_weights)
+net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
+
+_img = cv2.imread('examples/1.jpg')
+for i in range(50):
+    detect_card_details(_img, net)
+
 
 class GetPicture(Resource):
     def post(self):
@@ -23,7 +34,7 @@ class GetPicture(Resource):
             cv2.imwrite("output_imgs/raw_output.jpg", img)
 
         # detect credit card
-        card_details = detect_card_details(img, save=save, prepro=True)
+        card_details = detect_card_details(img, net, save=save, prepro=True)
 
         # check if any details return
         if card_details:

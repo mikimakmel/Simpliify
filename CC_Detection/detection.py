@@ -1,6 +1,5 @@
 import os
 import cv2 as cv
-import numpy as np
 from preprocess import preprocess
 from postprocess import postprocess
 
@@ -13,16 +12,9 @@ def get_outputs_names(_net):
     return [layers_names[i[0] - 1] for i in _net.getUnconnectedOutLayers()]
 
 
-def detection(img):
+def detection(img, net):
     inpWidth = 416       # Width of network's input image
     inpHeight = 416       # Height of network's input image
-
-    # Give the configuration and weight files for the model and load the network using them.
-    model_configuration = "models/darknet-yolov3.cfg"
-    model_weights = "models/darknet-yolov3_best.weights"
-    net = cv.dnn.readNetFromDarknet(model_configuration, model_weights)
-    net.setPreferableBackend(cv.dnn.DNN_BACKEND_OPENCV)
-    net.setPreferableTarget(cv.dnn.DNN_TARGET_CPU)
 
     # Create a 4D blob from a frame.
     blob = cv.dnn.blobFromImage(img, 1/255, (inpWidth, inpHeight), [0, 0, 0], 1, crop=False)
@@ -41,13 +33,13 @@ def detection(img):
     return img, outs
 
 
-def detect_card_details(card_img, save=False, image_path=".jpg", prepro=False):
+def detect_card_details(card_img, net, save=False, image_path=".jpg", prepro=False):
     # Preprocess image
     if prepro:
         card_img = preprocess(card_img)
 
     # Predict classes from image
-    card_img, outs = detection(card_img)
+    card_img, outs = detection(card_img, net)
 
     # Postprocess to extract card details
     image_name = os.path.split(image_path)[1]
