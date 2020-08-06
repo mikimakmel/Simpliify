@@ -18,9 +18,9 @@ net = cv2.dnn.readNetFromDarknet(model_configuration, model_weights)
 net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
 net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
-_img = cv2.imread('examples/1.jpg')
-for i in range(50):
-    detect_card_details(_img, net)
+# _img = cv2.imread('examples/1.jpg')
+# for i in range(50):
+#     detect_card_details(_img, net)
 
 
 class GetPicture(Resource):

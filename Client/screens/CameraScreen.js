@@ -38,7 +38,7 @@ class CameraScreen extends Component {
         };
         formData.append('image', image);
 
-        const url = 'http://ec2-3-132-216-141.us-east-2.compute.amazonaws.com:5000/pic';
+        const url = 'http://192.168.1.198:5000/pic';
         const options = { method: 'POST', body: formData };
         const request = new Request(url, options);
 

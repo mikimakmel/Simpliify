@@ -5,16 +5,16 @@ import numpy as np
 def preprocess(img, debug=True):
 
     # image dimensions
-    # height, width = img.shape[:2]
-    #
-    # # crop image as card rectangle
-    # a = int(height * 0.125)
-    # b = int(width * 0.406)
-    # x1 = int(width/2) - b
-    # x2 = int(width/2) + b
-    # y1 = int(height/2) - a
-    # y2 = int(height/2) + a
-    # img = img[y1:y2, x1:x2].copy()
+    height, width = img.shape[:2]
+
+    # crop image as card rectangle
+    a = int(height * 0.125)
+    b = int(width * 0.406)
+    x1 = int(width/2) - b
+    x2 = int(width/2) + b
+    y1 = int(height/2) - a
+    y2 = int(height/2) + a
+    img = img[y1:y2, x1:x2].copy()
 
     height, width = img.shape[:2]
     img_size = height*width

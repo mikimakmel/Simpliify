@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Button, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Button, Alert, ScrollView} from 'react-native';
 import { CreditCardInput } from 'react-native-credit-card-input';
 import GradientButton from 'react-native-gradient-buttons';
 import Colors from '../constants/Colors';
 import { MaterialCommunityIcons, Octicons, MaterialIcons } from '@expo/vector-icons';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 class CreditCardScreen extends Component {
   constructor(props) {
@@ -76,7 +77,7 @@ class CreditCardScreen extends Component {
   
   render() {
     return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <KeyboardAwareScrollView extraHeight={100} style={{backgroundColor: 'white'}}>
         <View style={{flex: 1, paddingTop: 50, backgroundColor: 'white'}}>
           <CreditCardInput
             autoFocus={false}
@@ -93,27 +94,8 @@ class CreditCardScreen extends Component {
             inputStyle={{fontSize: 16, fontWeight: '700', color: Colors.black}}
             placeholderColor={Colors.gray02}
           />
-          
-          {/* <View style={{position: 'absolute', bottom: 30, alignItems: 'center', justifyContent: 'center', width: '100%'}}>
-            <GradientButton
-              // blueViolet   
-              gradientBegin="#7F81D6"
-              gradientEnd="#90E4E4"
-              gradientDirection="diagonal" 
-              style={{ marginVertical: 8 }}
-              textStyle={{ fontSize: 20, fontWeight: '600' }}
-              height={50}
-              width={'80%'}
-              radius={10}
-              impact={true}
-              impactStyle={'Medium'}
-              onPressAction={() => alert('Confirmed')}
-            >
-              SAVE CHANGES
-            </GradientButton>
-          </View> */}
         </View>
-      </TouchableWithoutFeedback>
+      </KeyboardAwareScrollView>
     );
   }
 }
