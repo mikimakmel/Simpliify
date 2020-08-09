@@ -281,8 +281,7 @@ class ReviewsPage extends Component {
       <Overlay 
         isVisible={this.state.isReviewOverlayVisible} 
         onBackdropPress={() => this.setState({isReviewOverlayVisible: false})}
-        width={'90%'}
-        height={'50%'}
+        overlayStyle={{height: '50%', width: '90%'}}
       >
         <View style={{flex: 1, alignItems: 'center',}}>
           <Text style={{fontSize: 16, color: colors.gray04, marginTop: 10, marginBottom: 20}}>How was your experience?</Text>
