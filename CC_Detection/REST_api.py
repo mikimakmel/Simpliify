@@ -1,10 +1,11 @@
-from flask import Flask, request, Response
-from detection import detect_card_details
-from flask_restful import Resource, Api
+import cv2
+import time
+import argparse
 import jsonpickle
 import numpy as np
-import cv2
-import argparse
+from flask_restful import Resource, Api
+from detection import detect_card_details
+from flask import Flask, request, Response
 
 save = False
 
@@ -18,9 +19,10 @@ net = cv2.dnn.readNetFromDarknet(model_configuration, model_weights)
 net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
 net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
-# _img = cv2.imread('examples/1.jpg')
-# for i in range(50):
-#     detect_card_details(_img, net)
+_img = cv2.imread('examples/1.jpg')
+for i in range(50):
+    detect_card_details(_img, net)
+    time.sleep(1)
 
 
 class GetPicture(Resource):

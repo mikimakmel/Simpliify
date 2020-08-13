@@ -21,16 +21,13 @@ def preprocess(img, debug=True):
 
     # convert RGB to Gray
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite("debug/gray.jpg", gray)
 
     # threshold for binary image (black and white)
     ret, thresh = cv2.threshold(gray, 120, 255, cv2.THRESH_BINARY)
-    cv2.imwrite("debug/thresh.jpg", thresh)
 
     # clean noise in background
     kernel = np.ones((5, 5), np.uint8)
     opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
-    cv2.imwrite("debug/opening.jpg", opening)
 
     # find all contours in image
     contours, hierarchy = cv2.findContours(opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -39,7 +36,6 @@ def preprocess(img, debug=True):
         # draw all contours
         counts = img.copy()
         cv2.drawContours(counts, contours, -1, (0, 255, 0), 3)
-        cv2.imwrite("debug/counts.jpg", counts)
 
     # find the biggest contour
     max_area = 0
@@ -57,7 +53,6 @@ def preprocess(img, debug=True):
         # draw rectangle around contour
         card_rect = img.copy()
         cv2.rectangle(card_rect, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        cv2.imwrite("debug/card_rect.jpg", card_rect)
 
     # check if the bigger counter is the credit card by calculate the percentage of it from the all image
     per = (h*w)/img_size
