@@ -1,5 +1,7 @@
 ![simpliifyLogoNEW](https://user-images.githubusercontent.com/37630492/74667845-b3bdb300-51ac-11ea-922a-47dfea848a52.png)
 
+Screenshots:
+
 <img src="https://user-images.githubusercontent.com/37630492/126381756-6646d45f-8c96-43b3-ae41-1bd2cdf784d5.png" width="40%" height="40%">
 
 <img src="https://user-images.githubusercontent.com/37630492/126381887-f99e0256-8d46-4b6e-9e9d-034b826aa4d7.png" width="40%" height="40%">
