@@ -14,7 +14,7 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6",
     "mathjs": "^6.6.4",
-    "moment": "^2.25.3",
+    "moment": "^2.29.2",
     "moment-range": "^4.0.2",
     "node-fetch": "^2.6.0",
     "opencage-api-client": "^0.7.1",
